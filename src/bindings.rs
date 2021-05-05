@@ -2656,15 +2656,17 @@ pub mod Windows {
             }
             #[repr(transparent)]
             #[derive(:: std :: cmp :: Eq)]
-            pub struct BSTR(pub *mut u16);
+            #[doc = r" https://docs.microsoft.com/en-us/previous-versions/windows/desktop/automat/bstr#remarks"]
+            #[doc = r" Uses [`::windows::widestring::UStr`] and not [`::windows::widestring::UCstr`], the latter checks for internal nulls."]
+            pub struct BSTR(pub *mut ::windows::widestring::WideChar);
             impl BSTR {
-                #[doc = r" Create an empty `BSTR`."]
+                #[doc = r" Create an empty [`BSTR`]."]
                 #[doc = r""]
                 #[doc = r" This function does not allocate memory."]
                 pub fn new() -> Self {
                     Self(std::ptr::null_mut())
                 }
-                #[doc = r" Returns `true` if the string is empty."]
+                #[doc = r" Returns [`true`] if the string is empty."]
                 pub fn is_empty(&self) -> bool {
                     self.0.is_null()
                 }
@@ -2675,19 +2677,20 @@ pub mod Windows {
                     }
                     unsafe { SysStringLen(self) as usize }
                 }
-                #[doc = r" Create a `BSTR` from a slice of 16-bit characters."]
-                pub fn from_wide(value: &[u16]) -> Self {
+                #[doc = r" Create a [`BSTR`] from a slice of 16-bit characters."]
+                fn from_wide(value: &::windows::widestring::WideStr) -> Self {
                     if value.len() == 0 {
                         return Self(::std::ptr::null_mut());
                     }
                     unsafe { SysAllocStringLen(PWSTR(value.as_ptr() as _), value.len() as u32) }
                 }
                 #[doc = r" Get the string as 16-bit characters."]
-                pub fn as_wide(&self) -> &[u16] {
+                fn as_wide(&self) -> &::windows::widestring::WideStr {
                     if self.0.is_null() {
-                        return &[];
+                        ::windows::widestring::WideStr::from_slice(&[])
+                    } else {
+                        unsafe { ::windows::widestring::WideStr::from_ptr(self.0, self.len()) }
                     }
-                    unsafe { ::std::slice::from_raw_parts(self.0 as *const u16, self.len()) }
                 }
             }
             impl ::std::clone::Clone for BSTR {
@@ -2697,7 +2700,7 @@ pub mod Windows {
             }
             impl ::std::convert::From<&str> for BSTR {
                 fn from(value: &str) -> Self {
-                    let value: ::std::vec::Vec<u16> = value.encode_utf16().collect();
+                    let value = ::windows::widestring::WideString::from_str(value);
                     Self::from_wide(&value)
                 }
             }
@@ -2711,16 +2714,20 @@ pub mod Windows {
                     value.as_str().into()
                 }
             }
+            #[cfg(windows)]
+            type FromWidestringError = ::std::string::FromUtf16Error;
+            #[cfg(not(windows))]
+            type FromWidestringError = ::windows::widestring::FromUtf32Error;
             impl<'a> ::std::convert::TryFrom<&'a BSTR> for ::std::string::String {
-                type Error = ::std::string::FromUtf16Error;
+                type Error = FromWidestringError;
                 fn try_from(value: &BSTR) -> ::std::result::Result<Self, Self::Error> {
-                    ::std::string::String::from_utf16(value.as_wide())
+                    value.as_wide().to_string()
                 }
             }
             impl ::std::convert::TryFrom<BSTR> for ::std::string::String {
-                type Error = ::std::string::FromUtf16Error;
+                type Error = FromWidestringError;
                 fn try_from(value: BSTR) -> ::std::result::Result<Self, Self::Error> {
-                    ::std::string::String::try_from(&value)
+                    value.as_wide().to_string()
                 }
             }
             impl ::std::default::Default for BSTR {
@@ -2730,11 +2737,7 @@ pub mod Windows {
             }
             impl ::std::fmt::Display for BSTR {
                 fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-                    use std::fmt::Write;
-                    for c in ::std::char::decode_utf16(self.as_wide().iter().cloned()) {
-                        f.write_char(c.map_err(|_| ::std::fmt::Error)?)?
-                    }
-                    Ok(())
+                    f.write_str(&self.as_wide().to_string().unwrap())
                 }
             }
             impl ::std::fmt::Debug for BSTR {
@@ -2759,7 +2762,8 @@ pub mod Windows {
             }
             impl ::std::cmp::PartialEq<&str> for BSTR {
                 fn eq(&self, other: &&str) -> bool {
-                    self.as_wide().iter().copied().eq(other.encode_utf16())
+                    let other = ::windows::widestring::WideString::from_str(other);
+                    self.as_wide().eq(&other)
                 }
             }
             impl ::std::cmp::PartialEq<BSTR> for &str {
@@ -2778,7 +2782,7 @@ pub mod Windows {
                 type Abi = ::std::mem::ManuallyDrop<Self>;
                 type DefaultType = Self;
             }
-            pub type BSTR_abi = *mut u16;
+            pub type BSTR_abi = *mut ::windows::widestring::WideChar;
             pub const CO_E_NOTINITIALIZED: ::windows::HRESULT =
                 ::windows::HRESULT(-2147221008i32 as _);
             pub unsafe fn CloseHandle<'a, Param0: ::windows::IntoParam<'a, HANDLE>>(
