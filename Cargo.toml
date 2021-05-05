@@ -14,6 +14,7 @@ exclude = [".github", ".windows", "docs", "tests"]
 windows_macros = { path = "crates/macros",  version = "0.21.1", optional = true }
 windows_reader = { path = "crates/reader", version = "0.21.1", optional = true }
 windows_gen = { path = "crates/gen",  version = "0.21.1", optional = true }
+widestring = "0.4"
 
 [workspace]
 members = ["crates/*", "tests/legacy/*", "tests/metadata/*", "tests/winrt/*", "tests/win32/*"]

@@ -48,3 +48,6 @@ pub type RawPtr = *mut std::ffi::c_void;
 
 #[doc(hidden)]
 pub use runtime::ConstBuffer;
+
+#[doc(hidden)]
+pub use widestring;
