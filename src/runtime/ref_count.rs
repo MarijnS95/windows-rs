@@ -2,11 +2,11 @@ use std::sync::atomic::{fence, AtomicI32, Ordering};
 
 #[doc(hidden)]
 #[repr(transparent)]
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct RefCount(pub(crate) AtomicI32);
 
 impl RefCount {
-    /// Creates a new `RefCount` with an initial value of `1`.
+    /// Creates a new `RefCount` with an initial value of `count`.
     pub fn new(count: u32) -> Self {
         Self(AtomicI32::new(count as _))
     }
