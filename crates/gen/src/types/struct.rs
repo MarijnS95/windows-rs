@@ -24,17 +24,6 @@ impl Struct {
         let mut dependencies = vec![];
 
         match self.0.full_name() {
-            ("Windows.Win32.System.OleAutomation", "BSTR") => {
-                dependencies.push(
-                    reader.resolve_type("Windows.Win32.System.OleAutomation", "SysFreeString"),
-                );
-                dependencies.push(
-                    reader.resolve_type("Windows.Win32.System.OleAutomation", "SysAllocStringLen"),
-                );
-                dependencies.push(
-                    reader.resolve_type("Windows.Win32.System.OleAutomation", "SysStringLen"),
-                );
-            }
             ("Windows.Foundation.Numerics", "Matrix3x2") => {
                 dependencies.push(
                     reader.resolve_type("Windows.Win32.Graphics.Direct2D", "D2D1MakeRotateMatrix"),
@@ -58,6 +47,7 @@ impl Struct {
 
     pub fn is_blittable(&self) -> bool {
         // TODO: should be "if self.can_drop().is_some() {" once win32metadata bugs are fixed (423, 422, 421, 389)
+        // TODO: BSTR moved
         if self.0.full_name() == ("Windows.Win32.System.OleAutomation", "BSTR") {
             false
         } else {
@@ -462,9 +452,6 @@ impl Struct {
     fn gen_replacement(&self) -> Option<TokenStream> {
         match self.0.full_name() {
             ("Windows.Win32.System.SystemServices", "BOOL") => Some(gen_bool32()),
-            ("Windows.Win32.System.SystemServices", "PWSTR") => Some(gen_pwstr()),
-            ("Windows.Win32.System.SystemServices", "PSTR") => Some(gen_pstr()),
-            ("Windows.Win32.System.OleAutomation", "BSTR") => Some(gen_bstr()),
             _ => None,
         }
     }

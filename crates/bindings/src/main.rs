@@ -14,7 +14,7 @@ fn main() -> std::io::Result<()> {
         Windows::Win32::System::Memory::{
             GetProcessHeap, HeapAlloc, HeapFree, HEAP_NONE,
         },
-        Windows::Win32::System::OleAutomation::{BSTR, GetErrorInfo, IErrorInfo, SetErrorInfo},
+        Windows::Win32::System::OleAutomation::{GetErrorInfo, IErrorInfo, SetErrorInfo},
         Windows::Win32::System::SystemServices::{
             GetProcAddress, LoadLibraryA, FreeLibrary, CO_E_NOTINITIALIZED, E_POINTER,
         },

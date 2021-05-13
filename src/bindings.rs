@@ -1799,13 +1799,13 @@ pub mod Windows {
                 }
                 pub const CLSCTX_ALL: CLSCTX = CLSCTX(23u32 as _);
                 pub unsafe fn CLSIDFromProgID<'a>(
-                    lpszprogid: impl ::windows::IntoParam<'a, super::SystemServices::PWSTR>,
+                    lpszprogid: impl ::windows::IntoParam<'a, ::windows::PWSTR>,
                     lpclsid: *mut ::windows::Guid,
                 ) -> ::windows::HRESULT {
                     #[link(name = "OLE32")]
                     extern "system" {
                         fn CLSIDFromProgID(
-                            lpszprogid: super::SystemServices::PWSTR,
+                            lpszprogid: ::windows::PWSTR,
                             lpclsid: *mut ::windows::Guid,
                         ) -> ::windows::HRESULT;
                     }
@@ -2043,7 +2043,7 @@ pub mod Windows {
                         lpsource: *const ::std::ffi::c_void,
                         dwmessageid: u32,
                         dwlanguageid: u32,
-                        lpbuffer: super::super::SystemServices::PWSTR,
+                        lpbuffer: ::windows::PWSTR,
                         nsize: u32,
                         arguments: *mut *mut i8,
                     ) -> u32 {
@@ -2054,7 +2054,7 @@ pub mod Windows {
                                 lpsource: *const ::std::ffi::c_void,
                                 dwmessageid: u32,
                                 dwlanguageid: u32,
-                                lpbuffer: super::super::SystemServices::PWSTR,
+                                lpbuffer: ::windows::PWSTR,
                                 nsize: u32,
                                 arguments: *mut *mut i8,
                             ) -> u32;
@@ -2256,192 +2256,6 @@ pub mod Windows {
                 clippy::all
             )]
             pub mod OleAutomation {
-                pub unsafe fn SysFreeString<'a>(bstrstring: impl ::windows::IntoParam<'a, BSTR>) {
-                    #[link(name = "OLEAUT32")]
-                    extern "system" {
-                        fn SysFreeString(bstrstring: BSTR_abi);
-                    }
-                    SysFreeString(bstrstring.into_param().abi())
-                }
-                pub unsafe fn SysAllocStringLen<'a>(
-                    strin: impl ::windows::IntoParam<'a, super::SystemServices::PWSTR>,
-                    ui: u32,
-                ) -> BSTR {
-                    #[link(name = "OLEAUT32")]
-                    extern "system" {
-                        fn SysAllocStringLen(strin: super::SystemServices::PWSTR, ui: u32) -> BSTR;
-                    }
-                    SysAllocStringLen(strin.into_param().abi(), ::std::mem::transmute(ui))
-                }
-                pub unsafe fn SysStringLen<'a>(pbstr: impl ::windows::IntoParam<'a, BSTR>) -> u32 {
-                    #[link(name = "OLEAUT32")]
-                    extern "system" {
-                        fn SysStringLen(pbstr: BSTR_abi) -> u32;
-                    }
-                    SysStringLen(pbstr.into_param().abi())
-                }
-                #[repr(transparent)]
-                #[derive(:: std :: cmp :: Eq)]
-                #[doc = r" https://docs.microsoft.com/en-us/previous-versions/windows/desktop/automat/bstr#remarks"]
-                #[doc = r" Uses [`::windows::widestring::UStr`] and not [`::windows::widestring::UCstr`], the latter checks for internal nulls."]
-                pub struct BSTR(*mut ::windows::widestring::WideChar);
-                impl BSTR {
-                    pub fn is_empty(&self) -> bool {
-                        self.0.is_null()
-                    }
-                    pub fn len(&self) -> usize {
-                        #[cfg(not(windows))]
-                        unsafe fn SysStringLen(s: &BSTR) -> u32 {
-                            unsafe fn SysStringByteLen(s: &BSTR) -> u32 {
-                                if s.0.is_null() {
-                                    0
-                                } else {
-                                    s.0.cast::<u32>().offset(-1).read()
-                                }
-                            }
-                            SysStringByteLen(s)
-                                / std::mem::size_of::<::windows::widestring::WideChar>() as u32
-                        }
-                        unsafe { SysStringLen(self) as usize }
-                    }
-                    fn from_wide(value: &::windows::widestring::WideStr) -> Self {
-                        if value.is_empty() {
-                            return Self(::std::ptr::null_mut());
-                        }
-                        #[cfg(windows)]
-                        unsafe {
-                            SysAllocStringLen(
-                                super::SystemServices::PWSTR(value.as_ptr() as _),
-                                value.len() as u32,
-                            )
-                        }
-                        #[cfg(not(windows))]
-                        {
-                            const LENGTH_PREFIX_IN_CHARS: usize = std::mem::size_of::<u32>()
-                                / std::mem::size_of::<::windows::widestring::WideChar>();
-                            let mut vec: Vec<::windows::widestring::WideChar> =
-                                vec![0; LENGTH_PREFIX_IN_CHARS + value.len() + 1];
-                            vec[LENGTH_PREFIX_IN_CHARS..LENGTH_PREFIX_IN_CHARS + value.len()]
-                                .copy_from_slice(value.as_slice());
-                            assert_eq!(vec[LENGTH_PREFIX_IN_CHARS + value.len()], 0);
-                            let vec_ptr = vec.as_mut_ptr().cast::<u32>();
-                            std::mem::forget(vec);
-                            unsafe {
-                                *vec_ptr = (value.len()
-                                    * std::mem::size_of::<::windows::widestring::WideChar>())
-                                    as u32
-                            };
-                            BSTR(
-                                unsafe { vec_ptr.offset(1) }
-                                    .cast::<::windows::widestring::WideChar>(),
-                            )
-                        }
-                    }
-                    fn as_wide(&self) -> &::windows::widestring::WideStr {
-                        if self.0.is_null() {
-                            ::windows::widestring::WideStr::from_slice(&[])
-                        } else {
-                            unsafe { ::windows::widestring::WideStr::from_ptr(self.0, self.len()) }
-                        }
-                    }
-                }
-                impl ::std::clone::Clone for BSTR {
-                    fn clone(&self) -> Self {
-                        Self::from_wide(self.as_wide())
-                    }
-                }
-                impl ::std::convert::From<&str> for BSTR {
-                    fn from(value: &str) -> Self {
-                        let value = ::windows::widestring::WideString::from_str(value);
-                        Self::from_wide(&value)
-                    }
-                }
-                impl ::std::convert::From<::std::string::String> for BSTR {
-                    fn from(value: ::std::string::String) -> Self {
-                        value.as_str().into()
-                    }
-                }
-                impl ::std::convert::From<&::std::string::String> for BSTR {
-                    fn from(value: &::std::string::String) -> Self {
-                        value.as_str().into()
-                    }
-                }
-                #[cfg(windows)]
-                type FromWidestringError = ::std::string::FromUtf16Error;
-                #[cfg(not(windows))]
-                type FromWidestringError = ::windows::widestring::FromUtf32Error;
-                impl<'a> ::std::convert::TryFrom<&'a BSTR> for ::std::string::String {
-                    type Error = FromWidestringError;
-                    fn try_from(value: &BSTR) -> ::std::result::Result<Self, Self::Error> {
-                        value.as_wide().to_string()
-                    }
-                }
-                impl ::std::convert::TryFrom<BSTR> for ::std::string::String {
-                    type Error = FromWidestringError;
-                    fn try_from(value: BSTR) -> ::std::result::Result<Self, Self::Error> {
-                        value.as_wide().to_string()
-                    }
-                }
-                impl ::std::default::Default for BSTR {
-                    fn default() -> Self {
-                        Self(::std::ptr::null_mut())
-                    }
-                }
-                impl ::std::fmt::Display for BSTR {
-                    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-                        f.write_str(&self.as_wide().to_string().unwrap())
-                    }
-                }
-                impl ::std::fmt::Debug for BSTR {
-                    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-                        ::std::write!(f, "{}", self)
-                    }
-                }
-                impl ::std::cmp::PartialEq for BSTR {
-                    fn eq(&self, other: &Self) -> bool {
-                        self.as_wide() == other.as_wide()
-                    }
-                }
-                impl ::std::cmp::PartialEq<::std::string::String> for BSTR {
-                    fn eq(&self, other: &::std::string::String) -> bool {
-                        self == other.as_str()
-                    }
-                }
-                impl ::std::cmp::PartialEq<str> for BSTR {
-                    fn eq(&self, other: &str) -> bool {
-                        self == other
-                    }
-                }
-                impl ::std::cmp::PartialEq<&str> for BSTR {
-                    fn eq(&self, other: &&str) -> bool {
-                        let other = ::windows::widestring::WideString::from_str(other);
-                        self.as_wide().eq(&other)
-                    }
-                }
-                impl ::std::cmp::PartialEq<BSTR> for &str {
-                    fn eq(&self, other: &BSTR) -> bool {
-                        other == self
-                    }
-                }
-                impl ::std::ops::Drop for BSTR {
-                    fn drop(&mut self) {
-                        #[cfg(not(windows))]
-                        fn SysFreeString(s: &BSTR) {
-                            unsafe { ::std::boxed::Box::from_raw(s.0.cast::<u32>().offset(-1)) };
-                        }
-                        if !self.0.is_null() {
-                            unsafe { SysFreeString(self as &Self) };
-                        }
-                    }
-                }
-                unsafe impl ::windows::Abi for BSTR {
-                    type Abi = *mut ::windows::widestring::WideChar;
-                    fn set_abi(&mut self) -> *mut *mut ::windows::widestring::WideChar {
-                        debug_assert!(self.0.is_null());
-                        &mut self.0 as *mut _ as _
-                    }
-                }
-                pub type BSTR_abi = *mut ::windows::widestring::WideChar;
                 #[repr(transparent)]
                 #[derive(
                     :: std :: cmp :: PartialEq,
@@ -2460,7 +2274,10 @@ pub mod Windows {
                             ::std::mem::transmute(pguid),
                         )
                     }
-                    pub unsafe fn GetSource(&self, pbstrsource: *mut BSTR) -> ::windows::HRESULT {
+                    pub unsafe fn GetSource(
+                        &self,
+                        pbstrsource: *mut ::windows::BSTR,
+                    ) -> ::windows::HRESULT {
                         (::windows::Interface::vtable(self).4)(
                             ::windows::Abi::abi(self),
                             ::std::mem::transmute(pbstrsource),
@@ -2468,7 +2285,7 @@ pub mod Windows {
                     }
                     pub unsafe fn GetDescription(
                         &self,
-                        pbstrdescription: *mut BSTR,
+                        pbstrdescription: *mut ::windows::BSTR,
                     ) -> ::windows::HRESULT {
                         (::windows::Interface::vtable(self).5)(
                             ::windows::Abi::abi(self),
@@ -2477,7 +2294,7 @@ pub mod Windows {
                     }
                     pub unsafe fn GetHelpFile(
                         &self,
-                        pbstrhelpfile: *mut BSTR,
+                        pbstrhelpfile: *mut ::windows::BSTR,
                     ) -> ::windows::HRESULT {
                         (::windows::Interface::vtable(self).6)(
                             ::windows::Abi::abi(self),
@@ -2543,15 +2360,15 @@ pub mod Windows {
                     ) -> ::windows::HRESULT,
                     pub  unsafe extern "system" fn(
                         this: ::windows::RawPtr,
-                        pbstrsource: *mut BSTR_abi,
+                        pbstrsource: *mut ::windows::BSTR_abi,
                     ) -> ::windows::HRESULT,
                     pub  unsafe extern "system" fn(
                         this: ::windows::RawPtr,
-                        pbstrdescription: *mut BSTR_abi,
+                        pbstrdescription: *mut ::windows::BSTR_abi,
                     ) -> ::windows::HRESULT,
                     pub  unsafe extern "system" fn(
                         this: ::windows::RawPtr,
-                        pbstrhelpfile: *mut BSTR_abi,
+                        pbstrhelpfile: *mut ::windows::BSTR_abi,
                     ) -> ::windows::HRESULT,
                     pub  unsafe extern "system" fn(
                         this: ::windows::RawPtr,
@@ -2601,92 +2418,6 @@ pub mod Windows {
                 clippy::all
             )]
             pub mod SystemServices {
-                #[repr(transparent)]
-                #[derive(
-                    :: std :: clone :: Clone, :: std :: marker :: Copy, :: std :: cmp :: Eq,
-                )]
-                #[doc = r" Uses [`::windows::widestring::UCStr`] for null-terminated, checked strings."]
-                pub struct PWSTR(pub *mut ::windows::widestring::WideChar);
-                impl PWSTR {
-                    pub const NULL: Self = Self(::std::ptr::null_mut());
-                    pub fn is_null(&self) -> bool {
-                        self.0.is_null()
-                    }
-                    pub fn is_empty(&self) -> bool {
-                        self.is_null()
-                    }
-                    pub fn len(&self) -> usize {
-                        self.as_wide().len()
-                    }
-                    fn as_wide(&self) -> &::windows::widestring::WideCStr {
-                        if self.is_null() {
-                            Default::default()
-                        } else {
-                            unsafe { ::windows::widestring::WideCStr::from_ptr_str(self.0) }
-                        }
-                    }
-                }
-                impl ::std::default::Default for PWSTR {
-                    fn default() -> Self {
-                        Self(::std::ptr::null_mut())
-                    }
-                }
-                impl ::std::fmt::Display for PWSTR {
-                    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-                        f.write_str(&self.as_wide().to_string().unwrap())
-                    }
-                }
-                impl ::std::fmt::Debug for PWSTR {
-                    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-                        ::std::write!(f, "{}", self)
-                    }
-                }
-                impl ::std::cmp::PartialEq for PWSTR {
-                    fn eq(&self, other: &Self) -> bool {
-                        self.as_wide().eq(other.as_wide())
-                    }
-                }
-                impl ::std::cmp::PartialEq<&str> for PWSTR {
-                    fn eq(&self, other: &&str) -> bool {
-                        let other = unsafe {
-                            ::windows::widestring::WideCString::from_str_unchecked(other)
-                        };
-                        self.as_wide().eq(&other)
-                    }
-                }
-                impl ::std::cmp::PartialEq<PWSTR> for &str {
-                    fn eq(&self, other: &PWSTR) -> bool {
-                        other.eq(self)
-                    }
-                }
-                unsafe impl ::windows::Abi for PWSTR {
-                    type Abi = Self;
-                    fn drop_param(param: &mut ::windows::Param<Self>) {
-                        if let ::windows::Param::Boxed(value) = param {
-                            if !value.is_null() {
-                                unsafe { ::windows::widestring::WideCString::from_raw(value.0) };
-                            }
-                        }
-                    }
-                }
-                impl<'a> ::windows::IntoParam<'a, PWSTR> for &'a str {
-                    fn into_param(self) -> ::windows::Param<'a, PWSTR> {
-                        ::windows::Param::Boxed(PWSTR(
-                            ::windows::widestring::WideCString::from_str(self)
-                                .unwrap()
-                                .into_raw(),
-                        ))
-                    }
-                }
-                impl<'a> ::windows::IntoParam<'a, PWSTR> for String {
-                    fn into_param(self) -> ::windows::Param<'a, PWSTR> {
-                        ::windows::Param::Boxed(PWSTR(
-                            ::windows::widestring::WideCString::from_str(self)
-                                .unwrap()
-                                .into_raw(),
-                        ))
-                    }
-                }
                 #[repr(transparent)]
                 #[derive(
                     :: std :: default :: Default,
@@ -2815,81 +2546,25 @@ pub mod Windows {
                     FreeLibrary(hlibmodule.into_param().abi())
                 }
                 pub type FARPROC = unsafe extern "system" fn() -> isize;
-                #[repr(transparent)]
-                #[derive(
-                    :: std :: clone :: Clone,
-                    :: std :: marker :: Copy,
-                    :: std :: cmp :: Eq,
-                    :: std :: fmt :: Debug,
-                )]
-                pub struct PSTR(pub *mut u8);
-                impl PSTR {
-                    pub const NULL: Self = Self(::std::ptr::null_mut());
-                    pub fn is_null(&self) -> bool {
-                        self.0.is_null()
-                    }
-                }
-                impl ::std::default::Default for PSTR {
-                    fn default() -> Self {
-                        Self(::std::ptr::null_mut())
-                    }
-                }
-                impl ::std::cmp::PartialEq for PSTR {
-                    fn eq(&self, other: &Self) -> bool {
-                        self.0 == other.0
-                    }
-                }
-                unsafe impl ::windows::Abi for PSTR {
-                    type Abi = Self;
-                    fn drop_param(param: &mut ::windows::Param<Self>) {
-                        if let ::windows::Param::Boxed(value) = param {
-                            if !value.0.is_null() {
-                                unsafe {
-                                    ::std::boxed::Box::from_raw(value.0);
-                                }
-                            }
-                        }
-                    }
-                }
-                impl<'a> ::windows::IntoParam<'a, PSTR> for &'a str {
-                    fn into_param(self) -> ::windows::Param<'a, PSTR> {
-                        ::windows::Param::Boxed(PSTR(::std::boxed::Box::<[u8]>::into_raw(
-                            self.bytes()
-                                .chain(::std::iter::once(0))
-                                .collect::<std::vec::Vec<u8>>()
-                                .into_boxed_slice(),
-                        ) as _))
-                    }
-                }
-                impl<'a> ::windows::IntoParam<'a, PSTR> for String {
-                    fn into_param(self) -> ::windows::Param<'a, PSTR> {
-                        ::windows::Param::Boxed(PSTR(::std::boxed::Box::<[u8]>::into_raw(
-                            self.bytes()
-                                .chain(::std::iter::once(0))
-                                .collect::<std::vec::Vec<u8>>()
-                                .into_boxed_slice(),
-                        ) as _))
-                    }
-                }
                 pub unsafe fn GetProcAddress<'a>(
                     hmodule: impl ::windows::IntoParam<'a, HINSTANCE>,
-                    lpprocname: impl ::windows::IntoParam<'a, PSTR>,
+                    lpprocname: impl ::windows::IntoParam<'a, ::windows::PSTR>,
                 ) -> ::std::option::Option<FARPROC> {
                     #[link(name = "KERNEL32")]
                     extern "system" {
                         fn GetProcAddress(
                             hmodule: HINSTANCE,
-                            lpprocname: PSTR,
+                            lpprocname: ::windows::PSTR,
                         ) -> ::std::option::Option<FARPROC>;
                     }
                     GetProcAddress(hmodule.into_param().abi(), lpprocname.into_param().abi())
                 }
                 pub unsafe fn LoadLibraryA<'a>(
-                    lplibfilename: impl ::windows::IntoParam<'a, PSTR>,
+                    lplibfilename: impl ::windows::IntoParam<'a, ::windows::PSTR>,
                 ) -> HINSTANCE {
                     #[link(name = "KERNEL32")]
                     extern "system" {
-                        fn LoadLibraryA(lplibfilename: PSTR) -> HINSTANCE;
+                        fn LoadLibraryA(lplibfilename: ::windows::PSTR) -> HINSTANCE;
                     }
                     LoadLibraryA(lplibfilename.into_param().abi())
                 }
@@ -2985,7 +2660,7 @@ pub mod Windows {
                     lpeventattributes: *mut super::SystemServices::SECURITY_ATTRIBUTES,
                     bmanualreset: impl ::windows::IntoParam<'a, super::SystemServices::BOOL>,
                     binitialstate: impl ::windows::IntoParam<'a, super::SystemServices::BOOL>,
-                    lpname: impl ::windows::IntoParam<'a, super::SystemServices::PSTR>,
+                    lpname: impl ::windows::IntoParam<'a, ::windows::PSTR>,
                 ) -> super::SystemServices::HANDLE {
                     #[link(name = "KERNEL32")]
                     extern "system" {
@@ -2993,7 +2668,7 @@ pub mod Windows {
                             lpeventattributes: *mut super::SystemServices::SECURITY_ATTRIBUTES,
                             bmanualreset: super::SystemServices::BOOL,
                             binitialstate: super::SystemServices::BOOL,
-                            lpname: super::SystemServices::PSTR,
+                            lpname: ::windows::PSTR,
                         ) -> super::SystemServices::HANDLE;
                     }
                     CreateEventA(
@@ -3297,10 +2972,10 @@ pub mod Windows {
                 impl IRestrictedErrorInfo {
                     pub unsafe fn GetErrorDetails(
                         &self,
-                        description: *mut super::OleAutomation::BSTR,
+                        description: *mut ::windows::BSTR,
                         error: *mut ::windows::HRESULT,
-                        restricteddescription: *mut super::OleAutomation::BSTR,
-                        capabilitysid: *mut super::OleAutomation::BSTR,
+                        restricteddescription: *mut ::windows::BSTR,
+                        capabilitysid: *mut ::windows::BSTR,
                     ) -> ::windows::HRESULT {
                         (::windows::Interface::vtable(self).3)(
                             ::windows::Abi::abi(self),
@@ -3312,7 +2987,7 @@ pub mod Windows {
                     }
                     pub unsafe fn GetReference(
                         &self,
-                        reference: *mut super::OleAutomation::BSTR,
+                        reference: *mut ::windows::BSTR,
                     ) -> ::windows::HRESULT {
                         (::windows::Interface::vtable(self).4)(
                             ::windows::Abi::abi(self),
@@ -3367,14 +3042,14 @@ pub mod Windows {
                     pub unsafe extern "system" fn(this: ::windows::RawPtr) -> u32,
                     pub  unsafe extern "system" fn(
                         this: ::windows::RawPtr,
-                        description: *mut super::OleAutomation::BSTR_abi,
+                        description: *mut ::windows::BSTR_abi,
                         error: *mut ::windows::HRESULT,
-                        restricteddescription: *mut super::OleAutomation::BSTR_abi,
-                        capabilitysid: *mut super::OleAutomation::BSTR_abi,
+                        restricteddescription: *mut ::windows::BSTR_abi,
+                        capabilitysid: *mut ::windows::BSTR_abi,
                     ) -> ::windows::HRESULT,
                     pub  unsafe extern "system" fn(
                         this: ::windows::RawPtr,
-                        reference: *mut super::OleAutomation::BSTR_abi,
+                        reference: *mut ::windows::BSTR_abi,
                     ) -> ::windows::HRESULT,
                 );
                 #[repr(transparent)]

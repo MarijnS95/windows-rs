@@ -1,7 +1,7 @@
 use crate::*;
 
 use bindings::{
-    Windows::Win32::System::SystemServices::{HANDLE, PSTR},
+    Windows::Win32::System::SystemServices::HANDLE,
     Windows::Win32::System::Threading::{CreateEventA, SetEvent, WaitForSingleObject},
     Windows::Win32::System::WindowsProgramming::CloseHandle,
 };

@@ -23,6 +23,11 @@ pub enum ElementType {
     IInspectable,
     HRESULT,
     Matrix3x2,
+
+    PWSTR,
+    PSTR,
+    BSTR,
+
     TypeName,
     GenericParam(tables::GenericParam),
     Array((Box<Signature>, u32)),
@@ -134,6 +139,9 @@ impl ElementType {
                         ("Windows.Win32.System.WinRT", "IInspectable") => Self::IInspectable,
                         ("Windows.Win32.System.SystemServices", "LARGE_INTEGER") => Self::I64,
                         ("Windows.Win32.System.SystemServices", "ULARGE_INTEGER") => Self::U64,
+                        ("Windows.Win32.System.SystemServices", "PWSTR") => Self::PWSTR,
+                        ("Windows.Win32.System.SystemServices", "PSTR") => Self::PSTR,
+                        ("Windows.Win32.System.OleAutomation", "BSTR") => Self::BSTR,
                         ("Windows.Win32.Graphics.Direct2D", "D2D_MATRIX_3X2_F") => Self::Matrix3x2,
                         ("System", "Type") => Self::TypeName,
                         _ => Self::from_type_def(type_ref.resolve(), Vec::new()),
@@ -228,6 +236,9 @@ impl ElementType {
                 let numerics = gen.namespace("Windows.Foundation.Numerics");
                 quote! { #numerics Matrix3x2 }
             }
+            Self::PWSTR => quote!(::windows::PWSTR),
+            Self::PSTR => quote!(::windows::PSTR),
+            Self::BSTR => quote!(::windows::BSTR),
             Self::Array((kind, len)) => {
                 let name = kind.gen_win32(gen);
                 let len = Literal::u32_unsuffixed(*len);
@@ -283,6 +294,9 @@ impl ElementType {
                 let numerics = gen.namespace("Windows.Foundation.Numerics");
                 quote! { #numerics Matrix3x2 }
             }
+            Self::PWSTR => quote!(::windows::PWSTR),
+            Self::PSTR => quote!(::windows::PSTR),
+            Self::BSTR => quote!(::windows::BSTR_abi),
             Self::Array((kind, len)) => {
                 let name = kind.gen_win32_abi(gen);
                 let len = Literal::u32_unsuffixed(*len);
@@ -374,6 +388,18 @@ impl ElementType {
             Self::Callback(t) => t.dependencies(),
             Self::Constant(t) => t.dependencies(),
             Self::Array((signature, _)) => signature.dependencies(),
+
+            // TODO: These should be specified in bindings/src/main.rs instead!
+            // Or in the `exclude` list in type_reader if linked, overridden
+            // and publicly exported from bstr.rs.
+            Self::BSTR => {
+                let reader = TypeReader::get();
+                vec![
+                    reader.resolve_type("Windows.Win32.System.OleAutomation", "SysFreeString"),
+                    reader.resolve_type("Windows.Win32.System.OleAutomation", "SysAllocStringLen"),
+                    reader.resolve_type("Windows.Win32.System.OleAutomation", "SysStringLen"),
+                ]
+            }
             _ => Vec::new(),
         }
     }
@@ -415,6 +441,10 @@ impl ElementType {
             Self::String
             | Self::IInspectable
             | Self::IUnknown
+            | Self::PWSTR
+            | Self::PSTR
+            // See Struct::is_blittable edgecase
+            // | Self::BSTR
             | Self::GenericParam(_)
             | Self::Class(_)
             | Self::Interface(_)
@@ -434,6 +464,9 @@ impl ElementType {
                 | Self::Guid
                 | Self::IUnknown
                 | Self::Matrix3x2
+                | Self::PWSTR
+                | Self::PSTR
+                | Self::BSTR
                 | Self::GenericParam(_)
                 | Self::Class(_)
                 | Self::Interface(_)

@@ -1,7 +1,7 @@
 use test_handles::{
-    Windows::Win32::Graphics::Gdi::HGDIOBJ,
-    Windows::Win32::System::SystemServices::{HANDLE, PSTR, PWSTR},
+    Windows::Win32::Graphics::Gdi::HGDIOBJ, Windows::Win32::System::SystemServices::HANDLE,
 };
+use windows::{PSTR, PWSTR};
 
 #[test]
 fn test() {

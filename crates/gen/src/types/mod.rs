@@ -1,7 +1,6 @@
 pub use super::*;
 
 mod bool32;
-mod bstr;
 mod callback;
 mod class;
 mod com_interface;
@@ -13,8 +12,6 @@ mod handle;
 mod interface;
 mod matrix3x2;
 mod matrix4x4;
-mod pstr;
-mod pwstr;
 mod r#struct;
 mod timespan;
 mod vector2;
@@ -22,7 +19,6 @@ mod vector3;
 mod vector4;
 
 pub use bool32::*;
-pub use bstr::*;
 pub use callback::*;
 pub use class::*;
 pub use com_interface::*;
@@ -33,8 +29,6 @@ pub use handle::*;
 pub use interface::*;
 pub use matrix3x2::*;
 pub use matrix4x4::*;
-pub use pstr::*;
-pub use pwstr::*;
 pub use r#enum::*;
 pub use r#struct::*;
 pub use timespan::*;

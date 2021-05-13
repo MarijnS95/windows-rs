@@ -26,7 +26,7 @@ fn main() {
         },
         Windows::Win32::Graphics::Gdi::{BeginPaint, EndPaint, PAINTSTRUCT},
         Windows::Win32::System::SystemServices::{
-            GetModuleHandleA, DXGI_STATUS_OCCLUDED, HINSTANCE, LRESULT, PSTR,
+            GetModuleHandleA, DXGI_STATUS_OCCLUDED, HINSTANCE, LRESULT,
         },
         Windows::Win32::System::WindowsProgramming::{
             GetLocalTime, QueryPerformanceCounter, QueryPerformanceFrequency,

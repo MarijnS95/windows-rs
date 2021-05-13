@@ -1,6 +1,7 @@
 use bindings::Windows::Win32;
+use windows::PWSTR;
 use Win32::Globalization;
-use Win32::System::SystemServices::{BOOL, PWSTR, S_FALSE};
+use Win32::System::SystemServices::{BOOL, S_FALSE};
 
 fn main() -> windows::Result<()> {
     let input = std::env::args()

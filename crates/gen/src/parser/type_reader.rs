@@ -129,6 +129,9 @@ impl TypeReader {
             ("Windows.Win32.Graphics.Direct2D", "D2D_MATRIX_3X2_F"),
             ("Windows.Win32.System.SystemServices", "LARGE_INTEGER"),
             ("Windows.Win32.System.SystemServices", "ULARGE_INTEGER"),
+            ("Windows.Win32.System.SystemServices", "PWSTR"),
+            ("Windows.Win32.System.SystemServices", "PSTR"),
+            ("Windows.Win32.System.OleAutomation", "BSTR"),
         ];
 
         for (namespace, name) in exclude {

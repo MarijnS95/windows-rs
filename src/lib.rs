@@ -16,9 +16,11 @@ mod interfaces;
 mod result;
 mod runtime;
 mod traits;
+mod types;
 
 use interfaces::*;
 use runtime::*;
+pub use types::*;
 
 #[doc(hidden)]
 pub use bindings::Windows::Win32::System::Com::IAgileObject;
@@ -45,6 +47,3 @@ pub type RawPtr = *mut std::ffi::c_void;
 
 #[doc(hidden)]
 pub use const_sha1::ConstBuffer;
-
-#[doc(hidden)]
-pub use widestring;

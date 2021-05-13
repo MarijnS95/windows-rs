@@ -3,7 +3,7 @@ fn main() {
         Microsoft::Web::WebView2::Core::*,
         Windows::Foundation::*,
         Windows::Win32::Graphics::Gdi::UpdateWindow,
-        Windows::Win32::System::SystemServices::{GetModuleHandleA, HINSTANCE, LRESULT, PWSTR},
+        Windows::Win32::System::SystemServices::{GetModuleHandleA, HINSTANCE, LRESULT},
         Windows::Win32::System::Threading::GetCurrentThreadId,
         Windows::Win32::UI::DisplayDevices::{POINT, RECT, SIZE},
         Windows::Win32::UI::HiDpi::{

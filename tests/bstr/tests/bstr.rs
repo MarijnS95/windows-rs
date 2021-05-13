@@ -1,5 +1,4 @@
-use test_bstr::Windows::Win32::System::OleAutomation::BSTR;
-use windows::Abi;
+use windows::{Abi, BSTR};
 
 #[test]
 fn test() {

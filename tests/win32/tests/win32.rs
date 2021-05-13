@@ -10,8 +10,7 @@ use test_win32::{
     Windows::Win32::Storage::StructuredStorage::*,
     Windows::Win32::System::Com::CreateUri,
     Windows::Win32::System::Diagnostics::Debug::*,
-    Windows::Win32::System::OleAutomation::BSTR,
-    Windows::Win32::System::SystemServices::{BOOL, HANDLE, PSTR, PWSTR},
+    Windows::Win32::System::SystemServices::{BOOL, HANDLE},
     Windows::Win32::System::Threading::*,
     Windows::Win32::System::WindowsProgramming::CloseHandle,
     Windows::Win32::UI::Accessibility::UIA_ScrollPatternNoScroll,
@@ -23,7 +22,7 @@ use test_win32::{
     },
 };
 
-use windows::{Abi, Guid};
+use windows::{Abi, Guid, BSTR, PSTR, PWSTR};
 
 #[test]
 fn signed_enum32() {
