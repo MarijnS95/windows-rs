@@ -23,8 +23,19 @@ pub fn gen_bstr() -> TokenStream {
 
             /// Returns the length of the string.
             pub fn len(&self) -> usize {
-                if self.is_empty() {
-                    return 0;
+                // TODO: Override directly in bindings.rs generation
+                #[cfg(not(windows))]
+                unsafe fn SysStringLen(s: &BSTR) -> u32 {
+                    unsafe fn SysStringByteLen(s: &BSTR) -> u32 {
+                        if s.0.is_null() {
+                            0
+                        } else {
+                            s.0.cast::<u32>().offset(-1).read()
+                        }
+                    }
+                    SysStringByteLen(s)
+                        / std::mem::size_of::<::windows::widestring::WideChar>()
+                        as u32
                 }
 
                 unsafe { SysStringLen(self) as usize }
@@ -35,10 +46,41 @@ pub fn gen_bstr() -> TokenStream {
                 if value.len() == 0 {
                     return Self(::std::ptr::null_mut());
                 }
+                #[cfg(windows)]
                 unsafe {
                     SysAllocStringLen(
                         PWSTR(value.as_ptr() as _),
                         value.len() as u32,
+                    )
+                }
+                // TODO: Implement this inside `SysAllocStringLen`
+                #[cfg(not(windows))]
+                {
+                    const LENGTH_PREFIX_IN_CHARS: usize = std::mem::size_of::<u32>()
+                        / std::mem::size_of::<::windows::widestring::WideChar>();
+                    let mut vec: Vec<::windows::widestring::WideChar> =
+                        // Includes trailing null character
+                        vec![0; LENGTH_PREFIX_IN_CHARS + value.len() + 1];
+                    vec[LENGTH_PREFIX_IN_CHARS..LENGTH_PREFIX_IN_CHARS + value.len()]
+                        .copy_from_slice(value.as_slice());
+                    assert_eq!(vec[LENGTH_PREFIX_IN_CHARS + value.len()], 0);
+
+                    // Cast to u32 for easy access to length prefix and
+                    // pointer beyond that
+                    let vec_ptr = vec.as_mut_ptr().cast::<u32>();
+                    std::mem::forget(vec);
+
+                    // Store length-prefix without NULL, in bytes
+                    unsafe {
+                        *vec_ptr = (value.len()
+                            * std::mem::size_of::<::windows::widestring::WideChar>())
+                            as u32
+                    };
+
+                    BSTR(
+                        // Pointer points to first character byte, not to length-prefix
+                        unsafe { vec_ptr.offset(1) }
+                            .cast::<::windows::widestring::WideChar>(),
                     )
                 }
             }
@@ -140,6 +182,11 @@ pub fn gen_bstr() -> TokenStream {
 
         impl ::std::ops::Drop for BSTR {
             fn drop(&mut self) {
+                #[cfg(not(windows))]
+                unsafe fn SysFreeString(s: &BSTR) {
+                    ::std::boxed::Box::from_raw(s.0.cast::<u32>().offset(-1));
+                }
+
                 if !self.0.is_null() {
                     unsafe { SysFreeString(self as &Self) }
                 }
