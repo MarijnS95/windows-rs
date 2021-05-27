@@ -4,7 +4,7 @@ use std::convert::TryInto;
 use bindings::{
     Windows::Win32::Foundation::{BSTR, S_OK},
     Windows::Win32::System::Diagnostics::Debug::GetLastError,
-    Windows::Win32::System::OleAutomation::{GetErrorInfo, SetErrorInfo},
+    Windows::Win32::System::OleAutomation::GetErrorInfo,
     Windows::Win32::System::WinRT::{ILanguageExceptionErrorInfo2, IRestrictedErrorInfo},
 };
 
@@ -103,10 +103,14 @@ impl Error {
 impl std::convert::From<Error> for HRESULT {
     fn from(error: Error) -> Self {
         let code = error.code;
-        let info = error.info.and_then(|info| info.cast().ok());
 
-        unsafe {
-            let _ = SetErrorInfo(0, info);
+        #[cfg(windows)]
+        {
+            use bindings::Windows::Win32::System::OleAutomation::SetErrorInfo;
+            let info = error.info.and_then(|info| info.cast().ok());
+            unsafe {
+                let _ = SetErrorInfo(0, info);
+            }
         }
 
         code
