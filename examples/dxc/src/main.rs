@@ -8,21 +8,6 @@ use std::path::Path;
 use std::rc::Rc;
 use windows::*;
 
-#[cfg(target_os = "windows")]
-fn dxcompiler_lib_name() -> &'static Path {
-    Path::new("dxcompiler.dll")
-}
-
-#[cfg(target_os = "linux")]
-fn dxcompiler_lib_name() -> &'static Path {
-    Path::new("./libdxcompiler.so")
-}
-
-#[cfg(target_os = "macos")]
-fn dxcompiler_lib_name() -> &'static Path {
-    Path::new("./libdxcompiler.dynlib")
-}
-
 fn blob_encoding_as_str(blob: &IDxcBlobEncoding) -> &str {
     let mut known: BOOL = false.into();
     let mut cp = DXC_CP::default();
@@ -68,12 +53,8 @@ impl IncludeHandler {
 
 #[allow(non_snake_case)]
 fn main() -> windows::Result<()> {
-    let lib = unsafe { Library::new(dxcompiler_lib_name()) }.unwrap();
-    let create: Symbol<DxcCreateInstanceProc> = unsafe { lib.get(b"DxcCreateInstance\0") }.unwrap();
-    dbg!(&create);
-
-    let compiler: IDxcCompiler2 = unsafe { DxcCreateInstanceProc(&create, &CLSID_DxcCompiler) }?;
-    let library: IDxcLibrary = unsafe { DxcCreateInstanceProc(&create, &CLSID_DxcLibrary) }?;
+    let compiler: IDxcCompiler2 = unsafe { DxcCreateInstance(&CLSID_DxcCompiler) }?;
+    let library: IDxcLibrary = unsafe { DxcCreateInstance(&CLSID_DxcLibrary) }?;
 
     dbg!(&compiler, &library);
 
