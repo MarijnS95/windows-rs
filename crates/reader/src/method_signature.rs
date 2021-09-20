@@ -43,7 +43,8 @@ impl MethodSignature {
                         if guid.signature.kind == ElementType::Guid
                             && !guid.param.flags().output()
                             && object.signature.kind == ElementType::Void
-                            && object.param.is_com_out_ptr()
+                            // && object.param.is_com_out_ptr()
+                            && object.signature.pointers == 2
                         {
                             if object.param.is_optional() {
                                 return SignatureKind::QueryOptional;
