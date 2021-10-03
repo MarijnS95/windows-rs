@@ -28,9 +28,9 @@ use syn::parse_macro_input;
 /// namespace.
 ///
 /// ```rust,ignore
-/// build!(
+/// build! {
 ///     Microsoft::AI::MachineLearning::*
-/// );
+/// };
 /// ```
 #[proc_macro]
 pub fn build(stream: proc_macro::TokenStream) -> proc_macro::TokenStream {

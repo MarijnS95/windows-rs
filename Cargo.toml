@@ -17,7 +17,7 @@ windows_gen = { path = "crates/gen",  version = "0.21.1", optional = true }
 widestring = "0.4"
 
 [workspace]
-members = ["crates/*", "tests/legacy/*", "tests/metadata/*", "tests/winrt/*", "tests/win32/*"]
+members = ["crates/*", "tests/legacy/*", "tests/metadata/*", "tests/winrt/*", "tests/win32/*", "examples/*"]
 exclude = ["tests/component"]
 
 [package.metadata.docs.rs]
