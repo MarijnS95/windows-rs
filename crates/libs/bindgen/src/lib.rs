@@ -1,6 +1,6 @@
 mod args;
 mod error;
-mod metadata;
+pub mod metadata;
 mod rdl;
 mod rust;
 mod tokens;
