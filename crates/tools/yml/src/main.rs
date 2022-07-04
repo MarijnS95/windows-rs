@@ -143,8 +143,6 @@ fn build_yml() {
 on:
   pull_request:
   push:
-    branches:
-      - master
 
 env:
   RUSTFLAGS: -Dwarnings
