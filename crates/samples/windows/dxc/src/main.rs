@@ -137,13 +137,13 @@ fn main() -> Result<()> {
     // https://github.com/microsoft/DirectXShaderCompiler/pull/4524
     // And support for helper generation here in windows-rs:
     // https://github.com/microsoft/windows-rs/issues/1835
-    // let compiler: IDxcCompiler2 = unsafe { DxcCreateInstanceProc(&create, &CLSID_DxcCompiler) }?;
+    // let compiler: IDxcCompiler3 = unsafe { DxcCreateInstanceProc(&create, &CLSID_DxcCompiler) }?;
     // let library: IDxcLibrary = unsafe { DxcCreateInstanceProc(&create, &CLSID_DxcLibrary) }?;
-    let mut compiler = None::<IDxcCompiler2>;
+    let mut compiler = None::<IDxcCompiler3>;
     unsafe {
         (create.unwrap())(
             &CLSID_DxcCompiler,
-            &IDxcCompiler2::IID,
+            &IDxcCompiler3::IID,
             <*mut _>::cast(&mut compiler),
         )
         .ok()?
@@ -179,27 +179,47 @@ fn main() -> Result<()> {
 
     let main_shader = include_str!("copy.hlsl");
 
-    let shader_blob = unsafe {
-        library.CreateBlobWithEncodingFromPinned(
-            main_shader.as_ptr() as *const _,
-            main_shader.len() as u32,
-            DXC_CP_UTF8,
-        )
-    }?;
-    dbg!(&shader_blob);
+    // let shader_blob = unsafe {
+    //     library.CreateBlobWithEncodingFromPinned(
+    //         main_shader.as_ptr() as *const _,
+    //         main_shader.len() as u32,
+    //         DXC_CP_UTF8,
+    //     )
+    // }?;
+    // dbg!(&shader_blob);
 
-    let defines = vec![];
+    let shader_blob = DxcBuffer {
+        Ptr: main_shader.as_ptr().cast(),
+        Size: main_shader.len(),
+        Encoding: DXC_CP_ACP,
+    };
 
-    let result = unsafe {
+    // let defines = vec![];
+
+    let result: IDxcResult = unsafe {
         compiler.Compile(
             &shader_blob,
-            w!("copy.hlsl"),
-            w!("copyCs"),
-            w!("cs_6_5"),
-            None,
-            &defines,
+            // , w!("-Fc"), w!("HELLO")
+            Some(&[
+                w!("-T"),
+                w!("cs_6_5"),
+                w!("-E"),
+                w!("copyCs"),
+                // w!("-spirv"),
+                w!("-Zi"),
+                w!("-Qembed_debug"),
+            ]),
             None,
         )
+        // compiler.Compile(
+        //     &shader_blob,
+        //     w!("copy.hlsl"),
+        //     w!("copyCs"),
+        //     w!("cs_6_5"),
+        //     None,
+        //     &defines,
+        //     None,
+        // )
     }?;
 
     let status = unsafe { result.GetStatus() }?;
@@ -209,10 +229,18 @@ fn main() -> Result<()> {
         eprintln!("Compilation failed with {:?}: `{}`", status, errors);
         Ok(status.ok()?)
     } else {
+        dbg!(unsafe { result.PrimaryOutput() });
         let blob = unsafe { result.GetResult() }?;
+
+        let types = (0..unsafe { result.GetNumOutputs() })
+            .map(|i| unsafe { result.GetOutputByIndex(i) })
+            .collect::<Vec<_>>();
+        dbg!(types);
+
         let shader = unsafe {
             std::slice::from_raw_parts(blob.GetBufferPointer().cast::<u8>(), blob.GetBufferSize())
         };
+
         let buffer = DxcBuffer {
             Ptr: unsafe { blob.GetBufferPointer() },
             Size: unsafe { blob.GetBufferSize() },
@@ -241,6 +269,39 @@ fn main() -> Result<()> {
             dbg!(desc.Creator.to_string());
             dbg!(desc);
         }
+
+        let mut blob = None::<IDxcBlob>;
+        let mut outname = None::<IDxcBlobUtf16>;
+        unsafe { result.GetOutput(DXC_OUT_OBJECT, &mut outname, &mut blob) }?;
+        let blob = blob.unwrap();
+        // let outname = outname.unwrap();
+        // dbg!(unsafe { outname.GetStringPointer().to_string() });
+        // let shader2 = unsafe {
+        //     std::slice::from_raw_parts(blob.GetBufferPointer().cast::<u8>(), blob.GetBufferSize())
+        // };
+        // assert_eq!(shader, shader2);
+
+        let result: IDxcResult = unsafe {
+            compiler.Disassemble(dbg!(&DxcBuffer {
+                Ptr: blob.GetBufferPointer().cast(),
+                Size: blob.GetBufferSize(),
+                Encoding: DXC_CP_ACP,
+            }))
+        }?;
+
+        let blob = unsafe { result.GetResult() }?;
+
+        let types = (0..unsafe { result.GetNumOutputs() })
+            .map(|i| unsafe { result.GetOutputByIndex(i) })
+            .collect::<Vec<_>>();
+        dbg!(types);
+
+        let disasm = unsafe {
+            std::slice::from_raw_parts(blob.GetBufferPointer().cast::<u8>(), blob.GetBufferSize())
+        };
+        println!("{}", std::str::from_utf8(disasm).unwrap());
+
+        // std::fs::write("result.spv", shader)?;
         // for c in shader.chunks(16) {
         //     println!("{:02x?}", c);
         // }
