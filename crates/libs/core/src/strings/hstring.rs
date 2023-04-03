@@ -28,29 +28,30 @@ impl HSTRING {
         }
     }
 
-    /// Get the string as 16-bit wide characters (wchars).
-    pub fn as_wide(&self) -> &[u16] {
+    /// Get the string as 16-bit or 32-bit wide characters (wchars).
+    pub fn as_wide(&self) -> &[WCHAR] {
         unsafe { std::slice::from_raw_parts(self.as_ptr(), self.len()) }
     }
 
     /// Returns a raw pointer to the `HSTRING` buffer.
-    pub fn as_ptr(&self) -> *const u16 {
+    pub fn as_ptr(&self) -> *const WCHAR {
         if let Some(header) = self.get_header() {
             header.data
         } else {
-            const EMPTY: [u16; 1] = [0];
+            const EMPTY: [WCHAR; 1] = [0];
             EMPTY.as_ptr()
         }
     }
 
-    /// Create a `HSTRING` from a slice of 16 bit characters (wchars).
-    pub fn from_wide(value: &[u16]) -> Result<Self> {
+    /// Create a `HSTRING` from a slice of 16- or 32-bit characters (wchars).
+    pub fn from_wide(value: &[WCHAR]) -> Result<Self> {
         unsafe { Self::from_wide_iter(value.iter().copied(), value.len()) }
     }
 
     /// Get the contents of this `HSTRING` as a String lossily.
     pub fn to_string_lossy(&self) -> std::string::String {
-        std::string::String::from_utf16_lossy(self.as_wide())
+        todo!("This function should receive a 32-bit equivalent")
+        // std::string::String::from_utf16_lossy(self.as_wide())
     }
 
     /// Get the contents of this `HSTRING` as a OsString.
@@ -61,7 +62,7 @@ impl HSTRING {
 
     /// # Safety
     /// len must not be less than the number of items in the iterator.
-    unsafe fn from_wide_iter<I: Iterator<Item = u16>>(iter: I, len: usize) -> Result<Self> {
+    unsafe fn from_wide_iter<I: Iterator<Item = WCHAR>>(iter: I, len: usize) -> Result<Self> {
         if len == 0 {
             return Ok(Self::new());
         }
@@ -138,8 +139,9 @@ unsafe impl Send for HSTRING {}
 unsafe impl Sync for HSTRING {}
 
 impl std::fmt::Display for HSTRING {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", Decode(|| std::char::decode_utf16(self.as_wide().iter().cloned())))
+    fn fmt(&self, _f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        todo!("This function should receive a 32-bit equivalent")
+        // write!(f, "{}", Decode(|| std::char::decode_utf16(self.as_wide().iter().cloned())))
     }
 }
 
@@ -151,7 +153,8 @@ impl std::fmt::Debug for HSTRING {
 
 impl std::convert::From<&str> for HSTRING {
     fn from(value: &str) -> Self {
-        unsafe { Self::from_wide_iter(value.encode_utf16(), value.len()).unwrap() }
+        todo!("This function should receive a 32-bit equivalent")
+        // unsafe { Self::from_wide_iter(value.encode_utf16(), value.len()).unwrap() }
     }
 }
 
@@ -234,8 +237,9 @@ impl PartialEq<&std::string::String> for HSTRING {
 }
 
 impl PartialEq<str> for HSTRING {
-    fn eq(&self, other: &str) -> bool {
-        self.as_wide().iter().copied().eq(other.encode_utf16())
+    fn eq(&self, _other: &str) -> bool {
+        todo!("This function should receive a 32-bit equivalent")
+        // self.as_wide().iter().copied().eq(other.encode_utf16())
     }
 }
 
@@ -374,8 +378,9 @@ impl PartialEq<&HSTRING> for std::ffi::OsString {
 impl<'a> std::convert::TryFrom<&'a HSTRING> for std::string::String {
     type Error = std::string::FromUtf16Error;
 
-    fn try_from(hstring: &HSTRING) -> std::result::Result<Self, Self::Error> {
-        std::string::String::from_utf16(hstring.as_wide())
+    fn try_from(_hstring: &HSTRING) -> std::result::Result<Self, Self::Error> {
+        todo!("This function should receive a 32-bit equivalent")
+        // std::string::String::from_utf16(hstring.as_wide())
     }
 }
 
@@ -415,9 +420,9 @@ struct Header {
     len: u32,
     _0: u32,
     _1: u32,
-    data: *mut u16,
+    data: *mut WCHAR,
     count: crate::imp::RefCount,
-    buffer_start: u16,
+    buffer_start: WCHAR,
 }
 
 impl Header {

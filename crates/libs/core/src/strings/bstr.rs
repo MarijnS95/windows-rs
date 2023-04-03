@@ -3,7 +3,7 @@ use super::*;
 /// A BSTR string ([BSTR](https://learn.microsoft.com/en-us/previous-versions/windows/desktop/automat/string-manipulation-functions))
 /// is a length-prefixed wide string.
 #[repr(transparent)]
-pub struct BSTR(*const u16);
+pub struct BSTR(*const WCHAR);
 
 impl BSTR {
     /// Create an empty `BSTR`.
@@ -23,12 +23,12 @@ impl BSTR {
         if self.0.is_null() {
             0
         } else {
-            unsafe { crate::imp::SysStringLen(self.0) as usize }
+            unsafe { crate::imp::SysStringLen(self.0.cast()) as usize }
         }
     }
 
     /// Get the string as 16-bit wide characters (wchars).
-    pub fn as_wide(&self) -> &[u16] {
+    pub fn as_wide(&self) -> &[WCHAR] {
         if self.0.is_null() {
             return &[];
         }
@@ -37,7 +37,7 @@ impl BSTR {
     }
 
     /// Create a `BSTR` from a slice of 16 bit characters (wchars).
-    pub fn from_wide(value: &[u16]) -> Result<Self> {
+    pub fn from_wide(value: &[WCHAR]) -> Result<Self> {
         if value.is_empty() {
             return Ok(Self::new());
         }
@@ -53,13 +53,13 @@ impl BSTR {
 
     /// # Safety
     #[doc(hidden)]
-    pub unsafe fn from_raw(raw: *const u16) -> Self {
+    pub unsafe fn from_raw(raw: *const WCHAR) -> Self {
         Self(raw)
     }
 
     /// # Safety
     #[doc(hidden)]
-    pub fn into_raw(self) -> *const u16 {
+    pub fn into_raw(self) -> *const WCHAR {
         unsafe { std::mem::transmute(self) }
     }
 }
@@ -71,9 +71,10 @@ impl std::clone::Clone for BSTR {
 }
 
 impl std::convert::From<&str> for BSTR {
-    fn from(value: &str) -> Self {
-        let value: std::vec::Vec<u16> = value.encode_utf16().collect();
-        Self::from_wide(&value).unwrap()
+    fn from(_value: &str) -> Self {
+        todo!("This function should receive a 32-bit equivalent")
+        // let value: std::vec::Vec<u16> = value.encode_utf16().collect();
+        // Self::from_wide(&value).unwrap()
     }
 }
 
@@ -92,8 +93,9 @@ impl std::convert::From<&std::string::String> for BSTR {
 impl<'a> std::convert::TryFrom<&'a BSTR> for std::string::String {
     type Error = std::string::FromUtf16Error;
 
-    fn try_from(value: &BSTR) -> std::result::Result<Self, Self::Error> {
-        std::string::String::from_utf16(value.as_wide())
+    fn try_from(_value: &BSTR) -> std::result::Result<Self, Self::Error> {
+        todo!("This function should receive a 32-bit equivalent")
+        // std::string::String::from_utf16(value.as_wide())
     }
 }
 
@@ -112,8 +114,9 @@ impl std::default::Default for BSTR {
 }
 
 impl std::fmt::Display for BSTR {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::write!(f, "{}", crate::Decode(|| std::char::decode_utf16(self.as_wide().iter().cloned())))
+    fn fmt(&self, _f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        todo!("This function should receive a 32-bit equivalent")
+        // std::write!(f, "{}", crate::Decode(|| std::char::decode_utf16(self.as_wide().iter().cloned())))
     }
 }
 
@@ -144,15 +147,16 @@ impl std::cmp::PartialEq<BSTR> for String {
 }
 
 impl<T: AsRef<str> + ?Sized> std::cmp::PartialEq<T> for BSTR {
-    fn eq(&self, other: &T) -> bool {
-        self.as_wide().iter().copied().eq(other.as_ref().encode_utf16())
+    fn eq(&self, _other: &T) -> bool {
+        todo!("This function should receive a 32-bit equivalent")
+        // self.as_wide().iter().copied().eq(other.as_ref().encode_utf16())
     }
 }
 
 impl std::ops::Drop for BSTR {
     fn drop(&mut self) {
         if !self.0.is_null() {
-            unsafe { crate::imp::SysFreeString(self.0) }
+            unsafe { crate::imp::SysFreeString(self.0.cast()) }
         }
     }
 }

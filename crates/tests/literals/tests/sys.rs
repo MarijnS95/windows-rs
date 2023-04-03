@@ -32,7 +32,7 @@ fn assert_utf8(left: PCSTR, right: &[u8]) {
     assert_eq!(left, right);
 }
 
-fn assert_utf16(left: PCWSTR, right: &[u16]) {
+fn assert_utf16(left: PCWSTR, right: &[WCHAR]) {
     let len = unsafe { wcslen(left) };
     assert_eq!(len, right.len() - 1);
     let left = unsafe { std::slice::from_raw_parts(left, right.len()) };

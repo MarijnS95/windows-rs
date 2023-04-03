@@ -17,6 +17,12 @@ pub use pwstr::*;
 
 use super::*;
 
+// TODO: move to bindings.rs?
+#[cfg(windows)]
+pub type WCHAR = u16;
+#[cfg(not(windows))]
+pub type WCHAR = u32;
+
 extern "C" {
     #[doc(hidden)]
     pub fn strlen(s: PCSTR) -> usize;

@@ -127,7 +127,7 @@ impl std::fmt::Debug for HRESULT {
     }
 }
 
-struct HeapString(*mut u16);
+struct HeapString(*mut WCHAR);
 
 impl Drop for HeapString {
     fn drop(&mut self) {

@@ -11,21 +11,21 @@ macro_rules! s {
 macro_rules! w {
     ($s:literal) => {{
         const INPUT: &[u8] = $s.as_bytes();
-        const OUTPUT_LEN: usize = $crate::utf16_len(INPUT) + 1;
-        const OUTPUT: &[u16; OUTPUT_LEN] = {
+        const OUTPUT_LEN: usize = if cfg!(windows) { $crate::utf16_len(INPUT) } else { INPUT.len() } + 1;
+        const OUTPUT: &[$crate::WCHAR; OUTPUT_LEN] = {
             let mut buffer = [0; OUTPUT_LEN];
             let mut input_pos = 0;
             let mut output_pos = 0;
             while let Some((mut code_point, new_pos)) = $crate::decode_utf8_char(INPUT, input_pos) {
                 input_pos = new_pos;
-                if code_point <= 0xffff {
-                    buffer[output_pos] = code_point as u16;
+                if code_point <= 0xffff || !cfg!(windows) {
+                    buffer[output_pos] = code_point as $crate::WCHAR;
                     output_pos += 1;
                 } else {
                     code_point -= 0x10000;
-                    buffer[output_pos] = 0xd800 + (code_point >> 10) as u16;
+                    buffer[output_pos] = 0xd800 + (code_point >> 10) as $crate::WCHAR;
                     output_pos += 1;
-                    buffer[output_pos] = 0xdc00 + (code_point & 0x3ff) as u16;
+                    buffer[output_pos] = 0xdc00 + (code_point & 0x3ff) as $crate::WCHAR;
                     output_pos += 1;
                 }
             }
@@ -40,10 +40,10 @@ macro_rules! w {
 macro_rules! h {
     ($s:literal) => {{
         const INPUT: &[u8] = $s.as_bytes();
-        const OUTPUT_LEN: usize = $crate::utf16_len(INPUT) + 1;
+        const OUTPUT_LEN: usize = if cfg!(windows) { $crate::utf16_len(INPUT) } else { INPUT.len() } + 1;
         const RESULT: $crate::HSTRING = {
             if OUTPUT_LEN == 1 {
-                unsafe { ::std::mem::transmute(::std::ptr::null::<u16>()) }
+                unsafe { ::std::mem::transmute(::std::ptr::null::<WCHAR>()) }
             } else {
                 const OUTPUT: $crate::PCWSTR = $crate::w!($s);
                 const HEADER: $crate::HSTRING_HEADER = $crate::HSTRING_HEADER { flags: 0x11, len: (OUTPUT_LEN - 1) as u32, padding1: 0, padding2: 0, ptr: OUTPUT.as_ptr() };
@@ -126,7 +126,7 @@ pub struct HSTRING_HEADER {
     pub len: u32,
     pub padding1: u32,
     pub padding2: u32,
-    pub ptr: *const u16,
+    pub ptr: *const super::WCHAR,
 }
 
 #[doc(hidden)]

@@ -20,7 +20,8 @@
 ::windows_targets::link!("oleaut32.dll" "system" fn SysFreeString(bstrstring : BSTR));
 ::windows_targets::link!("oleaut32.dll" "system" fn SysStringLen(pbstr : BSTR) -> u32);
 pub type BOOL = i32;
-pub type BSTR = *const u16;
+pub use crate::WCHAR;
+pub type BSTR = *const WCHAR;
 pub const ERROR_NO_UNICODE_TRANSLATION: WIN32_ERROR = 1113u32;
 pub const E_INVALIDARG: HRESULT = -2147024809i32;
 pub type FARPROC = ::core::option::Option<unsafe extern "system" fn() -> isize>;
@@ -35,8 +36,8 @@ pub type HRESULT = i32;
 pub type LOAD_LIBRARY_FLAGS = u32;
 pub const LOAD_LIBRARY_SEARCH_DEFAULT_DIRS: LOAD_LIBRARY_FLAGS = 4096u32;
 pub type PCSTR = *const u8;
-pub type PCWSTR = *const u16;
-pub type PWSTR = *mut u16;
+pub type PCWSTR = *const WCHAR;
+pub type PWSTR = *mut WCHAR;
 #[repr(C)]
 pub struct SECURITY_ATTRIBUTES {
     pub nLength: u32,

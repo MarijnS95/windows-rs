@@ -29,7 +29,7 @@ pub fn then_some<T>(value: bool, t: T) -> Option<T> {
     }
 }
 
-pub fn wide_trim_end(mut wide: &[u16]) -> &[u16] {
+pub fn wide_trim_end(mut wide: &[WCHAR]) -> &[WCHAR] {
     while let Some(last) = wide.last() {
         match last {
             32 | 9..=13 => wide = &wide[..wide.len() - 1],
