@@ -4,18 +4,10 @@
 use anyhow::Result;
 use libloading::{Library, Symbol};
 use std::path::Path;
-use windows::{
-    core::{w, Interface},
-    Win32::{
-        Foundation::BOOL, Graphics::Direct3D::Dxc::*, Graphics::Direct3D12::ID3D12ShaderReflection,
-    },
-};
+use windows_core::{w, Interface, BOOL};
+mod bindings;
+use bindings::*;
 
-#[cfg(not(windows))]
-use windows::Win32::{
-    Foundation::HANDLE,
-    System::{Memory::HEAP_FLAGS, SystemServices::MEMORY_ALLOCATION_ALIGNMENT},
-};
 #[cfg(not(windows))]
 const PROCESS_HEAP: HANDLE = HANDLE(1);
 
@@ -276,10 +268,11 @@ fn main() -> Result<()> {
         let blob = blob.unwrap();
         // let outname = outname.unwrap();
         // dbg!(unsafe { outname.GetStringPointer().to_string() });
-        // let shader2 = unsafe {
-        //     std::slice::from_raw_parts(blob.GetBufferPointer().cast::<u8>(), blob.GetBufferSize())
-        // };
+        let shader2 = unsafe {
+            std::slice::from_raw_parts(blob.GetBufferPointer().cast::<u8>(), blob.GetBufferSize())
+        };
         // assert_eq!(shader, shader2);
+        // dbg!(shader, shader2);
 
         let result: IDxcResult = unsafe {
             compiler.Disassemble(dbg!(&DxcBuffer {

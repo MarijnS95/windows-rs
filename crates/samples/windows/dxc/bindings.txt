@@ -1,0 +1,28 @@
+--out src/bindings.rs
+--flat
+
+--filter
+    Windows.Win32.Graphics.Direct3D.Dxc.CLSID_DxcCompiler
+    Windows.Win32.Graphics.Direct3D.Dxc.CLSID_DxcContainerReflection
+    Windows.Win32.Graphics.Direct3D.Dxc.CLSID_DxcLibrary
+    Windows.Win32.Graphics.Direct3D.Dxc.CLSID_DxcUtils
+    Windows.Win32.Graphics.Direct3D.Dxc.DXC_CP_ACP
+    Windows.Win32.Graphics.Direct3D.Dxc.DXC_CP_UTF8
+    Windows.Win32.Graphics.Direct3D.Dxc.DXC_OUT_OBJECT
+    Windows.Win32.Graphics.Direct3D.Dxc.DXC_OUT_PDB
+    Windows.Win32.Graphics.Direct3D.Dxc.DXC_PART
+    Windows.Win32.Graphics.Direct3D.Dxc.DxcBuffer
+    Windows.Win32.Graphics.Direct3D.Dxc.DxcCreateInstanceProc
+    Windows.Win32.Graphics.Direct3D.Dxc.IDxcBlob
+    Windows.Win32.Graphics.Direct3D.Dxc.IDxcBlobEncoding
+    Windows.Win32.Graphics.Direct3D.Dxc.IDxcBlobUtf16
+    Windows.Win32.Graphics.Direct3D.Dxc.IDxcCompiler3
+    Windows.Win32.Graphics.Direct3D.Dxc.IDxcContainerReflection
+    Windows.Win32.Graphics.Direct3D.Dxc.IDxcIncludeHandler
+    Windows.Win32.Graphics.Direct3D.Dxc.IDxcLibrary
+    Windows.Win32.Graphics.Direct3D.Dxc.IDxcResult
+    Windows.Win32.Graphics.Direct3D.Dxc.IDxcUtils
+    Windows.Win32.Graphics.Direct3D12.D3D12_SHADER_DESC
+    Windows.Win32.Graphics.Direct3D12.ID3D12ShaderReflection
+    Windows.Win32.System.Memory.HEAP_FLAGS
+    Windows.Win32.System.SystemServices.MEMORY_ALLOCATION_ALIGNMENT

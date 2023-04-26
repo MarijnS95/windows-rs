@@ -1,19 +1,20 @@
 [package]
 name = "sample_dxc"
 version = "0.0.0"
-edition = "2018"
+edition = "2021" # For TryInto in the prelude!
 
 [dependencies]
 anyhow = "1"
 libloading = "0.8"
 
-[dependencies.windows]
-path = "../../../libs/windows"
-features = [
-    "Win32_Foundation",
-    "Win32_Graphics_Direct3D_Dxc",
-    "Win32_Graphics_Direct3D12",
-    "Win32_System_Com",
-    "Win32_System_Memory",
-    "Win32_System_SystemServices",
-]
+[dependencies.windows-core]
+path = "../../../libs/core"
+
+[dependencies.windows-targets]
+path = "../../../libs/targets"
+
+[dependencies.windows-link]
+path = "../../../libs/link"
+
+[build-dependencies.windows-bindgen]
+path = "../../../libs/bindgen"
