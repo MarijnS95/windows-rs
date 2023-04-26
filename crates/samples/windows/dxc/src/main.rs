@@ -4,18 +4,46 @@
 use anyhow::Result;
 use libloading::{Library, Symbol};
 use std::path::Path;
-use windows::{
-    core::{w, Interface},
-    Win32::{
-        Foundation::BOOL, Graphics::Direct3D::Dxc::*, Graphics::Direct3D12::ID3D12ShaderReflection,
-    },
-};
+// use windows::{
+//     core::{w, Interface},
+//     Win32::{
+//         Foundation::BOOL, Graphics::Direct3D::Dxc::*, Graphics::Direct3D12::ID3D12ShaderReflection,
+//     },
+// };
+use windows_core::{w, Interface};
+mod bindings;
+use bindings::*;
 
-#[cfg(not(windows))]
-use windows::Win32::{
-    Foundation::HANDLE,
-    System::{Memory::HEAP_FLAGS, SystemServices::MEMORY_ALLOCATION_ALIGNMENT},
-};
+// https://github.com/microsoft/windows-rs/issues/2517#issuecomment-1755623786
+impl BOOL {
+    #[inline]
+    pub fn as_bool(self) -> bool {
+        self.0 != 0
+    }
+    #[inline]
+    pub fn ok(self) -> windows_core::Result<()> {
+        if self.as_bool() {
+            Ok(())
+        } else {
+            Err(windows_core::Error::from_win32())
+        }
+    }
+}
+impl ::core::convert::From<BOOL> for bool {
+    fn from(value: BOOL) -> Self {
+        value.as_bool()
+    }
+}
+impl ::core::convert::From<bool> for BOOL {
+    fn from(value: bool) -> Self {
+        if value {
+            Self(1)
+        } else {
+            Self(0)
+        }
+    }
+}
+
 #[cfg(not(windows))]
 const PROCESS_HEAP: HANDLE = HANDLE(1);
 
@@ -276,10 +304,11 @@ fn main() -> Result<()> {
         let blob = blob.unwrap();
         // let outname = outname.unwrap();
         // dbg!(unsafe { outname.GetStringPointer().to_string() });
-        // let shader2 = unsafe {
-        //     std::slice::from_raw_parts(blob.GetBufferPointer().cast::<u8>(), blob.GetBufferSize())
-        // };
+        let shader2 = unsafe {
+            std::slice::from_raw_parts(blob.GetBufferPointer().cast::<u8>(), blob.GetBufferSize())
+        };
         // assert_eq!(shader, shader2);
+        // dbg!(shader, shader2);
 
         let result: IDxcResult = unsafe {
             compiler.Disassemble(dbg!(&DxcBuffer {
