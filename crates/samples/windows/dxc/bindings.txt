@@ -1,0 +1,23 @@
+--out src/bindings.rs
+--config flatten
+
+--filter
+    Windows.Win32.Foundation.HANDLE
+    Windows.Win32.Graphics.Direct3D.Dxc.CLSID_DxcCompiler
+    Windows.Win32.Graphics.Direct3D.Dxc.CLSID_DxcLibrary
+    Windows.Win32.Graphics.Direct3D.Dxc.DXC_CP_UTF8
+    Windows.Win32.Graphics.Direct3D.Dxc.DXC_OUT_PDB
+    Windows.Win32.Graphics.Direct3D.Dxc.DxcCreateInstanceProc
+    Windows.Win32.Graphics.Direct3D.Dxc.IDxcBlob
+    Windows.Win32.Graphics.Direct3D.Dxc.IDxcBlobEncoding
+    Windows.Win32.Graphics.Direct3D.Dxc.IDxcBlobUtf16
+    Windows.Win32.Graphics.Direct3D.Dxc.IDxcCompiler3
+    Windows.Win32.Graphics.Direct3D.Dxc.IDxcLibrary
+    Windows.Win32.Graphics.Direct3D.Dxc.IDxcResult
+    Windows.Win32.System.Memory.HEAP_FLAGS
+    Windows.Win32.System.SystemServices.MEMORY_ALLOCATION_ALIGNMENT
+
+    # For IStream
+    Windows.Win32.System.Com.STGC
+    Windows.Win32.System.Com.LOCKTYPE
+    Windows.Win32.System.Com.STATFLAG

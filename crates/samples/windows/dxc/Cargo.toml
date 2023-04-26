@@ -7,12 +7,11 @@ edition = "2018"
 anyhow = "1"
 libloading = "0.8"
 
-[dependencies.windows]
-path = "../../../libs/windows"
-features = [
-    "Win32_Foundation",
-    "Win32_Graphics_Direct3D_Dxc",
-    "Win32_System_Com",
-    "Win32_System_Memory",
-    "Win32_System_SystemServices",
-]
+[dependencies.windows-core]
+path = "../../../libs/core"
+
+[dependencies.windows-targets]
+path = "../../../libs/targets"
+
+[build-dependencies.windows-bindgen]
+path = "../../../libs/bindgen"
