@@ -54885,10 +54885,10 @@ pub type BFFCALLBACK = ::core::option::Option<unsafe extern "system" fn(hwnd: su
 pub type DLLGETVERSIONPROC = ::core::option::Option<unsafe extern "system" fn(param0: *mut DLLVERSIONINFO) -> ::windows_core::HRESULT>;
 #[doc = "Required features: `\"Win32_Foundation\"`, `\"Win32_System_Com\"`"]
 #[cfg(all(feature = "Win32_Foundation", feature = "Win32_System_Com"))]
-pub type LPFNDFMCALLBACK = ::core::option::Option<unsafe extern "system" fn(psf: ::core::option::Option<IShellFolder>, hwnd: super::super::Foundation::HWND, pdtobj: ::core::option::Option<super::super::System::Com::IDataObject>, umsg: u32, wparam: super::super::Foundation::WPARAM, lparam: super::super::Foundation::LPARAM) -> ::windows_core::HRESULT>;
+pub type LPFNDFMCALLBACK = ::core::option::Option<unsafe extern "system" fn(psf: *mut ::core::ffi::c_void, hwnd: super::super::Foundation::HWND, pdtobj: *mut ::core::ffi::c_void, umsg: u32, wparam: super::super::Foundation::WPARAM, lparam: super::super::Foundation::LPARAM) -> ::windows_core::HRESULT>;
 #[doc = "Required features: `\"Win32_Foundation\"`, `\"Win32_System_Ole\"`"]
 #[cfg(all(feature = "Win32_Foundation", feature = "Win32_System_Ole"))]
-pub type LPFNVIEWCALLBACK = ::core::option::Option<unsafe extern "system" fn(psvouter: ::core::option::Option<IShellView>, psf: ::core::option::Option<IShellFolder>, hwndmain: super::super::Foundation::HWND, umsg: u32, wparam: super::super::Foundation::WPARAM, lparam: super::super::Foundation::LPARAM) -> ::windows_core::HRESULT>;
+pub type LPFNVIEWCALLBACK = ::core::option::Option<unsafe extern "system" fn(psvouter: *mut ::core::ffi::c_void, psf: *mut ::core::ffi::c_void, hwndmain: super::super::Foundation::HWND, umsg: u32, wparam: super::super::Foundation::WPARAM, lparam: super::super::Foundation::LPARAM) -> ::windows_core::HRESULT>;
 #[doc = "Required features: `\"Win32_Foundation\"`"]
 #[cfg(feature = "Win32_Foundation")]
 pub type PAPPCONSTRAIN_CHANGE_ROUTINE = ::core::option::Option<unsafe extern "system" fn(constrained: super::super::Foundation::BOOLEAN, context: *const ::core::ffi::c_void)>;

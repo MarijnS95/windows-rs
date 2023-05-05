@@ -2158,7 +2158,7 @@ impl ::core::default::Default for ServerInformation {
         unsafe { ::core::mem::zeroed() }
     }
 }
-pub type PFNGETACTIVATIONFACTORY = ::core::option::Option<unsafe extern "system" fn(param0: ::windows_core::HSTRING, param1: *mut ::core::option::Option<IActivationFactory>) -> ::windows_core::HRESULT>;
+pub type PFNGETACTIVATIONFACTORY = ::core::option::Option<unsafe extern "system" fn(param0: ::std::mem::MaybeUninit<::windows_core::HSTRING>, param1: *mut *mut ::core::ffi::c_void) -> ::windows_core::HRESULT>;
 pub type PINSPECT_HSTRING_CALLBACK = ::core::option::Option<unsafe extern "system" fn(context: *const ::core::ffi::c_void, readaddress: usize, length: u32, buffer: *mut u8) -> ::windows_core::HRESULT>;
 pub type PINSPECT_HSTRING_CALLBACK2 = ::core::option::Option<unsafe extern "system" fn(context: *const ::core::ffi::c_void, readaddress: u64, length: u32, buffer: *mut u8) -> ::windows_core::HRESULT>;
 pub type PINSPECT_MEMORY_CALLBACK = ::core::option::Option<unsafe extern "system" fn(context: *const ::core::ffi::c_void, readaddress: usize, length: u32, buffer: *mut u8) -> ::windows_core::HRESULT>;

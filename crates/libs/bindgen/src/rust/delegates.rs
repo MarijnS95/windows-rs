@@ -23,9 +23,19 @@ fn gen_callback(writer: &Writer, def: TypeDef) -> TokenStream {
     let generics = expand_generics(generics, quote!(T));
     let where_clause = expand_where_clause(where_clause, quote!(T: ::windows::core::ComInterface));
 
+    // let params = signature.params.iter().map(|p| {
+    //     let name = gen.param_name(p.def);
+    //     let tokens = gen.type_default_name(&p.ty);
+    //     quote! { #name: #tokens }
+    // });
+
     let params = signature.params.iter().map(|p| {
         let name = writer.param_name(p.def);
-        let tokens = writer.type_default_name(&p.ty);
+        let tokens = if p.kind == SignatureParamKind::ValueType {
+            writer.type_default_name(&p.ty)
+        } else {
+            writer.type_abi_name(&p.ty)
+        };
         quote! { #name: #tokens }
     });
 

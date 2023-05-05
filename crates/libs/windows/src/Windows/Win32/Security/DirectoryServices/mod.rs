@@ -60,10 +60,10 @@ pub const DSSI_NO_READONLY_MESSAGE: u32 = 64u32;
 pub const DSSI_READ_ONLY: u32 = 1u32;
 #[doc = "Required features: `\"Win32_Foundation\"`, `\"Win32_Security_Authorization_UI\"`"]
 #[cfg(all(feature = "Win32_Foundation", feature = "Win32_Security_Authorization_UI"))]
-pub type PFNDSCREATEISECINFO = ::core::option::Option<unsafe extern "system" fn(param0: ::windows_core::PCWSTR, param1: ::windows_core::PCWSTR, param2: u32, param3: *mut ::core::option::Option<super::Authorization::UI::ISecurityInformation>, param4: PFNREADOBJECTSECURITY, param5: PFNWRITEOBJECTSECURITY, param6: super::super::Foundation::LPARAM) -> ::windows_core::HRESULT>;
+pub type PFNDSCREATEISECINFO = ::core::option::Option<unsafe extern "system" fn(param0: ::windows_core::PCWSTR, param1: ::windows_core::PCWSTR, param2: u32, param3: *mut *mut ::core::ffi::c_void, param4: PFNREADOBJECTSECURITY, param5: PFNWRITEOBJECTSECURITY, param6: super::super::Foundation::LPARAM) -> ::windows_core::HRESULT>;
 #[doc = "Required features: `\"Win32_Foundation\"`, `\"Win32_Security_Authorization_UI\"`"]
 #[cfg(all(feature = "Win32_Foundation", feature = "Win32_Security_Authorization_UI"))]
-pub type PFNDSCREATEISECINFOEX = ::core::option::Option<unsafe extern "system" fn(param0: ::windows_core::PCWSTR, param1: ::windows_core::PCWSTR, param2: ::windows_core::PCWSTR, param3: ::windows_core::PCWSTR, param4: ::windows_core::PCWSTR, param5: u32, param6: *mut ::core::option::Option<super::Authorization::UI::ISecurityInformation>, param7: PFNREADOBJECTSECURITY, param8: PFNWRITEOBJECTSECURITY, param9: super::super::Foundation::LPARAM) -> ::windows_core::HRESULT>;
+pub type PFNDSCREATEISECINFOEX = ::core::option::Option<unsafe extern "system" fn(param0: ::windows_core::PCWSTR, param1: ::windows_core::PCWSTR, param2: ::windows_core::PCWSTR, param3: ::windows_core::PCWSTR, param4: ::windows_core::PCWSTR, param5: u32, param6: *mut *mut ::core::ffi::c_void, param7: PFNREADOBJECTSECURITY, param8: PFNWRITEOBJECTSECURITY, param9: super::super::Foundation::LPARAM) -> ::windows_core::HRESULT>;
 #[doc = "Required features: `\"Win32_Foundation\"`, `\"Win32_UI_Controls\"`"]
 #[cfg(all(feature = "Win32_Foundation", feature = "Win32_UI_Controls"))]
 pub type PFNDSCREATESECPAGE = ::core::option::Option<unsafe extern "system" fn(param0: ::windows_core::PCWSTR, param1: ::windows_core::PCWSTR, param2: u32, param3: *mut super::super::UI::Controls::HPROPSHEETPAGE, param4: PFNREADOBJECTSECURITY, param5: PFNWRITEOBJECTSECURITY, param6: super::super::Foundation::LPARAM) -> ::windows_core::HRESULT>;

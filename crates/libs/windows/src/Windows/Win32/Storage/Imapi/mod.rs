@@ -7151,6 +7151,6 @@ impl ::core::default::Default for tagIMMPID_GUIDLIST_ITEM {
 }
 #[doc = "Required features: `\"Win32_System_AddressBook\"`"]
 #[cfg(feature = "Win32_System_AddressBook")]
-pub type MSGCALLRELEASE = ::core::option::Option<unsafe extern "system" fn(ulcallerdata: u32, lpmessage: ::core::option::Option<super::super::System::AddressBook::IMessage>)>;
+pub type MSGCALLRELEASE = ::core::option::Option<unsafe extern "system" fn(ulcallerdata: u32, lpmessage: *mut ::core::ffi::c_void)>;
 #[cfg(feature = "implement")]
 ::core::include!("impl.rs");

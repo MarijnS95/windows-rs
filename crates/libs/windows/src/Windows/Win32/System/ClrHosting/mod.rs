@@ -4473,6 +4473,6 @@ pub type CreateInterfaceFnPtr = ::core::option::Option<unsafe extern "system" fn
 pub type FExecuteInAppDomainCallback = ::core::option::Option<unsafe extern "system" fn(cookie: *mut ::core::ffi::c_void) -> ::windows_core::HRESULT>;
 pub type FLockClrVersionCallback = ::core::option::Option<unsafe extern "system" fn() -> ::windows_core::HRESULT>;
 pub type PTLS_CALLBACK_FUNCTION = ::core::option::Option<unsafe extern "system" fn(__midl____midl_itf_mscoree_0000_00040005: *mut ::core::ffi::c_void)>;
-pub type RuntimeLoadedCallbackFnPtr = ::core::option::Option<unsafe extern "system" fn(pruntimeinfo: ::core::option::Option<ICLRRuntimeInfo>, pfncallbackthreadset: CallbackThreadSetFnPtr, pfncallbackthreadunset: CallbackThreadUnsetFnPtr)>;
+pub type RuntimeLoadedCallbackFnPtr = ::core::option::Option<unsafe extern "system" fn(pruntimeinfo: *mut ::core::ffi::c_void, pfncallbackthreadset: CallbackThreadSetFnPtr, pfncallbackthreadunset: CallbackThreadUnsetFnPtr)>;
 #[cfg(feature = "implement")]
 ::core::include!("impl.rs");

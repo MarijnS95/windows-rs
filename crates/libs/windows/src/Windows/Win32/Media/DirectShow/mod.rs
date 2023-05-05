@@ -29492,7 +29492,7 @@ pub type AMGETERRORTEXTPROCA = ::core::option::Option<unsafe extern "system" fn(
 pub type AMGETERRORTEXTPROCW = ::core::option::Option<unsafe extern "system" fn(param0: ::windows_core::HRESULT, param1: ::windows_core::PCWSTR, param2: u32) -> super::super::Foundation::BOOL>;
 #[doc = "Required features: `\"Win32_Foundation\"`, `\"Win32_Graphics_Direct3D9\"`, `\"Win32_Media_MediaFoundation\"`"]
 #[cfg(all(feature = "Win32_Foundation", feature = "Win32_Graphics_Direct3D9", feature = "Win32_Media_MediaFoundation"))]
-pub type PDXVA2SW_CREATEVIDEOPROCESSDEVICE = ::core::option::Option<unsafe extern "system" fn(pd3dd9: ::core::option::Option<super::super::Graphics::Direct3D9::IDirect3DDevice9>, pvideodesc: *const super::MediaFoundation::DXVA2_VideoDesc, rendertargetformat: super::super::Graphics::Direct3D9::D3DFORMAT, maxsubstreams: u32, phdevice: *mut super::super::Foundation::HANDLE) -> ::windows_core::HRESULT>;
+pub type PDXVA2SW_CREATEVIDEOPROCESSDEVICE = ::core::option::Option<unsafe extern "system" fn(pd3dd9: *mut ::core::ffi::c_void, pvideodesc: *const super::MediaFoundation::DXVA2_VideoDesc, rendertargetformat: super::super::Graphics::Direct3D9::D3DFORMAT, maxsubstreams: u32, phdevice: *mut super::super::Foundation::HANDLE) -> ::windows_core::HRESULT>;
 #[doc = "Required features: `\"Win32_Foundation\"`"]
 #[cfg(feature = "Win32_Foundation")]
 pub type PDXVA2SW_DESTROYVIDEOPROCESSDEVICE = ::core::option::Option<unsafe extern "system" fn(hdevice: super::super::Foundation::HANDLE) -> ::windows_core::HRESULT>;
@@ -29528,6 +29528,6 @@ pub type PDXVA2SW_VIDEOPROCESSBLT = ::core::option::Option<unsafe extern "system
 pub type PDXVA2SW_VIDEOPROCESSENDFRAME = ::core::option::Option<unsafe extern "system" fn(hdevice: super::super::Foundation::HANDLE, phandlecomplete: *mut super::super::Foundation::HANDLE) -> ::windows_core::HRESULT>;
 #[doc = "Required features: `\"Win32_Foundation\"`, `\"Win32_Graphics_Direct3D9\"`"]
 #[cfg(all(feature = "Win32_Foundation", feature = "Win32_Graphics_Direct3D9"))]
-pub type PDXVA2SW_VIDEOPROCESSSETRENDERTARGET = ::core::option::Option<unsafe extern "system" fn(hdevice: super::super::Foundation::HANDLE, prendertarget: ::core::option::Option<super::super::Graphics::Direct3D9::IDirect3DSurface9>) -> ::windows_core::HRESULT>;
+pub type PDXVA2SW_VIDEOPROCESSSETRENDERTARGET = ::core::option::Option<unsafe extern "system" fn(hdevice: super::super::Foundation::HANDLE, prendertarget: *mut ::core::ffi::c_void) -> ::windows_core::HRESULT>;
 #[cfg(feature = "implement")]
 ::core::include!("impl.rs");

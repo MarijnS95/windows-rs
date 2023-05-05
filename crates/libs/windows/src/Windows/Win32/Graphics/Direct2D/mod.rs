@@ -22143,8 +22143,8 @@ impl ::core::default::Default for D2D1_VERTEX_RANGE {
         unsafe { ::core::mem::zeroed() }
     }
 }
-pub type PD2D1_EFFECT_FACTORY = ::core::option::Option<unsafe extern "system" fn(effectimpl: *mut ::core::option::Option<::windows_core::IUnknown>) -> ::windows_core::HRESULT>;
-pub type PD2D1_PROPERTY_GET_FUNCTION = ::core::option::Option<unsafe extern "system" fn(effect: ::core::option::Option<::windows_core::IUnknown>, data: *mut u8, datasize: u32, actualsize: *mut u32) -> ::windows_core::HRESULT>;
-pub type PD2D1_PROPERTY_SET_FUNCTION = ::core::option::Option<unsafe extern "system" fn(effect: ::core::option::Option<::windows_core::IUnknown>, data: *const u8, datasize: u32) -> ::windows_core::HRESULT>;
+pub type PD2D1_EFFECT_FACTORY = ::core::option::Option<unsafe extern "system" fn(effectimpl: *mut *mut ::core::ffi::c_void) -> ::windows_core::HRESULT>;
+pub type PD2D1_PROPERTY_GET_FUNCTION = ::core::option::Option<unsafe extern "system" fn(effect: *mut ::core::ffi::c_void, data: *mut u8, datasize: u32, actualsize: *mut u32) -> ::windows_core::HRESULT>;
+pub type PD2D1_PROPERTY_SET_FUNCTION = ::core::option::Option<unsafe extern "system" fn(effect: *mut ::core::ffi::c_void, data: *const u8, datasize: u32) -> ::windows_core::HRESULT>;
 #[cfg(feature = "implement")]
 ::core::include!("impl.rs");

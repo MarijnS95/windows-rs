@@ -4939,7 +4939,7 @@ impl ::core::default::Default for __UPV {
         unsafe { ::core::mem::zeroed() }
     }
 }
-pub type CALLERRELEASE = ::core::option::Option<unsafe extern "system" fn(ulcallerdata: u32, lptbldata: ::core::option::Option<ITableData>, lpvue: ::core::option::Option<IMAPITable>)>;
+pub type CALLERRELEASE = ::core::option::Option<unsafe extern "system" fn(ulcallerdata: u32, lptbldata: *mut ::core::ffi::c_void, lpvue: *mut ::core::ffi::c_void)>;
 pub type LPALLOCATEBUFFER = ::core::option::Option<unsafe extern "system" fn(cbsize: u32, lppbuffer: *mut *mut ::core::ffi::c_void) -> i32>;
 pub type LPALLOCATEMORE = ::core::option::Option<unsafe extern "system" fn(cbsize: u32, lpobject: *mut ::core::ffi::c_void, lppbuffer: *mut *mut ::core::ffi::c_void) -> i32>;
 pub type LPCREATECONVERSATIONINDEX = ::core::option::Option<unsafe extern "system" fn(cbparent: u32, lpbparent: *mut u8, lpcbconvindex: *mut u32, lppbconvindex: *mut *mut u8) -> i32>;
@@ -4955,16 +4955,16 @@ pub type LPFREEBUFFER = ::core::option::Option<unsafe extern "system" fn(lpbuffe
 pub type LPNOTIFCALLBACK = ::core::option::Option<unsafe extern "system" fn(lpvcontext: *mut ::core::ffi::c_void, cnotification: u32, lpnotifications: *mut NOTIFICATION) -> i32>;
 #[doc = "Required features: `\"Win32_System_Com\"`"]
 #[cfg(feature = "Win32_System_Com")]
-pub type LPOPENSTREAMONFILE = ::core::option::Option<unsafe extern "system" fn(lpallocatebuffer: LPALLOCATEBUFFER, lpfreebuffer: LPFREEBUFFER, ulflags: u32, lpszfilename: *const i8, lpszprefix: *const i8, lppstream: *mut ::core::option::Option<super::Com::IStream>) -> ::windows_core::HRESULT>;
-pub type LPWABALLOCATEBUFFER = ::core::option::Option<unsafe extern "system" fn(lpwabobject: ::core::option::Option<IWABObject>, cbsize: u32, lppbuffer: *mut *mut ::core::ffi::c_void) -> i32>;
-pub type LPWABALLOCATEMORE = ::core::option::Option<unsafe extern "system" fn(lpwabobject: ::core::option::Option<IWABObject>, cbsize: u32, lpobject: *mut ::core::ffi::c_void, lppbuffer: *mut *mut ::core::ffi::c_void) -> i32>;
-pub type LPWABFREEBUFFER = ::core::option::Option<unsafe extern "system" fn(lpwabobject: ::core::option::Option<IWABObject>, lpbuffer: *mut ::core::ffi::c_void) -> u32>;
+pub type LPOPENSTREAMONFILE = ::core::option::Option<unsafe extern "system" fn(lpallocatebuffer: LPALLOCATEBUFFER, lpfreebuffer: LPFREEBUFFER, ulflags: u32, lpszfilename: *const i8, lpszprefix: *const i8, lppstream: *mut *mut ::core::ffi::c_void) -> ::windows_core::HRESULT>;
+pub type LPWABALLOCATEBUFFER = ::core::option::Option<unsafe extern "system" fn(lpwabobject: *mut ::core::ffi::c_void, cbsize: u32, lppbuffer: *mut *mut ::core::ffi::c_void) -> i32>;
+pub type LPWABALLOCATEMORE = ::core::option::Option<unsafe extern "system" fn(lpwabobject: *mut ::core::ffi::c_void, cbsize: u32, lpobject: *mut ::core::ffi::c_void, lppbuffer: *mut *mut ::core::ffi::c_void) -> i32>;
+pub type LPWABFREEBUFFER = ::core::option::Option<unsafe extern "system" fn(lpwabobject: *mut ::core::ffi::c_void, lpbuffer: *mut ::core::ffi::c_void) -> u32>;
 #[doc = "Required features: `\"Win32_Foundation\"`"]
 #[cfg(feature = "Win32_Foundation")]
-pub type LPWABOPEN = ::core::option::Option<unsafe extern "system" fn(lppadrbook: *mut ::core::option::Option<IAddrBook>, lppwabobject: *mut ::core::option::Option<IWABObject>, lpwp: *mut WAB_PARAM, reserved2: u32) -> ::windows_core::HRESULT>;
+pub type LPWABOPEN = ::core::option::Option<unsafe extern "system" fn(lppadrbook: *mut *mut ::core::ffi::c_void, lppwabobject: *mut *mut ::core::ffi::c_void, lpwp: *mut WAB_PARAM, reserved2: u32) -> ::windows_core::HRESULT>;
 #[doc = "Required features: `\"Win32_Foundation\"`"]
 #[cfg(feature = "Win32_Foundation")]
-pub type LPWABOPENEX = ::core::option::Option<unsafe extern "system" fn(lppadrbook: *mut ::core::option::Option<IAddrBook>, lppwabobject: *mut ::core::option::Option<IWABObject>, lpwp: *mut WAB_PARAM, reserved: u32, fnallocatebuffer: LPALLOCATEBUFFER, fnallocatemore: LPALLOCATEMORE, fnfreebuffer: LPFREEBUFFER) -> ::windows_core::HRESULT>;
+pub type LPWABOPENEX = ::core::option::Option<unsafe extern "system" fn(lppadrbook: *mut *mut ::core::ffi::c_void, lppwabobject: *mut *mut ::core::ffi::c_void, lpwp: *mut WAB_PARAM, reserved: u32, fnallocatebuffer: LPALLOCATEBUFFER, fnallocatemore: LPALLOCATEMORE, fnfreebuffer: LPFREEBUFFER) -> ::windows_core::HRESULT>;
 #[doc = "Required features: `\"Win32_Foundation\"`"]
 #[cfg(feature = "Win32_Foundation")]
 pub type PFNIDLE = ::core::option::Option<unsafe extern "system" fn(param0: *mut ::core::ffi::c_void) -> super::super::Foundation::BOOL>;

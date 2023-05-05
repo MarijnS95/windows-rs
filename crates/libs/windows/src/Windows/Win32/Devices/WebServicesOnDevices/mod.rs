@@ -4587,7 +4587,7 @@ impl ::core::default::Default for WSD_URI_LIST {
         unsafe { ::core::mem::zeroed() }
     }
 }
-pub type PWSD_SOAP_MESSAGE_HANDLER = ::core::option::Option<unsafe extern "system" fn(thisunknown: ::core::option::Option<::windows_core::IUnknown>, event: *mut WSD_EVENT) -> ::windows_core::HRESULT>;
-pub type WSD_STUB_FUNCTION = ::core::option::Option<unsafe extern "system" fn(server: ::core::option::Option<::windows_core::IUnknown>, session: ::core::option::Option<IWSDServiceMessaging>, event: *mut WSD_EVENT) -> ::windows_core::HRESULT>;
+pub type PWSD_SOAP_MESSAGE_HANDLER = ::core::option::Option<unsafe extern "system" fn(thisunknown: *mut ::core::ffi::c_void, event: *mut WSD_EVENT) -> ::windows_core::HRESULT>;
+pub type WSD_STUB_FUNCTION = ::core::option::Option<unsafe extern "system" fn(server: *mut ::core::ffi::c_void, session: *mut ::core::ffi::c_void, event: *mut WSD_EVENT) -> ::windows_core::HRESULT>;
 #[cfg(feature = "implement")]
 ::core::include!("impl.rs");

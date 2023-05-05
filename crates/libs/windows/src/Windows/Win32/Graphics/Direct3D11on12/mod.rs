@@ -222,6 +222,6 @@ impl ::core::default::Default for D3D11_RESOURCE_FLAGS {
 }
 #[doc = "Required features: `\"Win32_Graphics_Direct3D\"`, `\"Win32_Graphics_Direct3D11\"`"]
 #[cfg(all(feature = "Win32_Graphics_Direct3D", feature = "Win32_Graphics_Direct3D11"))]
-pub type PFN_D3D11ON12_CREATE_DEVICE = ::core::option::Option<unsafe extern "system" fn(param0: ::core::option::Option<::windows_core::IUnknown>, param1: u32, param2: *const super::Direct3D::D3D_FEATURE_LEVEL, featurelevels: u32, param4: *const ::core::option::Option<::windows_core::IUnknown>, numqueues: u32, param6: u32, param7: *mut ::core::option::Option<super::Direct3D11::ID3D11Device>, param8: *mut ::core::option::Option<super::Direct3D11::ID3D11DeviceContext>, param9: *mut super::Direct3D::D3D_FEATURE_LEVEL) -> ::windows_core::HRESULT>;
+pub type PFN_D3D11ON12_CREATE_DEVICE = ::core::option::Option<unsafe extern "system" fn(param0: *mut ::core::ffi::c_void, param1: u32, param2: *const super::Direct3D::D3D_FEATURE_LEVEL, featurelevels: u32, param4: *const *mut ::core::ffi::c_void, numqueues: u32, param6: u32, param7: *mut *mut ::core::ffi::c_void, param8: *mut *mut ::core::ffi::c_void, param9: *mut super::Direct3D::D3D_FEATURE_LEVEL) -> ::windows_core::HRESULT>;
 #[cfg(feature = "implement")]
 ::core::include!("impl.rs");

@@ -10173,7 +10173,7 @@ impl ::core::default::Default for TEXTRANGEW {
 pub type AutoCorrectProc = ::core::option::Option<unsafe extern "system" fn(langid: u16, pszbefore: ::windows_core::PCWSTR, pszafter: ::windows_core::PCWSTR, cchafter: i32, pcchreplaced: *mut i32) -> i32>;
 pub type EDITSTREAMCALLBACK = ::core::option::Option<unsafe extern "system" fn(dwcookie: usize, pbbuff: *mut u8, cb: i32, pcb: *mut i32) -> u32>;
 pub type EDITWORDBREAKPROCEX = ::core::option::Option<unsafe extern "system" fn(pchtext: ::windows_core::PCSTR, cchtext: i32, bcharset: u8, action: i32) -> i32>;
-pub type PCreateTextServices = ::core::option::Option<unsafe extern "system" fn(punkouter: ::core::option::Option<::windows_core::IUnknown>, pitexthost: ::core::option::Option<ITextHost>, ppunk: *mut ::core::option::Option<::windows_core::IUnknown>) -> ::windows_core::HRESULT>;
-pub type PShutdownTextServices = ::core::option::Option<unsafe extern "system" fn(ptextservices: ::core::option::Option<::windows_core::IUnknown>) -> ::windows_core::HRESULT>;
+pub type PCreateTextServices = ::core::option::Option<unsafe extern "system" fn(punkouter: *mut ::core::ffi::c_void, pitexthost: *mut ::core::ffi::c_void, ppunk: *mut *mut ::core::ffi::c_void) -> ::windows_core::HRESULT>;
+pub type PShutdownTextServices = ::core::option::Option<unsafe extern "system" fn(ptextservices: *mut ::core::ffi::c_void) -> ::windows_core::HRESULT>;
 #[cfg(feature = "implement")]
 ::core::include!("impl.rs");
