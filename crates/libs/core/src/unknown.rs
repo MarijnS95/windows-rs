@@ -25,11 +25,22 @@ unsafe impl ComInterface for IUnknown {
 
 impl Clone for IUnknown {
     fn clone(&self) -> Self {
-        unsafe {
-            (self.vtable().AddRef)(std::mem::transmute_copy(self));
-        }
+        self.add_ref().0
+    }
+}
 
-        Self(self.0)
+impl IUnknown {
+    /// Clone self and return the new refcount
+    pub fn add_ref(&self) -> (Self, u32) {
+        let c = unsafe { (self.vtable().AddRef)(std::mem::transmute_copy(self)) };
+
+        (Self(self.0), c)
+    }
+
+    /// Release self, and return the remaining refcount
+    pub fn release(self) -> u32 {
+        let intf = std::mem::ManuallyDrop::new(self);
+        unsafe { (intf.vtable().Release)(std::mem::transmute_copy(&intf)) }
     }
 }
 
