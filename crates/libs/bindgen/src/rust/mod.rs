@@ -273,7 +273,7 @@ fn expand_generics(generics: TokenStream, new: TokenStream) -> TokenStream {
     }
 }
 
-/// Expand a possibly emppty where clause with a new generic constraint
+/// Expand a possibly empty where clause with a new generic constraint
 fn expand_where_clause(where_clause: TokenStream, generic: TokenStream) -> TokenStream {
     if where_clause.is_empty() {
         quote!(where #generic)

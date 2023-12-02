@@ -18,6 +18,10 @@ fn gen_callback(writer: &Writer, def: TypeDef) -> TokenStream {
     let cfg = type_def_cfg(def, &[]);
     let doc = writer.cfg_doc(&cfg);
     let features = writer.cfg_features(&cfg);
+    let generics = writer.constraint_generics(&signature.params);
+    let where_clause = writer.where_clause(&signature.params);
+    let generics = expand_generics(generics, quote!(T));
+    let where_clause = expand_where_clause(where_clause, quote!(T: ::windows::core::ComInterface));
 
     let params = signature.params.iter().map(|p| {
         let name = writer.param_name(p.def);
@@ -25,10 +29,40 @@ fn gen_callback(writer: &Writer, def: TypeDef) -> TokenStream {
         quote! { #name: #tokens }
     });
 
+    let helper_fn = (!writer.sys).then(|| match signature.kind() {
+        kind @ SignatureKind::Query(_) => {
+            let args = writer.win32_args(&signature.params, kind);
+            let params = writer.win32_params(&signature.params, kind);
+
+            quote! {
+                #doc
+                #features
+                pub unsafe fn #name<#generics>(func: &#name, #params) -> ::windows::core::Result<T> #where_clause {
+                    let mut result__ = ::std::ptr::null_mut();
+                    (func.unwrap())(#args).from_abi(result__)
+                }
+            }
+        }
+        kind @ SignatureKind::QueryOptional(_) => {
+            let args = writer.win32_args(&signature.params, kind);
+            let params = writer.win32_params(&signature.params, kind);
+
+            quote! {
+                #doc
+                #features
+                pub unsafe fn #name<#generics>(func: &#name, #params result__: *mut ::core::option::Option<T>) -> ::windows::core::Result<()> #where_clause {
+                    (func.unwrap())(#args).ok()
+                }
+            }
+        }
+        _ => quote!(),
+    });
+
     quote! {
         #doc
         #features
         pub type #name = ::core::option::Option<unsafe extern "system" fn(#(#params),*) #return_type>;
+        #helper_fn
     }
 }
 
