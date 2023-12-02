@@ -395,7 +395,9 @@ impl IDxcCompiler3 {
                     .as_deref()
                     .map_or(::core::ptr::null(), |slice| slice.as_ptr()),
             ),
-            parguments.as_deref().map_or(0, |slice| slice.len() as _),
+            parguments
+                .as_deref()
+                .map_or(0, |slice| slice.len().try_into().unwrap()),
             pincludehandler.into_param().abi(),
             &<T as ::windows_core::ComInterface>::IID,
             &mut result__,
