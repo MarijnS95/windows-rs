@@ -3836,8 +3836,8 @@ pub const AdminReadWriteAc: CARD_FILE_ACCESS_CONDITION = CARD_FILE_ACCESS_CONDIT
 pub const AdministratorPin: SECRET_PURPOSE = SECRET_PURPOSE(4i32);
 pub const AlphaNumericPinType: SECRET_TYPE = SECRET_TYPE(0i32);
 pub const AuthenticationPin: SECRET_PURPOSE = SECRET_PURPOSE(0i32);
-pub const BASIC_CONSTRAINTS_CERT_CHAIN_POLICY_CA_FLAG: u32 = 2147483648u32;
-pub const BASIC_CONSTRAINTS_CERT_CHAIN_POLICY_END_ENTITY_FLAG: u32 = 1073741824u32;
+pub const BASIC_CONSTRAINTS_CERT_CHAIN_POLICY_CA_FLAG: CERT_CHAIN_POLICY_FLAGS = CERT_CHAIN_POLICY_FLAGS(2147483648u32);
+pub const BASIC_CONSTRAINTS_CERT_CHAIN_POLICY_END_ENTITY_FLAG: CERT_CHAIN_POLICY_FLAGS = CERT_CHAIN_POLICY_FLAGS(1073741824u32);
 pub const BCRYPTBUFFER_VERSION: u32 = 0u32;
 pub const BCRYPT_3DES_112_ALGORITHM: windows_core::PCWSTR = windows_core::w!("3DES_112");
 pub const BCRYPT_3DES_112_CBC_ALG_HANDLE: BCRYPT_ALG_HANDLE = BCRYPT_ALG_HANDLE(369u32 as _);
@@ -4416,7 +4416,7 @@ pub const CERT_CHAIN_POLICY_IGNORE_NOT_TIME_NESTED_FLAG: CERT_CHAIN_POLICY_FLAGS
 pub const CERT_CHAIN_POLICY_IGNORE_NOT_TIME_VALID_FLAG: CERT_CHAIN_POLICY_FLAGS = CERT_CHAIN_POLICY_FLAGS(1u32);
 pub const CERT_CHAIN_POLICY_IGNORE_PEER_TRUST_FLAG: CERT_CHAIN_POLICY_FLAGS = CERT_CHAIN_POLICY_FLAGS(4096u32);
 pub const CERT_CHAIN_POLICY_IGNORE_ROOT_REV_UNKNOWN_FLAG: CERT_CHAIN_POLICY_FLAGS = CERT_CHAIN_POLICY_FLAGS(2048u32);
-pub const CERT_CHAIN_POLICY_IGNORE_WEAK_SIGNATURE_FLAG: u32 = 134217728u32;
+pub const CERT_CHAIN_POLICY_IGNORE_WEAK_SIGNATURE_FLAG: CERT_CHAIN_POLICY_FLAGS = CERT_CHAIN_POLICY_FLAGS(134217728u32);
 pub const CERT_CHAIN_POLICY_IGNORE_WRONG_USAGE_FLAG: CERT_CHAIN_POLICY_FLAGS = CERT_CHAIN_POLICY_FLAGS(32u32);
 pub const CERT_CHAIN_POLICY_MICROSOFT_ROOT: windows_core::PCSTR = windows_core::PCSTR(7i32 as _);
 pub const CERT_CHAIN_POLICY_NT_AUTH: windows_core::PCSTR = windows_core::PCSTR(6i32 as _);
@@ -6070,9 +6070,9 @@ pub const LEGACY_RSAPUBLIC_BLOB: windows_core::PCWSTR = windows_core::w!("CAPIPU
 pub const MAXUIDLEN: u32 = 64u32;
 pub const MAX_CONTAINER_NAME_LEN: u32 = 39u32;
 pub const MAX_PINS: u32 = 8u32;
-pub const MICROSOFT_ROOT_CERT_CHAIN_POLICY_CHECK_APPLICATION_ROOT_FLAG: u32 = 131072u32;
-pub const MICROSOFT_ROOT_CERT_CHAIN_POLICY_DISABLE_FLIGHT_ROOT_FLAG: u32 = 262144u32;
-pub const MICROSOFT_ROOT_CERT_CHAIN_POLICY_ENABLE_TEST_ROOT_FLAG: u32 = 65536u32;
+pub const MICROSOFT_ROOT_CERT_CHAIN_POLICY_CHECK_APPLICATION_ROOT_FLAG: CERT_CHAIN_POLICY_FLAGS = CERT_CHAIN_POLICY_FLAGS(131072u32);
+pub const MICROSOFT_ROOT_CERT_CHAIN_POLICY_DISABLE_FLIGHT_ROOT_FLAG: CERT_CHAIN_POLICY_FLAGS = CERT_CHAIN_POLICY_FLAGS(262144u32);
+pub const MICROSOFT_ROOT_CERT_CHAIN_POLICY_ENABLE_TEST_ROOT_FLAG: CERT_CHAIN_POLICY_FLAGS = CERT_CHAIN_POLICY_FLAGS(65536u32);
 pub const MSCRYPT_ECC_MAX_CURVE_NAME_LENGTH: u32 = 255u32;
 pub const MSCRYPT_ECC_MAX_OID_LENGTH: u32 = 255u32;
 pub const MS_DEF_DH_SCHANNEL_PROV: windows_core::PCWSTR = windows_core::w!("Microsoft DH SChannel Cryptographic Provider");
@@ -7810,6 +7810,39 @@ impl windows_core::TypeKind for CERT_CHAIN_POLICY_FLAGS {
 impl core::fmt::Debug for CERT_CHAIN_POLICY_FLAGS {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_tuple("CERT_CHAIN_POLICY_FLAGS").field(&self.0).finish()
+    }
+}
+impl CERT_CHAIN_POLICY_FLAGS {
+    pub const fn contains(&self, other: Self) -> bool {
+        self.0 & other.0 == other.0
+    }
+}
+impl core::ops::BitOr for CERT_CHAIN_POLICY_FLAGS {
+    type Output = Self;
+    fn bitor(self, other: Self) -> Self {
+        Self(self.0 | other.0)
+    }
+}
+impl core::ops::BitAnd for CERT_CHAIN_POLICY_FLAGS {
+    type Output = Self;
+    fn bitand(self, other: Self) -> Self {
+        Self(self.0 & other.0)
+    }
+}
+impl core::ops::BitOrAssign for CERT_CHAIN_POLICY_FLAGS {
+    fn bitor_assign(&mut self, other: Self) {
+        self.0.bitor_assign(other.0)
+    }
+}
+impl core::ops::BitAndAssign for CERT_CHAIN_POLICY_FLAGS {
+    fn bitand_assign(&mut self, other: Self) {
+        self.0.bitand_assign(other.0)
+    }
+}
+impl core::ops::Not for CERT_CHAIN_POLICY_FLAGS {
+    type Output = Self;
+    fn not(self) -> Self {
+        Self(self.0.not())
     }
 }
 #[repr(transparent)]

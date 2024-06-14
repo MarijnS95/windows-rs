@@ -176,6 +176,28 @@ impl ID3D12CommandSignature_Vtbl {
         iid == &<ID3D12CommandSignature as windows_core::Interface>::IID || iid == &<ID3D12Object as windows_core::Interface>::IID || iid == &<ID3D12DeviceChild as windows_core::Interface>::IID || iid == &<ID3D12Pageable as windows_core::Interface>::IID
     }
 }
+pub trait ID3D12DSRDeviceFactory_Impl: Sized {
+    fn CreateDSRDevice(&self, pd3d12device: Option<&ID3D12Device>, nodemask: u32, riid: *const windows_core::GUID, ppvdsrdevice: *mut *mut core::ffi::c_void) -> windows_core::Result<()>;
+}
+impl windows_core::RuntimeName for ID3D12DSRDeviceFactory {}
+impl ID3D12DSRDeviceFactory_Vtbl {
+    pub const fn new<Identity: windows_core::IUnknownImpl, const OFFSET: isize>() -> ID3D12DSRDeviceFactory_Vtbl
+    where
+        Identity: ID3D12DSRDeviceFactory_Impl,
+    {
+        unsafe extern "system" fn CreateDSRDevice<Identity: windows_core::IUnknownImpl, const OFFSET: isize>(this: *mut core::ffi::c_void, pd3d12device: *mut core::ffi::c_void, nodemask: u32, riid: *const windows_core::GUID, ppvdsrdevice: *mut *mut core::ffi::c_void) -> windows_core::HRESULT
+        where
+            Identity: ID3D12DSRDeviceFactory_Impl,
+        {
+            let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+            ID3D12DSRDeviceFactory_Impl::CreateDSRDevice(this, windows_core::from_raw_borrowed(&pd3d12device), core::mem::transmute_copy(&nodemask), core::mem::transmute_copy(&riid), core::mem::transmute_copy(&ppvdsrdevice)).into()
+        }
+        Self { base__: windows_core::IUnknown_Vtbl::new::<Identity, OFFSET>(), CreateDSRDevice: CreateDSRDevice::<Identity, OFFSET> }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<ID3D12DSRDeviceFactory as windows_core::Interface>::IID
+    }
+}
 pub trait ID3D12Debug_Impl: Sized {
     fn EnableDebugLayer(&self);
 }
@@ -5249,5 +5271,158 @@ impl ID3D12WorkGraphProperties_Vtbl {
     }
     pub fn matches(iid: &windows_core::GUID) -> bool {
         iid == &<ID3D12WorkGraphProperties as windows_core::Interface>::IID
+    }
+}
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+pub trait IDSRDevice_Impl: Sized {
+    fn GetNumSuperResVariants(&self) -> u32;
+    fn GetSuperResVariantDesc(&self, variantindex: u32) -> windows_core::Result<DSR_SUPERRES_VARIANT_DESC>;
+    fn QuerySuperResSourceSettings(&self, variantindex: u32, targetsize: &DSR_SIZE, targetformat: super::Dxgi::Common::DXGI_FORMAT, optimizationtype: DSR_OPTIMIZATION_TYPE, createflags: DSR_SUPERRES_CREATE_ENGINE_FLAGS) -> windows_core::Result<DSR_SUPERRES_SOURCE_SETTINGS>;
+    fn CreateSuperResEngine(&self, pcreateparams: *const DSR_SUPERRES_CREATE_ENGINE_PARAMETERS, iid: *const windows_core::GUID, ppengine: *mut *mut core::ffi::c_void) -> windows_core::Result<()>;
+}
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+impl windows_core::RuntimeName for IDSRDevice {}
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+impl IDSRDevice_Vtbl {
+    pub const fn new<Identity: windows_core::IUnknownImpl, const OFFSET: isize>() -> IDSRDevice_Vtbl
+    where
+        Identity: IDSRDevice_Impl,
+    {
+        unsafe extern "system" fn GetNumSuperResVariants<Identity: windows_core::IUnknownImpl, const OFFSET: isize>(this: *mut core::ffi::c_void) -> u32
+        where
+            Identity: IDSRDevice_Impl,
+        {
+            let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+            IDSRDevice_Impl::GetNumSuperResVariants(this)
+        }
+        unsafe extern "system" fn GetSuperResVariantDesc<Identity: windows_core::IUnknownImpl, const OFFSET: isize>(this: *mut core::ffi::c_void, variantindex: u32, pvariantdesc: *mut DSR_SUPERRES_VARIANT_DESC) -> windows_core::HRESULT
+        where
+            Identity: IDSRDevice_Impl,
+        {
+            let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+            match IDSRDevice_Impl::GetSuperResVariantDesc(this, core::mem::transmute_copy(&variantindex)) {
+                Ok(ok__) => {
+                    pvariantdesc.write(core::mem::transmute(ok__));
+                    windows_core::HRESULT(0)
+                }
+                Err(err) => err.into(),
+            }
+        }
+        unsafe extern "system" fn QuerySuperResSourceSettings<Identity: windows_core::IUnknownImpl, const OFFSET: isize>(this: *mut core::ffi::c_void, variantindex: u32, targetsize: DSR_SIZE, targetformat: super::Dxgi::Common::DXGI_FORMAT, optimizationtype: DSR_OPTIMIZATION_TYPE, createflags: DSR_SUPERRES_CREATE_ENGINE_FLAGS, psourcesettings: *mut DSR_SUPERRES_SOURCE_SETTINGS) -> windows_core::HRESULT
+        where
+            Identity: IDSRDevice_Impl,
+        {
+            let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+            match IDSRDevice_Impl::QuerySuperResSourceSettings(this, core::mem::transmute_copy(&variantindex), core::mem::transmute(&targetsize), core::mem::transmute_copy(&targetformat), core::mem::transmute_copy(&optimizationtype), core::mem::transmute_copy(&createflags)) {
+                Ok(ok__) => {
+                    psourcesettings.write(core::mem::transmute(ok__));
+                    windows_core::HRESULT(0)
+                }
+                Err(err) => err.into(),
+            }
+        }
+        unsafe extern "system" fn CreateSuperResEngine<Identity: windows_core::IUnknownImpl, const OFFSET: isize>(this: *mut core::ffi::c_void, pcreateparams: *const DSR_SUPERRES_CREATE_ENGINE_PARAMETERS, iid: *const windows_core::GUID, ppengine: *mut *mut core::ffi::c_void) -> windows_core::HRESULT
+        where
+            Identity: IDSRDevice_Impl,
+        {
+            let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+            IDSRDevice_Impl::CreateSuperResEngine(this, core::mem::transmute_copy(&pcreateparams), core::mem::transmute_copy(&iid), core::mem::transmute_copy(&ppengine)).into()
+        }
+        Self {
+            base__: windows_core::IUnknown_Vtbl::new::<Identity, OFFSET>(),
+            GetNumSuperResVariants: GetNumSuperResVariants::<Identity, OFFSET>,
+            GetSuperResVariantDesc: GetSuperResVariantDesc::<Identity, OFFSET>,
+            QuerySuperResSourceSettings: QuerySuperResSourceSettings::<Identity, OFFSET>,
+            CreateSuperResEngine: CreateSuperResEngine::<Identity, OFFSET>,
+        }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<IDSRDevice as windows_core::Interface>::IID
+    }
+}
+pub trait IDSRSuperResEngine_Impl: Sized {
+    fn GetOptimalJitterPattern(&self, sourcesize: &DSR_SIZE, targetsize: &DSR_SIZE, psize: *mut u32, ppattern: *mut DSR_FLOAT2) -> windows_core::Result<()>;
+    fn CreateUpscaler(&self, pcommandqueue: Option<&ID3D12CommandQueue>, __midl__idsrsuperresengine0000: *const windows_core::GUID, ppupscaler: *mut *mut core::ffi::c_void) -> windows_core::Result<()>;
+    fn GetDevice(&self) -> Option<IDSRDevice>;
+}
+impl windows_core::RuntimeName for IDSRSuperResEngine {}
+impl IDSRSuperResEngine_Vtbl {
+    pub const fn new<Identity: windows_core::IUnknownImpl, const OFFSET: isize>() -> IDSRSuperResEngine_Vtbl
+    where
+        Identity: IDSRSuperResEngine_Impl,
+    {
+        unsafe extern "system" fn GetOptimalJitterPattern<Identity: windows_core::IUnknownImpl, const OFFSET: isize>(this: *mut core::ffi::c_void, sourcesize: DSR_SIZE, targetsize: DSR_SIZE, psize: *mut u32, ppattern: *mut DSR_FLOAT2) -> windows_core::HRESULT
+        where
+            Identity: IDSRSuperResEngine_Impl,
+        {
+            let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+            IDSRSuperResEngine_Impl::GetOptimalJitterPattern(this, core::mem::transmute(&sourcesize), core::mem::transmute(&targetsize), core::mem::transmute_copy(&psize), core::mem::transmute_copy(&ppattern)).into()
+        }
+        unsafe extern "system" fn CreateUpscaler<Identity: windows_core::IUnknownImpl, const OFFSET: isize>(this: *mut core::ffi::c_void, pcommandqueue: *mut core::ffi::c_void, __midl__idsrsuperresengine0000: *const windows_core::GUID, ppupscaler: *mut *mut core::ffi::c_void) -> windows_core::HRESULT
+        where
+            Identity: IDSRSuperResEngine_Impl,
+        {
+            let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+            IDSRSuperResEngine_Impl::CreateUpscaler(this, windows_core::from_raw_borrowed(&pcommandqueue), core::mem::transmute_copy(&__midl__idsrsuperresengine0000), core::mem::transmute_copy(&ppupscaler)).into()
+        }
+        unsafe extern "system" fn GetDevice<Identity: windows_core::IUnknownImpl, const OFFSET: isize>(this: *mut core::ffi::c_void) -> Option<IDSRDevice>
+        where
+            Identity: IDSRSuperResEngine_Impl,
+        {
+            let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+            IDSRSuperResEngine_Impl::GetDevice(this)
+        }
+        Self {
+            base__: windows_core::IUnknown_Vtbl::new::<Identity, OFFSET>(),
+            GetOptimalJitterPattern: GetOptimalJitterPattern::<Identity, OFFSET>,
+            CreateUpscaler: CreateUpscaler::<Identity, OFFSET>,
+            GetDevice: GetDevice::<Identity, OFFSET>,
+        }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<IDSRSuperResEngine as windows_core::Interface>::IID
+    }
+}
+pub trait IDSRSuperResUpscaler_Impl: Sized {
+    fn Execute(&self, pexecuteparams: *const DSR_SUPERRES_UPSCALER_EXECUTE_PARAMETERS, timedeltainseconds: f32, flags: DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS) -> windows_core::Result<()>;
+    fn Evict(&self) -> windows_core::Result<()>;
+    fn MakeResident(&self) -> windows_core::Result<()>;
+}
+impl windows_core::RuntimeName for IDSRSuperResUpscaler {}
+impl IDSRSuperResUpscaler_Vtbl {
+    pub const fn new<Identity: windows_core::IUnknownImpl, const OFFSET: isize>() -> IDSRSuperResUpscaler_Vtbl
+    where
+        Identity: IDSRSuperResUpscaler_Impl,
+    {
+        unsafe extern "system" fn Execute<Identity: windows_core::IUnknownImpl, const OFFSET: isize>(this: *mut core::ffi::c_void, pexecuteparams: *const DSR_SUPERRES_UPSCALER_EXECUTE_PARAMETERS, timedeltainseconds: f32, flags: DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS) -> windows_core::HRESULT
+        where
+            Identity: IDSRSuperResUpscaler_Impl,
+        {
+            let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+            IDSRSuperResUpscaler_Impl::Execute(this, core::mem::transmute_copy(&pexecuteparams), core::mem::transmute_copy(&timedeltainseconds), core::mem::transmute_copy(&flags)).into()
+        }
+        unsafe extern "system" fn Evict<Identity: windows_core::IUnknownImpl, const OFFSET: isize>(this: *mut core::ffi::c_void) -> windows_core::HRESULT
+        where
+            Identity: IDSRSuperResUpscaler_Impl,
+        {
+            let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+            IDSRSuperResUpscaler_Impl::Evict(this).into()
+        }
+        unsafe extern "system" fn MakeResident<Identity: windows_core::IUnknownImpl, const OFFSET: isize>(this: *mut core::ffi::c_void) -> windows_core::HRESULT
+        where
+            Identity: IDSRSuperResUpscaler_Impl,
+        {
+            let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+            IDSRSuperResUpscaler_Impl::MakeResident(this).into()
+        }
+        Self {
+            base__: windows_core::IUnknown_Vtbl::new::<Identity, OFFSET>(),
+            Execute: Execute::<Identity, OFFSET>,
+            Evict: Evict::<Identity, OFFSET>,
+            MakeResident: MakeResident::<Identity, OFFSET>,
+        }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<IDSRSuperResUpscaler as windows_core::Interface>::IID
     }
 }

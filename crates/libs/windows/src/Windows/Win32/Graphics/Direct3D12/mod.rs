@@ -195,6 +195,31 @@ unsafe impl Sync for ID3D12CommandSignature {}
 pub struct ID3D12CommandSignature_Vtbl {
     pub base__: ID3D12Pageable_Vtbl,
 }
+windows_core::imp::define_interface!(ID3D12DSRDeviceFactory, ID3D12DSRDeviceFactory_Vtbl, 0xf343d1a0_afe3_439f_b13d_cd87a43b70ca);
+impl core::ops::Deref for ID3D12DSRDeviceFactory {
+    type Target = windows_core::IUnknown;
+    fn deref(&self) -> &Self::Target {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+windows_core::imp::interface_hierarchy!(ID3D12DSRDeviceFactory, windows_core::IUnknown);
+impl ID3D12DSRDeviceFactory {
+    pub unsafe fn CreateDSRDevice<P0, T>(&self, pd3d12device: P0, nodemask: u32) -> windows_core::Result<T>
+    where
+        P0: windows_core::Param<ID3D12Device>,
+        T: windows_core::Interface,
+    {
+        let mut result__ = core::ptr::null_mut();
+        (windows_core::Interface::vtable(self).CreateDSRDevice)(windows_core::Interface::as_raw(self), pd3d12device.param().abi(), nodemask, &T::IID, &mut result__).and_then(|| windows_core::Type::from_abi(result__))
+    }
+}
+unsafe impl Send for ID3D12DSRDeviceFactory {}
+unsafe impl Sync for ID3D12DSRDeviceFactory {}
+#[repr(C)]
+pub struct ID3D12DSRDeviceFactory_Vtbl {
+    pub base__: windows_core::IUnknown_Vtbl,
+    pub CreateDSRDevice: unsafe extern "system" fn(*mut core::ffi::c_void, *mut core::ffi::c_void, u32, *const windows_core::GUID, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+}
 windows_core::imp::define_interface!(ID3D12Debug, ID3D12Debug_Vtbl, 0x344488b7_6846_474b_b989_f027448245e0);
 impl core::ops::Deref for ID3D12Debug {
     type Target = windows_core::IUnknown;
@@ -3958,6 +3983,111 @@ pub struct ID3D12WorkGraphProperties_Vtbl {
     pub GetWorkGraphMemoryRequirements: unsafe extern "system" fn(*mut core::ffi::c_void, u32, *mut D3D12_WORK_GRAPH_MEMORY_REQUIREMENTS),
     pub GetEntrypointRecordAlignmentInBytes: unsafe extern "system" fn(*mut core::ffi::c_void, u32, u32) -> u32,
 }
+windows_core::imp::define_interface!(IDSRDevice, IDSRDevice_Vtbl, 0x994659a7_31ad_4912_9414_159f16630306);
+impl core::ops::Deref for IDSRDevice {
+    type Target = windows_core::IUnknown;
+    fn deref(&self) -> &Self::Target {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+windows_core::imp::interface_hierarchy!(IDSRDevice, windows_core::IUnknown);
+impl IDSRDevice {
+    pub unsafe fn GetNumSuperResVariants(&self) -> u32 {
+        (windows_core::Interface::vtable(self).GetNumSuperResVariants)(windows_core::Interface::as_raw(self))
+    }
+    #[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+    pub unsafe fn GetSuperResVariantDesc(&self, variantindex: u32) -> windows_core::Result<DSR_SUPERRES_VARIANT_DESC> {
+        let mut result__ = core::mem::zeroed();
+        (windows_core::Interface::vtable(self).GetSuperResVariantDesc)(windows_core::Interface::as_raw(self), variantindex, &mut result__).map(|| result__)
+    }
+    #[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+    pub unsafe fn QuerySuperResSourceSettings(&self, variantindex: u32, targetsize: DSR_SIZE, targetformat: super::Dxgi::Common::DXGI_FORMAT, optimizationtype: DSR_OPTIMIZATION_TYPE, createflags: DSR_SUPERRES_CREATE_ENGINE_FLAGS) -> windows_core::Result<DSR_SUPERRES_SOURCE_SETTINGS> {
+        let mut result__ = core::mem::zeroed();
+        (windows_core::Interface::vtable(self).QuerySuperResSourceSettings)(windows_core::Interface::as_raw(self), variantindex, core::mem::transmute(targetsize), targetformat, optimizationtype, createflags, &mut result__).map(|| result__)
+    }
+    #[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+    pub unsafe fn CreateSuperResEngine<T>(&self, pcreateparams: *const DSR_SUPERRES_CREATE_ENGINE_PARAMETERS, result__: *mut Option<T>) -> windows_core::Result<()>
+    where
+        T: windows_core::Interface,
+    {
+        (windows_core::Interface::vtable(self).CreateSuperResEngine)(windows_core::Interface::as_raw(self), pcreateparams, &T::IID, result__ as *mut _ as *mut _).ok()
+    }
+}
+#[repr(C)]
+pub struct IDSRDevice_Vtbl {
+    pub base__: windows_core::IUnknown_Vtbl,
+    pub GetNumSuperResVariants: unsafe extern "system" fn(*mut core::ffi::c_void) -> u32,
+    #[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+    pub GetSuperResVariantDesc: unsafe extern "system" fn(*mut core::ffi::c_void, u32, *mut DSR_SUPERRES_VARIANT_DESC) -> windows_core::HRESULT,
+    #[cfg(not(feature = "Win32_Graphics_Dxgi_Common"))]
+    GetSuperResVariantDesc: usize,
+    #[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+    pub QuerySuperResSourceSettings: unsafe extern "system" fn(*mut core::ffi::c_void, u32, DSR_SIZE, super::Dxgi::Common::DXGI_FORMAT, DSR_OPTIMIZATION_TYPE, DSR_SUPERRES_CREATE_ENGINE_FLAGS, *mut DSR_SUPERRES_SOURCE_SETTINGS) -> windows_core::HRESULT,
+    #[cfg(not(feature = "Win32_Graphics_Dxgi_Common"))]
+    QuerySuperResSourceSettings: usize,
+    #[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+    pub CreateSuperResEngine: unsafe extern "system" fn(*mut core::ffi::c_void, *const DSR_SUPERRES_CREATE_ENGINE_PARAMETERS, *const windows_core::GUID, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    #[cfg(not(feature = "Win32_Graphics_Dxgi_Common"))]
+    CreateSuperResEngine: usize,
+}
+windows_core::imp::define_interface!(IDSRSuperResEngine, IDSRSuperResEngine_Vtbl, 0x4bfd72e2_2767_4800_bcf4_cedc0d07ea5a);
+impl core::ops::Deref for IDSRSuperResEngine {
+    type Target = windows_core::IUnknown;
+    fn deref(&self) -> &Self::Target {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+windows_core::imp::interface_hierarchy!(IDSRSuperResEngine, windows_core::IUnknown);
+impl IDSRSuperResEngine {
+    pub unsafe fn GetOptimalJitterPattern(&self, sourcesize: DSR_SIZE, targetsize: DSR_SIZE, psize: *mut u32, ppattern: Option<*mut DSR_FLOAT2>) -> windows_core::Result<()> {
+        (windows_core::Interface::vtable(self).GetOptimalJitterPattern)(windows_core::Interface::as_raw(self), core::mem::transmute(sourcesize), core::mem::transmute(targetsize), psize, core::mem::transmute(ppattern.unwrap_or(std::ptr::null_mut()))).ok()
+    }
+    pub unsafe fn CreateUpscaler<P0, T>(&self, pcommandqueue: P0) -> windows_core::Result<T>
+    where
+        P0: windows_core::Param<ID3D12CommandQueue>,
+        T: windows_core::Interface,
+    {
+        let mut result__ = core::ptr::null_mut();
+        (windows_core::Interface::vtable(self).CreateUpscaler)(windows_core::Interface::as_raw(self), pcommandqueue.param().abi(), &T::IID, &mut result__).and_then(|| windows_core::Type::from_abi(result__))
+    }
+    pub unsafe fn GetDevice(&self) -> Option<IDSRDevice> {
+        (windows_core::Interface::vtable(self).GetDevice)(windows_core::Interface::as_raw(self))
+    }
+}
+#[repr(C)]
+pub struct IDSRSuperResEngine_Vtbl {
+    pub base__: windows_core::IUnknown_Vtbl,
+    pub GetOptimalJitterPattern: unsafe extern "system" fn(*mut core::ffi::c_void, DSR_SIZE, DSR_SIZE, *mut u32, *mut DSR_FLOAT2) -> windows_core::HRESULT,
+    pub CreateUpscaler: unsafe extern "system" fn(*mut core::ffi::c_void, *mut core::ffi::c_void, *const windows_core::GUID, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub GetDevice: unsafe extern "system" fn(*mut core::ffi::c_void) -> Option<IDSRDevice>,
+}
+windows_core::imp::define_interface!(IDSRSuperResUpscaler, IDSRSuperResUpscaler_Vtbl, 0x2adc388c_1b5a_4a87_9377_64822e489c12);
+impl core::ops::Deref for IDSRSuperResUpscaler {
+    type Target = windows_core::IUnknown;
+    fn deref(&self) -> &Self::Target {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+windows_core::imp::interface_hierarchy!(IDSRSuperResUpscaler, windows_core::IUnknown);
+impl IDSRSuperResUpscaler {
+    pub unsafe fn Execute(&self, pexecuteparams: *const DSR_SUPERRES_UPSCALER_EXECUTE_PARAMETERS, timedeltainseconds: f32, flags: DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS) -> windows_core::Result<()> {
+        (windows_core::Interface::vtable(self).Execute)(windows_core::Interface::as_raw(self), pexecuteparams, timedeltainseconds, flags).ok()
+    }
+    pub unsafe fn Evict(&self) -> windows_core::Result<()> {
+        (windows_core::Interface::vtable(self).Evict)(windows_core::Interface::as_raw(self)).ok()
+    }
+    pub unsafe fn MakeResident(&self) -> windows_core::Result<()> {
+        (windows_core::Interface::vtable(self).MakeResident)(windows_core::Interface::as_raw(self)).ok()
+    }
+}
+#[repr(C)]
+pub struct IDSRSuperResUpscaler_Vtbl {
+    pub base__: windows_core::IUnknown_Vtbl,
+    pub Execute: unsafe extern "system" fn(*mut core::ffi::c_void, *const DSR_SUPERRES_UPSCALER_EXECUTE_PARAMETERS, f32, DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS) -> windows_core::HRESULT,
+    pub Evict: unsafe extern "system" fn(*mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub MakeResident: unsafe extern "system" fn(*mut core::ffi::c_void) -> windows_core::HRESULT,
+}
+pub const CLSID_D3D12DSRDeviceFactory: windows_core::GUID = windows_core::GUID::from_u128(0xbb6dd27e_94a9_41a6_9f1b_133772172428);
 pub const CLSID_D3D12Debug: windows_core::GUID = windows_core::GUID::from_u128(0xf2352aeb_dd84_49fe_b97b_a9dcfdcc1b4f);
 pub const CLSID_D3D12DeviceFactory: windows_core::GUID = windows_core::GUID::from_u128(0x114863bf_c386_4aee_b39d_8f0bbb062955);
 pub const CLSID_D3D12DeviceRemovedExtendedData: windows_core::GUID = windows_core::GUID::from_u128(0x4a75bbc4_9ff4_4ad8_9f18_abae84dc5ff2);
@@ -6501,6 +6631,35 @@ pub const D3D_SHADER_REQUIRES_VIEW_ID: u32 = 65536u32;
 pub const D3D_SHADER_REQUIRES_WAVE_MMA: u32 = 134217728u32;
 pub const D3D_SHADER_REQUIRES_WAVE_OPS: u32 = 16384u32;
 pub const D3D_SHADER_REQUIRES_WRITEABLE_MSAA_TEXTURES: u32 = 1073741824u32;
+pub const DSR_EX_VERSION_1_0: DSR_EX_VERSION = DSR_EX_VERSION(1i32);
+pub const DSR_EX_VERSION_NONE: DSR_EX_VERSION = DSR_EX_VERSION(0i32);
+pub const DSR_NUM_OPTIMIZATION_TYPES: DSR_OPTIMIZATION_TYPE = DSR_OPTIMIZATION_TYPE(7i32);
+pub const DSR_OPTIMIZATION_TYPE_BALANCED: DSR_OPTIMIZATION_TYPE = DSR_OPTIMIZATION_TYPE(0i32);
+pub const DSR_OPTIMIZATION_TYPE_HIGH_PERFORMANCE: DSR_OPTIMIZATION_TYPE = DSR_OPTIMIZATION_TYPE(3i32);
+pub const DSR_OPTIMIZATION_TYPE_HIGH_QUALITY: DSR_OPTIMIZATION_TYPE = DSR_OPTIMIZATION_TYPE(1i32);
+pub const DSR_OPTIMIZATION_TYPE_MAX_PERFORMANCE: DSR_OPTIMIZATION_TYPE = DSR_OPTIMIZATION_TYPE(4i32);
+pub const DSR_OPTIMIZATION_TYPE_MAX_POWER_SAVING: DSR_OPTIMIZATION_TYPE = DSR_OPTIMIZATION_TYPE(6i32);
+pub const DSR_OPTIMIZATION_TYPE_MAX_QUALITY: DSR_OPTIMIZATION_TYPE = DSR_OPTIMIZATION_TYPE(2i32);
+pub const DSR_OPTIMIZATION_TYPE_POWER_SAVING: DSR_OPTIMIZATION_TYPE = DSR_OPTIMIZATION_TYPE(5i32);
+pub const DSR_SUPERRES_CREATE_ENGINE_FLAG_ALLOW_DRS: DSR_SUPERRES_CREATE_ENGINE_FLAGS = DSR_SUPERRES_CREATE_ENGINE_FLAGS(4i32);
+pub const DSR_SUPERRES_CREATE_ENGINE_FLAG_ALLOW_SUBRECT_OUTPUT: DSR_SUPERRES_CREATE_ENGINE_FLAGS = DSR_SUPERRES_CREATE_ENGINE_FLAGS(16i32);
+pub const DSR_SUPERRES_CREATE_ENGINE_FLAG_AUTO_EXPOSURE: DSR_SUPERRES_CREATE_ENGINE_FLAGS = DSR_SUPERRES_CREATE_ENGINE_FLAGS(2i32);
+pub const DSR_SUPERRES_CREATE_ENGINE_FLAG_ENABLE_SHARPENING: DSR_SUPERRES_CREATE_ENGINE_FLAGS = DSR_SUPERRES_CREATE_ENGINE_FLAGS(64i32);
+pub const DSR_SUPERRES_CREATE_ENGINE_FLAG_FORCE_LDR_COLORS: DSR_SUPERRES_CREATE_ENGINE_FLAGS = DSR_SUPERRES_CREATE_ENGINE_FLAGS(128i32);
+pub const DSR_SUPERRES_CREATE_ENGINE_FLAG_LINEAR_DEPTH: DSR_SUPERRES_CREATE_ENGINE_FLAGS = DSR_SUPERRES_CREATE_ENGINE_FLAGS(32i32);
+pub const DSR_SUPERRES_CREATE_ENGINE_FLAG_MOTION_VECTORS_USE_JITTER_OFFSETS: DSR_SUPERRES_CREATE_ENGINE_FLAGS = DSR_SUPERRES_CREATE_ENGINE_FLAGS(8i32);
+pub const DSR_SUPERRES_CREATE_ENGINE_FLAG_MOTION_VECTORS_USE_TARGET_DIMENSIONS: DSR_SUPERRES_CREATE_ENGINE_FLAGS = DSR_SUPERRES_CREATE_ENGINE_FLAGS(1i32);
+pub const DSR_SUPERRES_CREATE_ENGINE_FLAG_NONE: DSR_SUPERRES_CREATE_ENGINE_FLAGS = DSR_SUPERRES_CREATE_ENGINE_FLAGS(0i32);
+pub const DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS_VALID_MASK: DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS = DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS(1i32);
+pub const DSR_SUPERRES_UPSCALER_EXECUTE_FLAG_NONE: DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS = DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS(0i32);
+pub const DSR_SUPERRES_UPSCALER_EXECUTE_FLAG_RESET_HISTORY: DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS = DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS(1i32);
+pub const DSR_SUPERRES_VARIANT_FLAG_DISALLOWS_REGION_OFFSETS: DSR_SUPERRES_VARIANT_FLAGS = DSR_SUPERRES_VARIANT_FLAGS(32i32);
+pub const DSR_SUPERRES_VARIANT_FLAG_NATIVE: DSR_SUPERRES_VARIANT_FLAGS = DSR_SUPERRES_VARIANT_FLAGS(4i32);
+pub const DSR_SUPERRES_VARIANT_FLAG_NONE: DSR_SUPERRES_VARIANT_FLAGS = DSR_SUPERRES_VARIANT_FLAGS(0i32);
+pub const DSR_SUPERRES_VARIANT_FLAG_SUPPORTS_EXPOSURE_SCALE_TEXTURE: DSR_SUPERRES_VARIANT_FLAGS = DSR_SUPERRES_VARIANT_FLAGS(1i32);
+pub const DSR_SUPERRES_VARIANT_FLAG_SUPPORTS_IGNORE_HISTORY_MASK: DSR_SUPERRES_VARIANT_FLAGS = DSR_SUPERRES_VARIANT_FLAGS(2i32);
+pub const DSR_SUPERRES_VARIANT_FLAG_SUPPORTS_REACTIVE_MASK: DSR_SUPERRES_VARIANT_FLAGS = DSR_SUPERRES_VARIANT_FLAGS(8i32);
+pub const DSR_SUPERRES_VARIANT_FLAG_SUPPORTS_SHARPNESS: DSR_SUPERRES_VARIANT_FLAGS = DSR_SUPERRES_VARIANT_FLAGS(16i32);
 pub const DXGI_DEBUG_D3D12: windows_core::GUID = windows_core::GUID::from_u128(0xcf59a98c_a950_4326_91ef_9bbaa17bfd95);
 pub const LUID_DEFINED: u32 = 1u32;
 pub const NUM_D3D12_GPU_BASED_VALIDATION_SHADER_PATCH_MODES: D3D12_GPU_BASED_VALIDATION_SHADER_PATCH_MODE = D3D12_GPU_BASED_VALIDATION_SHADER_PATCH_MODE(4i32);
@@ -10309,6 +10468,160 @@ impl windows_core::TypeKind for D3D_SHADER_MODEL {
 impl core::fmt::Debug for D3D_SHADER_MODEL {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_tuple("D3D_SHADER_MODEL").field(&self.0).finish()
+    }
+}
+#[repr(transparent)]
+#[derive(PartialEq, Eq, Copy, Clone, Default)]
+pub struct DSR_EX_VERSION(pub i32);
+impl windows_core::TypeKind for DSR_EX_VERSION {
+    type TypeKind = windows_core::CopyType;
+}
+impl core::fmt::Debug for DSR_EX_VERSION {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_tuple("DSR_EX_VERSION").field(&self.0).finish()
+    }
+}
+#[repr(transparent)]
+#[derive(PartialEq, Eq, Copy, Clone, Default)]
+pub struct DSR_OPTIMIZATION_TYPE(pub i32);
+impl windows_core::TypeKind for DSR_OPTIMIZATION_TYPE {
+    type TypeKind = windows_core::CopyType;
+}
+impl core::fmt::Debug for DSR_OPTIMIZATION_TYPE {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_tuple("DSR_OPTIMIZATION_TYPE").field(&self.0).finish()
+    }
+}
+#[repr(transparent)]
+#[derive(PartialEq, Eq, Copy, Clone, Default)]
+pub struct DSR_SUPERRES_CREATE_ENGINE_FLAGS(pub i32);
+impl windows_core::TypeKind for DSR_SUPERRES_CREATE_ENGINE_FLAGS {
+    type TypeKind = windows_core::CopyType;
+}
+impl core::fmt::Debug for DSR_SUPERRES_CREATE_ENGINE_FLAGS {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_tuple("DSR_SUPERRES_CREATE_ENGINE_FLAGS").field(&self.0).finish()
+    }
+}
+impl DSR_SUPERRES_CREATE_ENGINE_FLAGS {
+    pub const fn contains(&self, other: Self) -> bool {
+        self.0 & other.0 == other.0
+    }
+}
+impl core::ops::BitOr for DSR_SUPERRES_CREATE_ENGINE_FLAGS {
+    type Output = Self;
+    fn bitor(self, other: Self) -> Self {
+        Self(self.0 | other.0)
+    }
+}
+impl core::ops::BitAnd for DSR_SUPERRES_CREATE_ENGINE_FLAGS {
+    type Output = Self;
+    fn bitand(self, other: Self) -> Self {
+        Self(self.0 & other.0)
+    }
+}
+impl core::ops::BitOrAssign for DSR_SUPERRES_CREATE_ENGINE_FLAGS {
+    fn bitor_assign(&mut self, other: Self) {
+        self.0.bitor_assign(other.0)
+    }
+}
+impl core::ops::BitAndAssign for DSR_SUPERRES_CREATE_ENGINE_FLAGS {
+    fn bitand_assign(&mut self, other: Self) {
+        self.0.bitand_assign(other.0)
+    }
+}
+impl core::ops::Not for DSR_SUPERRES_CREATE_ENGINE_FLAGS {
+    type Output = Self;
+    fn not(self) -> Self {
+        Self(self.0.not())
+    }
+}
+#[repr(transparent)]
+#[derive(PartialEq, Eq, Copy, Clone, Default)]
+pub struct DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS(pub i32);
+impl windows_core::TypeKind for DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS {
+    type TypeKind = windows_core::CopyType;
+}
+impl core::fmt::Debug for DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_tuple("DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS").field(&self.0).finish()
+    }
+}
+impl DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS {
+    pub const fn contains(&self, other: Self) -> bool {
+        self.0 & other.0 == other.0
+    }
+}
+impl core::ops::BitOr for DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS {
+    type Output = Self;
+    fn bitor(self, other: Self) -> Self {
+        Self(self.0 | other.0)
+    }
+}
+impl core::ops::BitAnd for DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS {
+    type Output = Self;
+    fn bitand(self, other: Self) -> Self {
+        Self(self.0 & other.0)
+    }
+}
+impl core::ops::BitOrAssign for DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS {
+    fn bitor_assign(&mut self, other: Self) {
+        self.0.bitor_assign(other.0)
+    }
+}
+impl core::ops::BitAndAssign for DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS {
+    fn bitand_assign(&mut self, other: Self) {
+        self.0.bitand_assign(other.0)
+    }
+}
+impl core::ops::Not for DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS {
+    type Output = Self;
+    fn not(self) -> Self {
+        Self(self.0.not())
+    }
+}
+#[repr(transparent)]
+#[derive(PartialEq, Eq, Copy, Clone, Default)]
+pub struct DSR_SUPERRES_VARIANT_FLAGS(pub i32);
+impl windows_core::TypeKind for DSR_SUPERRES_VARIANT_FLAGS {
+    type TypeKind = windows_core::CopyType;
+}
+impl core::fmt::Debug for DSR_SUPERRES_VARIANT_FLAGS {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_tuple("DSR_SUPERRES_VARIANT_FLAGS").field(&self.0).finish()
+    }
+}
+impl DSR_SUPERRES_VARIANT_FLAGS {
+    pub const fn contains(&self, other: Self) -> bool {
+        self.0 & other.0 == other.0
+    }
+}
+impl core::ops::BitOr for DSR_SUPERRES_VARIANT_FLAGS {
+    type Output = Self;
+    fn bitor(self, other: Self) -> Self {
+        Self(self.0 | other.0)
+    }
+}
+impl core::ops::BitAnd for DSR_SUPERRES_VARIANT_FLAGS {
+    type Output = Self;
+    fn bitand(self, other: Self) -> Self {
+        Self(self.0 & other.0)
+    }
+}
+impl core::ops::BitOrAssign for DSR_SUPERRES_VARIANT_FLAGS {
+    fn bitor_assign(&mut self, other: Self) {
+        self.0.bitor_assign(other.0)
+    }
+}
+impl core::ops::BitAndAssign for DSR_SUPERRES_VARIANT_FLAGS {
+    fn bitand_assign(&mut self, other: Self) {
+        self.0.bitand_assign(other.0)
+    }
+}
+impl core::ops::Not for DSR_SUPERRES_VARIANT_FLAGS {
+    type Output = Self;
+    fn not(self) -> Self {
+        Self(self.0.not())
     }
 }
 #[repr(C)]
@@ -15476,7 +15789,177 @@ impl Default for D3D12_WRITEBUFFERIMMEDIATE_PARAMETER {
         unsafe { core::mem::zeroed() }
     }
 }
+#[repr(C)]
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+#[derive(Clone, Copy, Debug)]
+pub struct DSR_EX_FUNCTION_TABLE_1_0 {
+    pub pfnDSRExSuperResGetNumVariants: FNDSRExSuperResGetNumVariants,
+    pub pfnDSRExSuperResEnumVariant: FNDSRExSuperResEnumVariant,
+    pub pfnDSRExSuperResQuerySourceSettings: FNDSRExSuperResQuerySourceSettings,
+    pub pfnDSRExSuperResCreateEngine: FNDSRExSuperResCreateEngine,
+    pub pfnDSRExSuperResDestroyEngine: FNDSRExSuperResDestroyEngine,
+    pub pfnDSRExSuperResCreateUpscaler: FNDSRExSuperResCreateUpscaler,
+    pub pfnDSRExSuperResDestroyUpscaler: FNDSRExSuperResDestroyUpscaler,
+    pub pfnDSRExSuperResGetOptimalJitterPattern: FNDSRExSuperResGetOptimalJitterPattern,
+    pub pfnDSRExSuperResExecuteUpscaler: FNDSRExSuperResExecuteUpscaler,
+    pub pfnDSRExSuperResUpscalerEvict: FNDSRExSuperResUpscalerEvict,
+    pub pfnDSRExSuperResUpscalerMakeResident: FNDSRExSuperResUpscalerMakeResident,
+}
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+impl windows_core::TypeKind for DSR_EX_FUNCTION_TABLE_1_0 {
+    type TypeKind = windows_core::CopyType;
+}
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+impl Default for DSR_EX_FUNCTION_TABLE_1_0 {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct DSR_FLOAT2 {
+    pub X: f32,
+    pub Y: f32,
+}
+impl windows_core::TypeKind for DSR_FLOAT2 {
+    type TypeKind = windows_core::CopyType;
+}
+impl Default for DSR_FLOAT2 {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct DSR_SIZE {
+    pub Width: u32,
+    pub Height: u32,
+}
+impl windows_core::TypeKind for DSR_SIZE {
+    type TypeKind = windows_core::CopyType;
+}
+impl Default for DSR_SIZE {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct DSR_SUPERRES_CREATE_ENGINE_PARAMETERS {
+    pub VariantId: windows_core::GUID,
+    pub TargetFormat: super::Dxgi::Common::DXGI_FORMAT,
+    pub SourceColorFormat: super::Dxgi::Common::DXGI_FORMAT,
+    pub SourceDepthFormat: super::Dxgi::Common::DXGI_FORMAT,
+    pub ExposureScaleFormat: super::Dxgi::Common::DXGI_FORMAT,
+    pub Flags: DSR_SUPERRES_CREATE_ENGINE_FLAGS,
+    pub MaxSourceSize: DSR_SIZE,
+    pub TargetSize: DSR_SIZE,
+}
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+impl windows_core::TypeKind for DSR_SUPERRES_CREATE_ENGINE_PARAMETERS {
+    type TypeKind = windows_core::CopyType;
+}
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+impl Default for DSR_SUPERRES_CREATE_ENGINE_PARAMETERS {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct DSR_SUPERRES_SOURCE_SETTINGS {
+    pub OptimalSize: DSR_SIZE,
+    pub MinDynamicSize: DSR_SIZE,
+    pub MaxDynamicSize: DSR_SIZE,
+    pub OptimalColorFormat: super::Dxgi::Common::DXGI_FORMAT,
+    pub OptimalDepthFormat: super::Dxgi::Common::DXGI_FORMAT,
+}
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+impl windows_core::TypeKind for DSR_SUPERRES_SOURCE_SETTINGS {
+    type TypeKind = windows_core::CopyType;
+}
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+impl Default for DSR_SUPERRES_SOURCE_SETTINGS {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Debug, PartialEq)]
+pub struct DSR_SUPERRES_UPSCALER_EXECUTE_PARAMETERS {
+    pub pTargetTexture: core::mem::ManuallyDrop<Option<ID3D12Resource>>,
+    pub TargetRegion: super::super::Foundation::RECT,
+    pub pSourceColorTexture: core::mem::ManuallyDrop<Option<ID3D12Resource>>,
+    pub SourceColorRegion: super::super::Foundation::RECT,
+    pub pSourceDepthTexture: core::mem::ManuallyDrop<Option<ID3D12Resource>>,
+    pub SourceDepthRegion: super::super::Foundation::RECT,
+    pub pMotionVectorsTexture: core::mem::ManuallyDrop<Option<ID3D12Resource>>,
+    pub MotionVectorsRegion: super::super::Foundation::RECT,
+    pub MotionVectorScale: DSR_FLOAT2,
+    pub CameraJitter: DSR_FLOAT2,
+    pub ExposureScale: f32,
+    pub PreExposure: f32,
+    pub Sharpness: f32,
+    pub CameraNear: f32,
+    pub CameraFar: f32,
+    pub CameraFovAngleVert: f32,
+    pub pExposureScaleTexture: core::mem::ManuallyDrop<Option<ID3D12Resource>>,
+    pub pIgnoreHistoryMaskTexture: core::mem::ManuallyDrop<Option<ID3D12Resource>>,
+    pub IgnoreHistoryMaskRegion: super::super::Foundation::RECT,
+    pub pReactiveMaskTexture: core::mem::ManuallyDrop<Option<ID3D12Resource>>,
+    pub ReactiveMaskRegion: super::super::Foundation::RECT,
+}
+impl Clone for DSR_SUPERRES_UPSCALER_EXECUTE_PARAMETERS {
+    fn clone(&self) -> Self {
+        unsafe { core::mem::transmute_copy(self) }
+    }
+}
+impl windows_core::TypeKind for DSR_SUPERRES_UPSCALER_EXECUTE_PARAMETERS {
+    type TypeKind = windows_core::CopyType;
+}
+impl Default for DSR_SUPERRES_UPSCALER_EXECUTE_PARAMETERS {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct DSR_SUPERRES_VARIANT_DESC {
+    pub VariantId: windows_core::GUID,
+    pub VariantName: [i8; 128],
+    pub Flags: DSR_SUPERRES_VARIANT_FLAGS,
+    pub OptimizationRankings: [DSR_OPTIMIZATION_TYPE; 7],
+    pub OptimalTargetFormat: super::Dxgi::Common::DXGI_FORMAT,
+}
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+impl windows_core::TypeKind for DSR_SUPERRES_VARIANT_DESC {
+    type TypeKind = windows_core::CopyType;
+}
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+impl Default for DSR_SUPERRES_VARIANT_DESC {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
 pub type D3D12MessageFunc = Option<unsafe extern "system" fn(category: D3D12_MESSAGE_CATEGORY, severity: D3D12_MESSAGE_SEVERITY, id: D3D12_MESSAGE_ID, pdescription: windows_core::PCSTR, pcontext: *mut core::ffi::c_void)>;
+pub type FNDSRExGetVersionedFunctionTable = Option<unsafe extern "system" fn(version: DSR_EX_VERSION, pfunctiontable: *mut core::ffi::c_void, tablesizeinbytes: u32) -> windows_core::HRESULT>;
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+pub type FNDSRExSuperResCreateEngine = Option<unsafe extern "system" fn(variantindex: u32, pdevice: Option<ID3D12Device>, pcreateparams: *const DSR_SUPERRES_CREATE_ENGINE_PARAMETERS, psrenginehandle: *mut *mut core::ffi::c_void) -> windows_core::HRESULT>;
+pub type FNDSRExSuperResCreateUpscaler = Option<unsafe extern "system" fn(enginehandle: *mut core::ffi::c_void, pcommandqueue: Option<ID3D12CommandQueue>, psrupscalerhandle: *mut *mut core::ffi::c_void) -> windows_core::HRESULT>;
+pub type FNDSRExSuperResDestroyEngine = Option<unsafe extern "system" fn(srengine: *mut core::ffi::c_void) -> windows_core::HRESULT>;
+pub type FNDSRExSuperResDestroyUpscaler = Option<unsafe extern "system" fn(srupscaler: *mut core::ffi::c_void) -> windows_core::HRESULT>;
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+pub type FNDSRExSuperResEnumVariant = Option<unsafe extern "system" fn(variantindex: u32, pdevice: Option<ID3D12Device>, pvariantdesc: *mut DSR_SUPERRES_VARIANT_DESC) -> windows_core::HRESULT>;
+pub type FNDSRExSuperResExecuteUpscaler = Option<unsafe extern "system" fn(srupscalerhandle: *mut core::ffi::c_void, pparams: *const DSR_SUPERRES_UPSCALER_EXECUTE_PARAMETERS, timedeltainseconds: f32, flags: DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS) -> windows_core::HRESULT>;
+pub type FNDSRExSuperResGetNumVariants = Option<unsafe extern "system" fn(pdevice: Option<ID3D12Device>) -> u32>;
+pub type FNDSRExSuperResGetOptimalJitterPattern = Option<unsafe extern "system" fn(srenginehandle: *mut core::ffi::c_void, sourcesize: *const DSR_SIZE, targetsize: *const DSR_SIZE, psize: *mut u32, ppattern: *mut DSR_FLOAT2) -> windows_core::HRESULT>;
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+pub type FNDSRExSuperResQuerySourceSettings = Option<unsafe extern "system" fn(variantindex: u32, pdevice: Option<ID3D12Device>, targetsize: *const DSR_SIZE, targetformat: super::Dxgi::Common::DXGI_FORMAT, optimizationtype: DSR_OPTIMIZATION_TYPE, createflags: DSR_SUPERRES_CREATE_ENGINE_FLAGS, psourcesettings: *mut DSR_SUPERRES_SOURCE_SETTINGS) -> windows_core::HRESULT>;
+pub type FNDSRExSuperResUpscalerEvict = Option<unsafe extern "system" fn(srupscalerhandle: *mut core::ffi::c_void) -> windows_core::HRESULT>;
+pub type FNDSRExSuperResUpscalerMakeResident = Option<unsafe extern "system" fn(srupscalerhandle: *mut core::ffi::c_void) -> windows_core::HRESULT>;
 #[cfg(feature = "Win32_Graphics_Direct3D")]
 pub type PFN_D3D12_CREATE_DEVICE = Option<unsafe extern "system" fn(param0: Option<windows_core::IUnknown>, param1: super::Direct3D::D3D_FEATURE_LEVEL, param2: *const windows_core::GUID, param3: *mut *mut core::ffi::c_void) -> windows_core::HRESULT>;
 pub type PFN_D3D12_CREATE_ROOT_SIGNATURE_DESERIALIZER = Option<unsafe extern "system" fn(psrcdata: *const core::ffi::c_void, srcdatasizeinbytes: usize, prootsignaturedeserializerinterface: *const windows_core::GUID, pprootsignaturedeserializer: *mut *mut core::ffi::c_void) -> windows_core::HRESULT>;
