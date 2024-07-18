@@ -26,6 +26,10 @@ pub mod Geolocation;
 pub mod HumanInterfaceDevice;
 #[cfg(feature = "Win32_Devices_ImageAcquisition")]
 pub mod ImageAcquisition;
+#[cfg(feature = "Win32_Devices_Nfc")]
+pub mod Nfc;
+#[cfg(feature = "Win32_Devices_Nfp")]
+pub mod Nfp;
 #[cfg(feature = "Win32_Devices_PortableDevices")]
 pub mod PortableDevices;
 #[cfg(feature = "Win32_Devices_Properties")]

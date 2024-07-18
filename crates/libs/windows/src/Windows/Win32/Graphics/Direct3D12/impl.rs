@@ -2181,6 +2181,71 @@ impl ID3D12DeviceRemovedExtendedDataSettings2_Vtbl {
         iid == &<ID3D12DeviceRemovedExtendedDataSettings2 as windows_core::Interface>::IID || iid == &<ID3D12DeviceRemovedExtendedDataSettings as windows_core::Interface>::IID || iid == &<ID3D12DeviceRemovedExtendedDataSettings1 as windows_core::Interface>::IID
     }
 }
+pub trait ID3D12DeviceTools_Impl: Sized {
+    fn SetNextAllocationAddress(&self, nextallocationvirtualaddress: u64);
+}
+impl windows_core::RuntimeName for ID3D12DeviceTools {}
+impl ID3D12DeviceTools_Vtbl {
+    pub const fn new<Identity: windows_core::IUnknownImpl, const OFFSET: isize>() -> ID3D12DeviceTools_Vtbl
+    where
+        Identity: ID3D12DeviceTools_Impl,
+    {
+        unsafe extern "system" fn SetNextAllocationAddress<Identity: windows_core::IUnknownImpl, const OFFSET: isize>(this: *mut core::ffi::c_void, nextallocationvirtualaddress: u64)
+        where
+            Identity: ID3D12DeviceTools_Impl,
+        {
+            let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+            ID3D12DeviceTools_Impl::SetNextAllocationAddress(this, core::mem::transmute_copy(&nextallocationvirtualaddress))
+        }
+        Self { base__: windows_core::IUnknown_Vtbl::new::<Identity, OFFSET>(), SetNextAllocationAddress: SetNextAllocationAddress::<Identity, OFFSET> }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<ID3D12DeviceTools as windows_core::Interface>::IID
+    }
+}
+#[cfg(feature = "Win32_Graphics_Direct3D")]
+pub trait ID3D12DeviceTools1_Impl: Sized + ID3D12DeviceTools_Impl {
+    fn GetApplicationSpecificDriverState(&self) -> windows_core::Result<super::Direct3D::ID3DBlob>;
+    fn GetApplicationSpecificDriverBlobStatus(&self) -> D3D12_APPLICATION_SPECIFIC_DRIVER_BLOB_STATUS;
+}
+#[cfg(feature = "Win32_Graphics_Direct3D")]
+impl windows_core::RuntimeName for ID3D12DeviceTools1 {}
+#[cfg(feature = "Win32_Graphics_Direct3D")]
+impl ID3D12DeviceTools1_Vtbl {
+    pub const fn new<Identity: windows_core::IUnknownImpl, const OFFSET: isize>() -> ID3D12DeviceTools1_Vtbl
+    where
+        Identity: ID3D12DeviceTools1_Impl,
+    {
+        unsafe extern "system" fn GetApplicationSpecificDriverState<Identity: windows_core::IUnknownImpl, const OFFSET: isize>(this: *mut core::ffi::c_void, ppblob: *mut *mut core::ffi::c_void) -> windows_core::HRESULT
+        where
+            Identity: ID3D12DeviceTools1_Impl,
+        {
+            let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+            match ID3D12DeviceTools1_Impl::GetApplicationSpecificDriverState(this) {
+                Ok(ok__) => {
+                    ppblob.write(core::mem::transmute(ok__));
+                    windows_core::HRESULT(0)
+                }
+                Err(err) => err.into(),
+            }
+        }
+        unsafe extern "system" fn GetApplicationSpecificDriverBlobStatus<Identity: windows_core::IUnknownImpl, const OFFSET: isize>(this: *mut core::ffi::c_void) -> D3D12_APPLICATION_SPECIFIC_DRIVER_BLOB_STATUS
+        where
+            Identity: ID3D12DeviceTools1_Impl,
+        {
+            let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+            ID3D12DeviceTools1_Impl::GetApplicationSpecificDriverBlobStatus(this)
+        }
+        Self {
+            base__: ID3D12DeviceTools_Vtbl::new::<Identity, OFFSET>(),
+            GetApplicationSpecificDriverState: GetApplicationSpecificDriverState::<Identity, OFFSET>,
+            GetApplicationSpecificDriverBlobStatus: GetApplicationSpecificDriverBlobStatus::<Identity, OFFSET>,
+        }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<ID3D12DeviceTools1 as windows_core::Interface>::IID || iid == &<ID3D12DeviceTools as windows_core::Interface>::IID
+    }
+}
 pub trait ID3D12Fence_Impl: Sized + ID3D12Pageable_Impl {
     fn GetCompletedValue(&self) -> u64;
     fn SetEventOnCompletion(&self, value: u64, hevent: super::super::Foundation::HANDLE) -> windows_core::Result<()>;
@@ -3358,6 +3423,48 @@ impl ID3D12GraphicsCommandList9_Vtbl {
             || iid == &<ID3D12GraphicsCommandList8 as windows_core::Interface>::IID
     }
 }
+#[cfg(all(feature = "Win32_Graphics_Direct3D", feature = "Win32_Graphics_Dxgi_Common"))]
+pub trait ID3D12GraphicsCommandListExperimental_Impl: Sized + ID3D12GraphicsCommandList10_Impl {
+    fn SetWorkGraphMaximumGPUInputRecords(&self, maxrecords: u32, maxnodeinputs: u32);
+}
+#[cfg(all(feature = "Win32_Graphics_Direct3D", feature = "Win32_Graphics_Dxgi_Common"))]
+impl windows_core::RuntimeName for ID3D12GraphicsCommandListExperimental {}
+#[cfg(all(feature = "Win32_Graphics_Direct3D", feature = "Win32_Graphics_Dxgi_Common"))]
+impl ID3D12GraphicsCommandListExperimental_Vtbl {
+    pub const fn new<Identity: windows_core::IUnknownImpl, const OFFSET: isize>() -> ID3D12GraphicsCommandListExperimental_Vtbl
+    where
+        Identity: ID3D12GraphicsCommandListExperimental_Impl,
+    {
+        unsafe extern "system" fn SetWorkGraphMaximumGPUInputRecords<Identity: windows_core::IUnknownImpl, const OFFSET: isize>(this: *mut core::ffi::c_void, maxrecords: u32, maxnodeinputs: u32)
+        where
+            Identity: ID3D12GraphicsCommandListExperimental_Impl,
+        {
+            let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+            ID3D12GraphicsCommandListExperimental_Impl::SetWorkGraphMaximumGPUInputRecords(this, core::mem::transmute_copy(&maxrecords), core::mem::transmute_copy(&maxnodeinputs))
+        }
+        Self {
+            base__: ID3D12GraphicsCommandList10_Vtbl::new::<Identity, OFFSET>(),
+            SetWorkGraphMaximumGPUInputRecords: SetWorkGraphMaximumGPUInputRecords::<Identity, OFFSET>,
+        }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<ID3D12GraphicsCommandListExperimental as windows_core::Interface>::IID
+            || iid == &<ID3D12Object as windows_core::Interface>::IID
+            || iid == &<ID3D12DeviceChild as windows_core::Interface>::IID
+            || iid == &<ID3D12CommandList as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList1 as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList2 as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList3 as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList4 as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList5 as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList6 as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList7 as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList8 as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList9 as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList10 as windows_core::Interface>::IID
+    }
+}
 pub trait ID3D12Heap_Impl: Sized + ID3D12Pageable_Impl {
     fn GetDesc(&self) -> D3D12_HEAP_DESC;
 }
@@ -3958,6 +4065,28 @@ impl ID3D12Pageable_Vtbl {
     }
     pub fn matches(iid: &windows_core::GUID) -> bool {
         iid == &<ID3D12Pageable as windows_core::Interface>::IID || iid == &<ID3D12Object as windows_core::Interface>::IID || iid == &<ID3D12DeviceChild as windows_core::Interface>::IID
+    }
+}
+pub trait ID3D12PageableTools_Impl: Sized {
+    fn GetAllocation(&self, pallocation: *mut D3D12_GPU_VIRTUAL_ADDRESS_RANGE) -> windows_core::Result<()>;
+}
+impl windows_core::RuntimeName for ID3D12PageableTools {}
+impl ID3D12PageableTools_Vtbl {
+    pub const fn new<Identity: windows_core::IUnknownImpl, const OFFSET: isize>() -> ID3D12PageableTools_Vtbl
+    where
+        Identity: ID3D12PageableTools_Impl,
+    {
+        unsafe extern "system" fn GetAllocation<Identity: windows_core::IUnknownImpl, const OFFSET: isize>(this: *mut core::ffi::c_void, pallocation: *mut D3D12_GPU_VIRTUAL_ADDRESS_RANGE) -> windows_core::HRESULT
+        where
+            Identity: ID3D12PageableTools_Impl,
+        {
+            let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+            ID3D12PageableTools_Impl::GetAllocation(this, core::mem::transmute_copy(&pallocation)).into()
+        }
+        Self { base__: windows_core::IUnknown_Vtbl::new::<Identity, OFFSET>(), GetAllocation: GetAllocation::<Identity, OFFSET> }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<ID3D12PageableTools as windows_core::Interface>::IID
     }
 }
 #[cfg(feature = "Win32_Graphics_Dxgi_Common")]
@@ -5054,6 +5183,65 @@ impl ID3D12Tools_Vtbl {
         iid == &<ID3D12Tools as windows_core::Interface>::IID
     }
 }
+pub trait ID3D12Tools1_Impl: Sized + ID3D12Tools_Impl {
+    fn ReserveGPUVARangesAtCreate(&self, pranges: *const D3D12_GPU_VIRTUAL_ADDRESS_RANGE, uinumranges: u32) -> windows_core::Result<()>;
+    fn ClearReservedGPUVARangesList(&self);
+}
+impl windows_core::RuntimeName for ID3D12Tools1 {}
+impl ID3D12Tools1_Vtbl {
+    pub const fn new<Identity: windows_core::IUnknownImpl, const OFFSET: isize>() -> ID3D12Tools1_Vtbl
+    where
+        Identity: ID3D12Tools1_Impl,
+    {
+        unsafe extern "system" fn ReserveGPUVARangesAtCreate<Identity: windows_core::IUnknownImpl, const OFFSET: isize>(this: *mut core::ffi::c_void, pranges: *const D3D12_GPU_VIRTUAL_ADDRESS_RANGE, uinumranges: u32) -> windows_core::HRESULT
+        where
+            Identity: ID3D12Tools1_Impl,
+        {
+            let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+            ID3D12Tools1_Impl::ReserveGPUVARangesAtCreate(this, core::mem::transmute_copy(&pranges), core::mem::transmute_copy(&uinumranges)).into()
+        }
+        unsafe extern "system" fn ClearReservedGPUVARangesList<Identity: windows_core::IUnknownImpl, const OFFSET: isize>(this: *mut core::ffi::c_void)
+        where
+            Identity: ID3D12Tools1_Impl,
+        {
+            let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+            ID3D12Tools1_Impl::ClearReservedGPUVARangesList(this)
+        }
+        Self {
+            base__: ID3D12Tools_Vtbl::new::<Identity, OFFSET>(),
+            ReserveGPUVARangesAtCreate: ReserveGPUVARangesAtCreate::<Identity, OFFSET>,
+            ClearReservedGPUVARangesList: ClearReservedGPUVARangesList::<Identity, OFFSET>,
+        }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<ID3D12Tools1 as windows_core::Interface>::IID || iid == &<ID3D12Tools as windows_core::Interface>::IID
+    }
+}
+#[cfg(feature = "Win32_Graphics_Direct3D")]
+pub trait ID3D12Tools2_Impl: Sized + ID3D12Tools1_Impl {
+    fn SetApplicationSpecificDriverState(&self, padapter: Option<&windows_core::IUnknown>, pblob: Option<&super::Direct3D::ID3DBlob>) -> windows_core::Result<()>;
+}
+#[cfg(feature = "Win32_Graphics_Direct3D")]
+impl windows_core::RuntimeName for ID3D12Tools2 {}
+#[cfg(feature = "Win32_Graphics_Direct3D")]
+impl ID3D12Tools2_Vtbl {
+    pub const fn new<Identity: windows_core::IUnknownImpl, const OFFSET: isize>() -> ID3D12Tools2_Vtbl
+    where
+        Identity: ID3D12Tools2_Impl,
+    {
+        unsafe extern "system" fn SetApplicationSpecificDriverState<Identity: windows_core::IUnknownImpl, const OFFSET: isize>(this: *mut core::ffi::c_void, padapter: *mut core::ffi::c_void, pblob: *mut core::ffi::c_void) -> windows_core::HRESULT
+        where
+            Identity: ID3D12Tools2_Impl,
+        {
+            let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+            ID3D12Tools2_Impl::SetApplicationSpecificDriverState(this, windows_core::from_raw_borrowed(&padapter), windows_core::from_raw_borrowed(&pblob)).into()
+        }
+        Self { base__: ID3D12Tools1_Vtbl::new::<Identity, OFFSET>(), SetApplicationSpecificDriverState: SetApplicationSpecificDriverState::<Identity, OFFSET> }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<ID3D12Tools2 as windows_core::Interface>::IID || iid == &<ID3D12Tools as windows_core::Interface>::IID || iid == &<ID3D12Tools1 as windows_core::Interface>::IID
+    }
+}
 pub trait ID3D12VersionedRootSignatureDeserializer_Impl: Sized {
     fn GetRootSignatureDescAtVersion(&self, converttoversion: D3D_ROOT_SIGNATURE_VERSION) -> windows_core::Result<*mut D3D12_VERSIONED_ROOT_SIGNATURE_DESC>;
     fn GetUnconvertedRootSignatureDesc(&self) -> *mut D3D12_VERSIONED_ROOT_SIGNATURE_DESC;
@@ -5271,6 +5459,28 @@ impl ID3D12WorkGraphProperties_Vtbl {
     }
     pub fn matches(iid: &windows_core::GUID) -> bool {
         iid == &<ID3D12WorkGraphProperties as windows_core::Interface>::IID
+    }
+}
+pub trait ID3D12WorkGraphProperties1_Impl: Sized + ID3D12WorkGraphProperties_Impl {
+    fn SetMaximumInputRecords(&self, workgraphindex: u32, maxrecords: u32, maxnodeinputs: u32);
+}
+impl windows_core::RuntimeName for ID3D12WorkGraphProperties1 {}
+impl ID3D12WorkGraphProperties1_Vtbl {
+    pub const fn new<Identity: windows_core::IUnknownImpl, const OFFSET: isize>() -> ID3D12WorkGraphProperties1_Vtbl
+    where
+        Identity: ID3D12WorkGraphProperties1_Impl,
+    {
+        unsafe extern "system" fn SetMaximumInputRecords<Identity: windows_core::IUnknownImpl, const OFFSET: isize>(this: *mut core::ffi::c_void, workgraphindex: u32, maxrecords: u32, maxnodeinputs: u32)
+        where
+            Identity: ID3D12WorkGraphProperties1_Impl,
+        {
+            let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+            ID3D12WorkGraphProperties1_Impl::SetMaximumInputRecords(this, core::mem::transmute_copy(&workgraphindex), core::mem::transmute_copy(&maxrecords), core::mem::transmute_copy(&maxnodeinputs))
+        }
+        Self { base__: ID3D12WorkGraphProperties_Vtbl::new::<Identity, OFFSET>(), SetMaximumInputRecords: SetMaximumInputRecords::<Identity, OFFSET> }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<ID3D12WorkGraphProperties1 as windows_core::Interface>::IID || iid == &<ID3D12WorkGraphProperties as windows_core::Interface>::IID
     }
 }
 #[cfg(feature = "Win32_Graphics_Dxgi_Common")]

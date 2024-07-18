@@ -1385,8 +1385,8 @@ impl core::ops::Deref for IPropertyStoreCapabilities {
 }
 windows_core::imp::interface_hierarchy!(IPropertyStoreCapabilities, windows_core::IUnknown);
 impl IPropertyStoreCapabilities {
-    pub unsafe fn IsPropertyWritable(&self, key: *const PROPERTYKEY) -> windows_core::Result<()> {
-        (windows_core::Interface::vtable(self).IsPropertyWritable)(windows_core::Interface::as_raw(self), key).ok()
+    pub unsafe fn IsPropertyWritable(&self, key: *const PROPERTYKEY) -> windows_core::HRESULT {
+        (windows_core::Interface::vtable(self).IsPropertyWritable)(windows_core::Interface::as_raw(self), key)
     }
 }
 #[repr(C)]

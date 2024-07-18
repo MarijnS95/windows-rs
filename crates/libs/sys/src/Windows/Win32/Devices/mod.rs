@@ -18,6 +18,10 @@ pub mod Enumeration;
 pub mod Fax;
 #[cfg(feature = "Win32_Devices_HumanInterfaceDevice")]
 pub mod HumanInterfaceDevice;
+#[cfg(feature = "Win32_Devices_Nfc")]
+pub mod Nfc;
+#[cfg(feature = "Win32_Devices_Nfp")]
+pub mod Nfp;
 #[cfg(feature = "Win32_Devices_PortableDevices")]
 pub mod PortableDevices;
 #[cfg(feature = "Win32_Devices_Properties")]

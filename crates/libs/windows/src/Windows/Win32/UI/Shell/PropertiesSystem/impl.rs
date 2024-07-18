@@ -1210,7 +1210,7 @@ impl IPropertyStoreCache_Vtbl {
     }
 }
 pub trait IPropertyStoreCapabilities_Impl: Sized {
-    fn IsPropertyWritable(&self, key: *const PROPERTYKEY) -> windows_core::Result<()>;
+    fn IsPropertyWritable(&self, key: *const PROPERTYKEY) -> windows_core::HRESULT;
 }
 impl windows_core::RuntimeName for IPropertyStoreCapabilities {}
 impl IPropertyStoreCapabilities_Vtbl {
@@ -1223,7 +1223,7 @@ impl IPropertyStoreCapabilities_Vtbl {
             Identity: IPropertyStoreCapabilities_Impl,
         {
             let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
-            IPropertyStoreCapabilities_Impl::IsPropertyWritable(this, core::mem::transmute_copy(&key)).into()
+            IPropertyStoreCapabilities_Impl::IsPropertyWritable(this, core::mem::transmute_copy(&key))
         }
         Self { base__: windows_core::IUnknown_Vtbl::new::<Identity, OFFSET>(), IsPropertyWritable: IsPropertyWritable::<Identity, OFFSET> }
     }
