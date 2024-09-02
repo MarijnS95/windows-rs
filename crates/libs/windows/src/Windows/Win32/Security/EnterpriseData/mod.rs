@@ -69,6 +69,11 @@ pub unsafe fn SrpHostingTerminate(r#type: SRPHOSTING_TYPE) {
     unsafe { SrpHostingTerminate(r#type) }
 }
 #[inline]
+pub unsafe fn SrpIsAllowed(fileinfo: *const _SRP_REQUEST) -> super::super::Foundation::NTSTATUS {
+    windows_link::link!("srpapi.dll" "system" fn SrpIsAllowed(fileinfo : *const _SRP_REQUEST) -> super::super::Foundation:: NTSTATUS);
+    unsafe { SrpIsAllowed(fileinfo) }
+}
+#[inline]
 pub unsafe fn SrpIsTokenService(tokenhandle: super::super::Foundation::HANDLE, istokenservice: *mut u8) -> super::super::Foundation::NTSTATUS {
     windows_link::link!("srpapi.dll" "system" fn SrpIsTokenService(tokenhandle : super::super::Foundation:: HANDLE, istokenservice : *mut u8) -> super::super::Foundation:: NTSTATUS);
     unsafe { SrpIsTokenService(tokenhandle, istokenservice as _) }
@@ -445,3 +450,6 @@ pub const SRPHOSTING_TYPE_WININET: SRPHOSTING_TYPE = SRPHOSTING_TYPE(2i32);
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct SRPHOSTING_VERSION(pub i32);
 pub const SRPHOSTING_VERSION1: SRPHOSTING_VERSION = SRPHOSTING_VERSION(1i32);
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
+pub struct _SRP_REQUEST(pub isize);

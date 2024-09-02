@@ -202,6 +202,14 @@ pub unsafe fn WinBioImproveEnd(sessionhandle: u32) -> windows_core::Result<()> {
     unsafe { WinBioImproveEnd(sessionhandle).ok() }
 }
 #[inline]
+pub unsafe fn WinBioIsESSCapable() -> windows_core::Result<u8> {
+    windows_link::link!("winbio.dll" "system" fn WinBioIsESSCapable(value : *mut u8) -> windows_core::HRESULT);
+    unsafe {
+        let mut result__ = core::mem::zeroed();
+        WinBioIsESSCapable(&mut result__).map(|| result__)
+    }
+}
+#[inline]
 pub unsafe fn WinBioLocateSensor(sessionhandle: u32, unitid: Option<*mut u32>) -> windows_core::Result<()> {
     windows_link::link!("winbio.dll" "system" fn WinBioLocateSensor(sessionhandle : u32, unitid : *mut u32) -> windows_core::HRESULT);
     unsafe { WinBioLocateSensor(sessionhandle, unitid.unwrap_or(core::mem::zeroed()) as _).ok() }

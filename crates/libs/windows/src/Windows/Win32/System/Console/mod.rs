@@ -24,6 +24,11 @@ pub unsafe fn AllocConsole() -> windows_core::Result<()> {
     unsafe { AllocConsole().ok() }
 }
 #[inline]
+pub unsafe fn AllocConsoleWithOptions(options: Option<*const ALLOC_CONSOLE_OPTIONS>, result: Option<*mut ALLOC_CONSOLE_RESULT>) -> windows_core::Result<()> {
+    windows_link::link!("kernel32.dll" "system" fn AllocConsoleWithOptions(options : *const ALLOC_CONSOLE_OPTIONS, result : *mut ALLOC_CONSOLE_RESULT) -> windows_core::HRESULT);
+    unsafe { AllocConsoleWithOptions(options.unwrap_or(core::mem::zeroed()) as _, result.unwrap_or(core::mem::zeroed()) as _).ok() }
+}
+#[inline]
 pub unsafe fn AttachConsole(dwprocessid: u32) -> windows_core::Result<()> {
     windows_link::link!("kernel32.dll" "system" fn AttachConsole(dwprocessid : u32) -> windows_core::BOOL);
     unsafe { AttachConsole(dwprocessid).ok() }
@@ -368,6 +373,11 @@ pub unsafe fn ReadConsoleW(hconsoleinput: super::super::Foundation::HANDLE, lpbu
     unsafe { ReadConsoleW(hconsoleinput, lpbuffer as _, nnumberofcharstoread, lpnumberofcharsread as _, pinputcontrol.unwrap_or(core::mem::zeroed()) as _).ok() }
 }
 #[inline]
+pub unsafe fn ReleasePseudoConsole(hpc: HPCON) -> windows_core::Result<()> {
+    windows_link::link!("kernel32.dll" "system" fn ReleasePseudoConsole(hpc : HPCON) -> windows_core::HRESULT);
+    unsafe { ReleasePseudoConsole(hpc).ok() }
+}
+#[inline]
 pub unsafe fn ResizePseudoConsole(hpc: HPCON, size: COORD) -> windows_core::Result<()> {
     windows_link::link!("kernel32.dll" "system" fn ResizePseudoConsole(hpc : HPCON, size : COORD) -> windows_core::HRESULT);
     unsafe { ResizePseudoConsole(hpc, core::mem::transmute(size)).ok() }
@@ -539,6 +549,30 @@ pub unsafe fn WriteConsoleW(hconsoleoutput: super::super::Foundation::HANDLE, lp
     windows_link::link!("kernel32.dll" "system" fn WriteConsoleW(hconsoleoutput : super::super::Foundation:: HANDLE, lpbuffer : windows_core::PCWSTR, nnumberofcharstowrite : u32, lpnumberofcharswritten : *mut u32, lpreserved : *const core::ffi::c_void) -> windows_core::BOOL);
     unsafe { WriteConsoleW(hconsoleoutput, core::mem::transmute(lpbuffer.as_ptr()), lpbuffer.len().try_into().unwrap(), lpnumberofcharswritten.unwrap_or(core::mem::zeroed()) as _, lpreserved.unwrap_or(core::mem::zeroed()) as _).ok() }
 }
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct ALLOC_CONSOLE_MODE(pub i32);
+pub const ALLOC_CONSOLE_MODE_DEFAULT: ALLOC_CONSOLE_MODE = ALLOC_CONSOLE_MODE(0i32);
+pub const ALLOC_CONSOLE_MODE_NEW_WINDOW: ALLOC_CONSOLE_MODE = ALLOC_CONSOLE_MODE(1i32);
+pub const ALLOC_CONSOLE_MODE_NO_WINDOW: ALLOC_CONSOLE_MODE = ALLOC_CONSOLE_MODE(2i32);
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ALLOC_CONSOLE_OPTIONS {
+    pub mode: ALLOC_CONSOLE_MODE,
+    pub useShowWindow: windows_core::BOOL,
+    pub showWindow: u16,
+}
+impl Default for ALLOC_CONSOLE_OPTIONS {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct ALLOC_CONSOLE_RESULT(pub i32);
+pub const ALLOC_CONSOLE_RESULT_EXISTING_CONSOLE: ALLOC_CONSOLE_RESULT = ALLOC_CONSOLE_RESULT(2i32);
+pub const ALLOC_CONSOLE_RESULT_NEW_CONSOLE: ALLOC_CONSOLE_RESULT = ALLOC_CONSOLE_RESULT(1i32);
+pub const ALLOC_CONSOLE_RESULT_NO_CONSOLE: ALLOC_CONSOLE_RESULT = ALLOC_CONSOLE_RESULT(0i32);
 pub const ALTNUMPAD_BIT: u32 = 67108864u32;
 pub const ATTACH_PARENT_PROCESS: u32 = 4294967295u32;
 pub const BACKGROUND_BLUE: CONSOLE_CHARACTER_ATTRIBUTES = CONSOLE_CHARACTER_ATTRIBUTES(16u16);

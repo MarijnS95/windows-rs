@@ -4,6 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-metadata = { package = "windows-metadata", path = "../../libs/metadata" }
+# metadata = { package = "windows-metadata", path = "../../libs/metadata" }
 # Bindgen contains a bunch of util functions to "interpret" the metadata more easily
 bindgen = { package = "windows-bindgen", path = "../../libs/bindgen" }

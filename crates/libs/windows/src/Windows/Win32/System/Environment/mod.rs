@@ -24,6 +24,11 @@ pub unsafe fn DestroyEnvironmentBlock(lpenvironment: *const core::ffi::c_void) -
     unsafe { DestroyEnvironmentBlock(lpenvironment).ok() }
 }
 #[inline]
+pub unsafe fn EnclaveEncryptDataForTrustlet(datatoencrypt: *const core::ffi::c_void, datatoencryptsize: u32, trustletbindingdata: *const TRUSTLET_BINDING_DATA, encrypteddata: Option<*mut core::ffi::c_void>, buffersize: u32, encrypteddatasize: *mut u32) -> windows_core::Result<()> {
+    windows_link::link!("vertdll.dll" "system" fn EnclaveEncryptDataForTrustlet(datatoencrypt : *const core::ffi::c_void, datatoencryptsize : u32, trustletbindingdata : *const TRUSTLET_BINDING_DATA, encrypteddata : *mut core::ffi::c_void, buffersize : u32, encrypteddatasize : *mut u32) -> windows_core::HRESULT);
+    unsafe { EnclaveEncryptDataForTrustlet(datatoencrypt, datatoencryptsize, trustletbindingdata, encrypteddata.unwrap_or(core::mem::zeroed()) as _, buffersize, encrypteddatasize as _).ok() }
+}
+#[inline]
 pub unsafe fn EnclaveGetAttestationReport(enclavedata: Option<&[u8; 64]>, report: Option<*mut core::ffi::c_void>, buffersize: u32, outputsize: *mut u32) -> windows_core::Result<()> {
     windows_link::link!("vertdll.dll" "system" fn EnclaveGetAttestationReport(enclavedata : *const u8, report : *mut core::ffi::c_void, buffersize : u32, outputsize : *mut u32) -> windows_core::HRESULT);
     unsafe { EnclaveGetAttestationReport(core::mem::transmute(enclavedata.as_deref().map_or(core::ptr::null(), |slice| slice.as_ptr())), report.unwrap_or(core::mem::zeroed()) as _, buffersize, outputsize as _).ok() }
@@ -42,6 +47,11 @@ pub unsafe fn EnclaveSealData(datatoencrypt: *const core::ffi::c_void, datatoenc
 pub unsafe fn EnclaveUnsealData(protectedblob: *const core::ffi::c_void, protectedblobsize: u32, decrypteddata: Option<*mut core::ffi::c_void>, buffersize: u32, decrypteddatasize: *mut u32, sealingidentity: Option<*mut ENCLAVE_IDENTITY>, unsealingflags: Option<*mut u32>) -> windows_core::Result<()> {
     windows_link::link!("vertdll.dll" "system" fn EnclaveUnsealData(protectedblob : *const core::ffi::c_void, protectedblobsize : u32, decrypteddata : *mut core::ffi::c_void, buffersize : u32, decrypteddatasize : *mut u32, sealingidentity : *mut ENCLAVE_IDENTITY, unsealingflags : *mut u32) -> windows_core::HRESULT);
     unsafe { EnclaveUnsealData(protectedblob, protectedblobsize, decrypteddata.unwrap_or(core::mem::zeroed()) as _, buffersize, decrypteddatasize as _, sealingidentity.unwrap_or(core::mem::zeroed()) as _, unsealingflags.unwrap_or(core::mem::zeroed()) as _).ok() }
+}
+#[inline]
+pub unsafe fn EnclaveUsesAttestedKeys() -> bool {
+    windows_link::link!("vertdll.dll" "system" fn EnclaveUsesAttestedKeys() -> bool);
+    unsafe { EnclaveUsesAttestedKeys() }
 }
 #[inline]
 pub unsafe fn EnclaveVerifyAttestationReport(enclavetype: u32, report: *const core::ffi::c_void, reportsize: u32) -> windows_core::Result<()> {
@@ -300,6 +310,30 @@ pub struct ENCLAVE_VBS_BASIC_KEY_REQUEST {
     pub CurrentSystemKeyID: u32,
 }
 impl Default for ENCLAVE_VBS_BASIC_KEY_REQUEST {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct PS_TRUSTLET_TKSESSION_ID {
+    pub SessionId: [u64; 4],
+}
+impl Default for PS_TRUSTLET_TKSESSION_ID {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C, packed(1))]
+#[derive(Clone, Copy)]
+pub struct TRUSTLET_BINDING_DATA {
+    pub TrustletIdentity: u64,
+    pub TrustletSessionId: PS_TRUSTLET_TKSESSION_ID,
+    pub TrustletSvn: u32,
+    pub Reserved1: u32,
+    pub Reserved2: u64,
+}
+impl Default for TRUSTLET_BINDING_DATA {
     fn default() -> Self {
         unsafe { core::mem::zeroed() }
     }

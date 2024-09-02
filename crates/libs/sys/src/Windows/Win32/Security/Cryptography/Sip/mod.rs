@@ -20,6 +20,7 @@ windows_targets::link!("crypt32.dll" "system" fn CryptSIPRetrieveSubjectGuidForC
 windows_targets::link!("wintrust.dll" "system" fn CryptSIPVerifyIndirectData(psubjectinfo : *mut SIP_SUBJECTINFO, pindirectdata : *mut SIP_INDIRECT_DATA) -> windows_sys::core::BOOL);
 pub const MSSIP_ADDINFO_BLOB: u32 = 3u32;
 pub const MSSIP_ADDINFO_CATMEMBER: u32 = 2u32;
+pub const MSSIP_ADDINFO_DETACHEDSIG: u32 = 4u32;
 pub const MSSIP_ADDINFO_FLAT: u32 = 1u32;
 pub const MSSIP_ADDINFO_NONE: u32 = 0u32;
 pub const MSSIP_ADDINFO_NONMSSIP: u32 = 500u32;
@@ -34,6 +35,14 @@ pub struct MS_ADDINFO_BLOB {
     pub pbMemObject: *mut u8,
     pub cbMemSignedMsg: u32,
     pub pbMemSignedMsg: *mut u8,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct MS_ADDINFO_DETACHEDSIG {
+    pub cbStruct: u32,
+    pub hSignatureFile: super::super::super::Foundation::HANDLE,
+    pub cbSignatureObject: u32,
+    pub pbSignatureObject: *mut u8,
 }
 #[repr(C)]
 #[derive(Clone, Copy)]
@@ -133,6 +142,7 @@ pub union SIP_SUBJECTINFO_0 {
     pub psFlat: *mut MS_ADDINFO_FLAT,
     pub psCatMember: *mut super::Catalog::MS_ADDINFO_CATALOGMEMBER,
     pub psBlob: *mut MS_ADDINFO_BLOB,
+    pub psDetachedSig: *mut MS_ADDINFO_DETACHEDSIG,
 }
 pub const SPC_MARKER_CHECK_CURRENTLY_SUPPORTED_FLAGS: u32 = 1u32;
 pub const SPC_MARKER_CHECK_SKIP_SIP_INDIRECT_DATA_FLAG: u32 = 1u32;

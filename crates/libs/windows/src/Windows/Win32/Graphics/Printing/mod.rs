@@ -2594,6 +2594,9 @@ impl Default for DOC_INFO_INTERNAL {
     }
 }
 pub const DOC_INFO_INTERNAL_LEVEL: u32 = 100u32;
+pub const DONT_SEND_EXTRA_PAGES_FOR_DUPLEX: u32 = 2u32;
+pub const DOWN_THEN_LEFT: u32 = 8u32;
+pub const DOWN_THEN_RIGHT: u32 = 2u32;
 pub const DPD_DELETE_ALL_FILES: u32 = 4u32;
 pub const DPD_DELETE_SPECIFIC_VERSION: u32 = 2u32;
 pub const DPD_DELETE_UNUSED_FILES: u32 = 1u32;
@@ -4735,6 +4738,7 @@ pub const IOCTL_USBPRINT_CYCLE_PORT: u32 = 2228320u32;
 pub const IOCTL_USBPRINT_GET_1284_ID: u32 = 2228276u32;
 pub const IOCTL_USBPRINT_GET_INTERFACE_TYPE: u32 = 2228300u32;
 pub const IOCTL_USBPRINT_GET_LPT_STATUS: u32 = 2228272u32;
+pub const IOCTL_USBPRINT_GET_MFG_MDL_ID: u32 = 2228324u32;
 pub const IOCTL_USBPRINT_GET_PROTOCOL: u32 = 2228292u32;
 pub const IOCTL_USBPRINT_SET_DEVICE_ID: u32 = 2228312u32;
 pub const IOCTL_USBPRINT_SET_PORT_NUMBER: u32 = 2228304u32;
@@ -11473,6 +11477,7 @@ pub const JOB_CONTROL_CANCEL: u32 = 3u32;
 pub const JOB_CONTROL_DELETE: u32 = 5u32;
 pub const JOB_CONTROL_LAST_PAGE_EJECTED: u32 = 7u32;
 pub const JOB_CONTROL_PAUSE: u32 = 1u32;
+pub const JOB_CONTROL_PENDING_ON_DEVICE: u32 = 11u32;
 pub const JOB_CONTROL_RELEASE: u32 = 9u32;
 pub const JOB_CONTROL_RESTART: u32 = 4u32;
 pub const JOB_CONTROL_RESUME: u32 = 2u32;
@@ -11729,6 +11734,7 @@ impl Default for KERNDATA {
         unsafe { core::mem::zeroed() }
     }
 }
+pub const LEFT_THEN_DOWN: u32 = 4u32;
 pub const LOCAL_ONLY_REGISTRATION: PrintAsyncNotifyError = PrintAsyncNotifyError(23i32);
 pub const LPR: u32 = 2u32;
 #[repr(C)]
@@ -12434,7 +12440,10 @@ pub const OTS_MASK: u32 = 255u32;
 pub const OTS_PUSH_ENABLE_ALWAYS: u32 = 128u32;
 pub const OTS_PUSH_INCL_SETUP_TITLE: u32 = 32u32;
 pub const OTS_PUSH_NO_DOT_DOT_DOT: u32 = 64u32;
+pub const PDEV_ADJUST_GRAPHICS_RESOLUTION_TYPE: u32 = 4u32;
+pub const PDEV_ADJUST_IMAGEABLE_ORIGIN_AREA_TYPE: u32 = 8u32;
 pub const PDEV_ADJUST_PAPER_MARGIN_TYPE: u32 = 1u32;
+pub const PDEV_ADJUST_PHYSICAL_PAPER_SIZE_TYPE: u32 = 16u32;
 pub const PDEV_HOSTFONT_ENABLED_TYPE: u32 = 2u32;
 pub const PDEV_USE_TRUE_COLOR_TYPE: u32 = 3u32;
 pub type PFNCOMPROPSHEET = Option<unsafe extern "system" fn(hcompropsheet: super::super::Foundation::HANDLE, function: u32, lparam1: super::super::Foundation::LPARAM, lparam2: super::super::Foundation::LPARAM) -> isize>;
@@ -12637,6 +12646,10 @@ pub const PORT_TYPE_REDIRECTED: u32 = 4u32;
 pub const PORT_TYPE_WRITE: u32 = 1u32;
 pub const PPCAPS_BOOKLET_EDGE: u32 = 1u32;
 pub const PPCAPS_BORDER_PRINT: u32 = 1u32;
+pub const PPCAPS_DONT_SEND_EXTRA_PAGES_FOR_DUPLEX: u32 = 2u32;
+pub const PPCAPS_DOWN_THEN_LEFT: u32 = 8u32;
+pub const PPCAPS_DOWN_THEN_RIGHT: u32 = 2u32;
+pub const PPCAPS_LEFT_THEN_DOWN: u32 = 4u32;
 pub const PPCAPS_REVERSE_PAGES_FOR_REVERSE_DUPLEX: u32 = 1u32;
 pub const PPCAPS_RIGHT_THEN_DOWN: u32 = 1u32;
 pub const PPCAPS_SQUARE_SCALING: u32 = 1u32;
@@ -14073,6 +14086,7 @@ pub const SPLDS_PRINT_COLLATE: windows_core::PCWSTR = windows_core::w!("printCol
 pub const SPLDS_PRINT_COLOR: windows_core::PCWSTR = windows_core::w!("printColor");
 pub const SPLDS_PRINT_DUPLEX_SUPPORTED: windows_core::PCWSTR = windows_core::w!("printDuplexSupported");
 pub const SPLDS_PRINT_END_TIME: windows_core::PCWSTR = windows_core::w!("printEndTime");
+pub const SPLDS_PRINT_IPP_COMPRESSION_SUPPORTED: windows_core::PCWSTR = windows_core::w!("ippCompressionSupported");
 pub const SPLDS_PRINT_KEEP_PRINTED_JOBS: windows_core::PCWSTR = windows_core::w!("printKeepPrintedJobs");
 pub const SPLDS_PRINT_LANGUAGE: windows_core::PCWSTR = windows_core::w!("printLanguage");
 pub const SPLDS_PRINT_MAC_ADDRESS: windows_core::PCWSTR = windows_core::w!("printMACAddress");
@@ -14346,6 +14360,8 @@ pub const USBPRINT_IOCTL_INDEX: u32 = 0u32;
 pub const USB_PRINTER_INTERFACE_CLASSIC: u32 = 1u32;
 pub const USB_PRINTER_INTERFACE_DUAL: u32 = 3u32;
 pub const USB_PRINTER_INTERFACE_IPP: u32 = 2u32;
+pub const USB_PRINT_IPP_COMPAT_ID: u32 = 1u32;
+pub const USB_PRINT_IPP_FAXOUT: u32 = 2u32;
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct USERDATA {
@@ -14401,6 +14417,7 @@ pub struct XPSRAS_RENDERING_MODE(pub i32);
 pub const XPSRAS_RENDERING_MODE_ALIASED: XPSRAS_RENDERING_MODE = XPSRAS_RENDERING_MODE(1i32);
 pub const XPSRAS_RENDERING_MODE_ANTIALIASED: XPSRAS_RENDERING_MODE = XPSRAS_RENDERING_MODE(0i32);
 pub const XPS_FP_DRIVER_PROPERTY_BAG: windows_core::PCWSTR = windows_core::w!("DriverPropertyBag");
+pub const XPS_FP_FAX_JOB_PROPERTIES: windows_core::PCWSTR = windows_core::w!("JobFaxProperties");
 pub const XPS_FP_JOB_ID: windows_core::PCWSTR = windows_core::w!("PrintJobId");
 pub const XPS_FP_JOB_LEVEL_PRINTTICKET: windows_core::PCWSTR = windows_core::w!("JobPrintTicket");
 pub const XPS_FP_MERGED_DATAFILE_PATH: windows_core::PCWSTR = windows_core::w!("MergedDataFilePath");

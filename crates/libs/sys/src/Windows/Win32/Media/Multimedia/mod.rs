@@ -149,7 +149,7 @@ windows_targets::link!("winmm.dll" "system" fn joySetThreshold(ujoyid : u32, uth
 windows_targets::link!("winmm.dll" "system" fn mciDriverNotify(hwndcallback : super::super::Foundation:: HANDLE, wdeviceid : u32, ustatus : u32) -> windows_sys::core::BOOL);
 windows_targets::link!("winmm.dll" "system" fn mciDriverYield(wdeviceid : u32) -> u32);
 windows_targets::link!("winmm.dll" "system" fn mciFreeCommandResource(wtable : u32) -> windows_sys::core::BOOL);
-windows_targets::link!("winmm.dll" "system" fn mciGetCreatorTask(mciid : u32) -> super:: HTASK);
+windows_targets::link!("winmm.dll" "system" fn mciGetCreatorTask(mciid : u32) -> super::super::Foundation:: HTASK);
 windows_targets::link!("winmm.dll" "system" fn mciGetDeviceIDA(pszdevice : windows_sys::core::PCSTR) -> u32);
 windows_targets::link!("winmm.dll" "system" fn mciGetDeviceIDFromElementIDA(dwelementid : u32, lpstrtype : windows_sys::core::PCSTR) -> u32);
 windows_targets::link!("winmm.dll" "system" fn mciGetDeviceIDFromElementIDW(dwelementid : u32, lpstrtype : windows_sys::core::PCWSTR) -> u32);
@@ -2985,7 +2985,7 @@ pub struct MMIOINFO {
     pub fccIOProc: u32,
     pub pIOProc: LPMMIOPROC,
     pub wErrorRet: u32,
-    pub htask: super::HTASK,
+    pub htask: super::super::Foundation::HTASK,
     pub cchBuffer: i32,
     pub pchBuffer: *mut i8,
     pub pchNext: *mut i8,

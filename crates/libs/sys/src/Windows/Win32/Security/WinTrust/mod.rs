@@ -631,6 +631,7 @@ pub union WINTRUST_DATA_0 {
     pub pBlob: *mut WINTRUST_BLOB_INFO,
     pub pSgnr: *mut WINTRUST_SGNR_INFO,
     pub pCert: *mut WINTRUST_CERT_INFO,
+    pub pDetachedSig: *mut WINTRUST_DETACHED_SIG_INFO,
 }
 pub type WINTRUST_DATA_PROVIDER_FLAGS = u32;
 pub type WINTRUST_DATA_REVOCATION_CHECKS = u32;
@@ -638,6 +639,35 @@ pub type WINTRUST_DATA_STATE_ACTION = u32;
 pub type WINTRUST_DATA_UICHOICE = u32;
 pub type WINTRUST_DATA_UICONTEXT = u32;
 pub type WINTRUST_DATA_UNION_CHOICE = u32;
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct WINTRUST_DETACHED_SIG_BLOBS {
+    pub cbContentObject: i64,
+    pub pbContentObject: *mut u8,
+    pub cbSignatureObject: u32,
+    pub pbSignatureObject: *mut u8,
+}
+pub const WINTRUST_DETACHED_SIG_CHOICE_BLOB: u32 = 2u32;
+pub const WINTRUST_DETACHED_SIG_CHOICE_HANDLE: u32 = 1u32;
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct WINTRUST_DETACHED_SIG_FILE_HANDLES {
+    pub hContentFile: super::super::Foundation::HANDLE,
+    pub hSignatureFile: super::super::Foundation::HANDLE,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct WINTRUST_DETACHED_SIG_INFO {
+    pub cbStruct: u32,
+    pub dwUnionChoice: u32,
+    pub Anonymous: WINTRUST_DETACHED_SIG_INFO_0,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub union WINTRUST_DETACHED_SIG_INFO_0 {
+    pub pDetachedSigHandles: *mut WINTRUST_DETACHED_SIG_FILE_HANDLES,
+    pub pDetachedSigBlobs: *mut WINTRUST_DETACHED_SIG_BLOBS,
+}
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct WINTRUST_FILE_INFO {
@@ -750,6 +780,7 @@ pub const WTD_CACHE_ONLY_URL_RETRIEVAL: WINTRUST_DATA_PROVIDER_FLAGS = 4096u32;
 pub const WTD_CHOICE_BLOB: WINTRUST_DATA_UNION_CHOICE = 3u32;
 pub const WTD_CHOICE_CATALOG: WINTRUST_DATA_UNION_CHOICE = 2u32;
 pub const WTD_CHOICE_CERT: WINTRUST_DATA_UNION_CHOICE = 5u32;
+pub const WTD_CHOICE_DETACHED_SIG: u32 = 6u32;
 pub const WTD_CHOICE_FILE: WINTRUST_DATA_UNION_CHOICE = 1u32;
 pub const WTD_CHOICE_SIGNER: WINTRUST_DATA_UNION_CHOICE = 4u32;
 pub const WTD_CODE_INTEGRITY_DRIVER_MODE: u32 = 32768u32;
@@ -833,6 +864,7 @@ pub const WTD_UI_NOGOOD: WINTRUST_DATA_UICHOICE = 4u32;
 pub const WTD_UI_NONE: WINTRUST_DATA_UICHOICE = 2u32;
 pub const WTD_USE_DEFAULT_OSVER_CHECK: WINTRUST_DATA_PROVIDER_FLAGS = 1024u32;
 pub const WTD_USE_IE4_TRUST_FLAG: WINTRUST_DATA_PROVIDER_FLAGS = 1u32;
+pub const WTD_USE_LOCAL_MACHINE_CERTS: u32 = 8u32;
 pub const WTPF_ALLOWONLYPERTRUST: WINTRUST_POLICY_FLAGS = 262144u32;
 pub const WTPF_IGNOREEXPIRATION: WINTRUST_POLICY_FLAGS = 256u32;
 pub const WTPF_IGNOREREVOCATIONONTS: WINTRUST_POLICY_FLAGS = 131072u32;
@@ -858,6 +890,16 @@ pub const szOID_NESTED_SIGNATURE: windows_sys::core::PCSTR = windows_sys::core::
 pub const szOID_PKCS_9_SEQUENCE_NUMBER: windows_sys::core::PCSTR = windows_sys::core::s!("1.2.840.113549.1.9.25.4");
 pub const szOID_SEALING_SIGNATURE: windows_sys::core::PCSTR = windows_sys::core::s!("1.3.6.1.4.1.311.2.4.3");
 pub const szOID_SEALING_TIMESTAMP: windows_sys::core::PCSTR = windows_sys::core::s!("1.3.6.1.4.1.311.2.4.4");
+pub const szOID_SIGNED_ATTRIBUTE_AUTHOR: windows_sys::core::PCSTR = windows_sys::core::s!("1.3.6.1.4.1.311.2.7.8");
+pub const szOID_SIGNED_ATTRIBUTE_FILE_DESCRIPTION: windows_sys::core::PCSTR = windows_sys::core::s!("1.3.6.1.4.1.311.2.7.3");
+pub const szOID_SIGNED_ATTRIBUTE_FILE_VERSION: windows_sys::core::PCSTR = windows_sys::core::s!("1.3.6.1.4.1.311.2.7.2");
+pub const szOID_SIGNED_ATTRIBUTE_INTERNAL_NAME: windows_sys::core::PCSTR = windows_sys::core::s!("1.3.6.1.4.1.311.2.7.1");
+pub const szOID_SIGNED_ATTRIBUTE_LANGUAGE: windows_sys::core::PCSTR = windows_sys::core::s!("1.3.6.1.4.1.311.2.7.7");
+pub const szOID_SIGNED_ATTRIBUTE_ORIGINAL_FILENAME: windows_sys::core::PCSTR = windows_sys::core::s!("1.3.6.1.4.1.311.2.7.6");
+pub const szOID_SIGNED_ATTRIBUTE_PRODUCT: windows_sys::core::PCSTR = windows_sys::core::s!("1.3.6.1.4.1.311.2.7.4");
+pub const szOID_SIGNED_ATTRIBUTE_PRODUCT_VERSION: windows_sys::core::PCSTR = windows_sys::core::s!("1.3.6.1.4.1.311.2.7.5");
+pub const szOID_SIGNED_ATTRIBUTE_PUBLISH_TIME: windows_sys::core::PCSTR = windows_sys::core::s!("1.3.6.1.4.1.311.2.7.9");
+pub const szOID_SIGNED_ATTRIBUTE_SOURCE_URL: windows_sys::core::PCSTR = windows_sys::core::s!("1.3.6.1.4.1.311.2.7.10");
 pub const szOID_TRUSTED_CLIENT_AUTH_CA_LIST: windows_sys::core::PCSTR = windows_sys::core::s!("1.3.6.1.4.1.311.2.2.2");
 pub const szOID_TRUSTED_CODESIGNING_CA_LIST: windows_sys::core::PCSTR = windows_sys::core::s!("1.3.6.1.4.1.311.2.2.1");
 pub const szOID_TRUSTED_SERVER_AUTH_CA_LIST: windows_sys::core::PCSTR = windows_sys::core::s!("1.3.6.1.4.1.311.2.2.3");

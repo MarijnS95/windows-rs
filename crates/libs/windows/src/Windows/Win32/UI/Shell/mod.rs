@@ -7028,6 +7028,7 @@ pub const COPYENGINE_S_KEEP_BOTH: windows_core::HRESULT = windows_core::HRESULT(
 pub const COPYENGINE_S_MERGE: windows_core::HRESULT = windows_core::HRESULT(0x270006_u32 as _);
 pub const COPYENGINE_S_NOT_HANDLED: windows_core::HRESULT = windows_core::HRESULT(0x270003_u32 as _);
 pub const COPYENGINE_S_PENDING: windows_core::HRESULT = windows_core::HRESULT(0x27000B_u32 as _);
+pub const COPYENGINE_S_PENDING_BATCH_COPY: windows_core::HRESULT = windows_core::HRESULT(0x270011_u32 as _);
 pub const COPYENGINE_S_PENDING_DELETE: windows_core::HRESULT = windows_core::HRESULT(0x270010_u32 as _);
 pub const COPYENGINE_S_PROGRESS_PAUSE: windows_core::HRESULT = windows_core::HRESULT(0x27000F_u32 as _);
 pub const COPYENGINE_S_USER_IGNORED: windows_core::HRESULT = windows_core::HRESULT(0x270005_u32 as _);
@@ -8990,6 +8991,7 @@ pub const FOLDERTYPEID_StorageProviderPictures: windows_core::GUID = windows_cor
 pub const FOLDERTYPEID_StorageProviderVideos: windows_core::GUID = windows_core::GUID::from_u128(0x51294da1_d7b1_485b_9e9a_17cffe33e187);
 pub const FOLDERTYPEID_UserFiles: windows_core::GUID = windows_core::GUID::from_u128(0xcd0fc69b_71e2_46e5_9690_5bcd9f57aab3);
 pub const FOLDERTYPEID_UsersLibraries: windows_core::GUID = windows_core::GUID::from_u128(0xc4d98f09_6124_4fe0_9942_826416082da9);
+pub const FOLDERTYPEID_VersionControl: windows_core::GUID = windows_core::GUID::from_u128(0x69f1e26b_ec64_4280_bc83_f1eb887ec35a);
 pub const FOLDERTYPEID_Videos: windows_core::GUID = windows_core::GUID::from_u128(0x5fa96407_7e77_483c_ac93_691d05850de8);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
@@ -30506,6 +30508,45 @@ impl IObjectWithFolderEnumMode_Vtbl {
     }
 }
 impl windows_core::RuntimeName for IObjectWithFolderEnumMode {}
+windows_core::imp::define_interface!(IObjectWithPackageFullName, IObjectWithPackageFullName_Vtbl, 0xed2aa515_602f_469c_a130_ce69fd0fa878);
+windows_core::imp::interface_hierarchy!(IObjectWithPackageFullName, windows_core::IUnknown);
+impl IObjectWithPackageFullName {
+    pub unsafe fn GetPackageFullName(&self) -> windows_core::Result<windows_core::PWSTR> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetPackageFullName)(windows_core::Interface::as_raw(self), &mut result__).map(|| result__)
+        }
+    }
+}
+#[repr(C)]
+pub struct IObjectWithPackageFullName_Vtbl {
+    pub base__: windows_core::IUnknown_Vtbl,
+    pub GetPackageFullName: unsafe extern "system" fn(*mut core::ffi::c_void, *mut windows_core::PWSTR) -> windows_core::HRESULT,
+}
+pub trait IObjectWithPackageFullName_Impl: windows_core::IUnknownImpl {
+    fn GetPackageFullName(&self) -> windows_core::Result<windows_core::PWSTR>;
+}
+impl IObjectWithPackageFullName_Vtbl {
+    pub const fn new<Identity: IObjectWithPackageFullName_Impl, const OFFSET: isize>() -> Self {
+        unsafe extern "system" fn GetPackageFullName<Identity: IObjectWithPackageFullName_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, packagefullname: *mut windows_core::PWSTR) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IObjectWithPackageFullName_Impl::GetPackageFullName(this) {
+                    Ok(ok__) => {
+                        packagefullname.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        Self { base__: windows_core::IUnknown_Vtbl::new::<Identity, OFFSET>(), GetPackageFullName: GetPackageFullName::<Identity, OFFSET> }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<IObjectWithPackageFullName as windows_core::Interface>::IID
+    }
+}
+impl windows_core::RuntimeName for IObjectWithPackageFullName {}
 windows_core::imp::define_interface!(IObjectWithProgID, IObjectWithProgID_Vtbl, 0x71e806fb_8dee_46fc_bf8c_7748a8a1ae13);
 windows_core::imp::interface_hierarchy!(IObjectWithProgID, windows_core::IUnknown);
 impl IObjectWithProgID {
@@ -37347,10 +37388,6 @@ impl IShellImageData {
     pub unsafe fn Rotate(&self, dwangle: u32) -> windows_core::Result<()> {
         unsafe { (windows_core::Interface::vtable(self).Rotate)(windows_core::Interface::as_raw(self), dwangle).ok() }
     }
-    #[cfg(feature = "Win32_Graphics_GdiPlus")]
-    pub unsafe fn Scale(&self, cx: u32, cy: u32, hints: super::super::Graphics::GdiPlus::InterpolationMode) -> windows_core::Result<()> {
-        unsafe { (windows_core::Interface::vtable(self).Scale)(windows_core::Interface::as_raw(self), cx, cy, hints).ok() }
-    }
     pub unsafe fn DiscardEdit(&self) -> windows_core::Result<()> {
         unsafe { (windows_core::Interface::vtable(self).DiscardEdit)(windows_core::Interface::as_raw(self)).ok() }
     }
@@ -37419,9 +37456,6 @@ pub struct IShellImageData_Vtbl {
     #[cfg(not(feature = "Win32_System_Com_StructuredStorage"))]
     GetProperties: usize,
     pub Rotate: unsafe extern "system" fn(*mut core::ffi::c_void, u32) -> windows_core::HRESULT,
-    #[cfg(feature = "Win32_Graphics_GdiPlus")]
-    pub Scale: unsafe extern "system" fn(*mut core::ffi::c_void, u32, u32, super::super::Graphics::GdiPlus::InterpolationMode) -> windows_core::HRESULT,
-    #[cfg(not(feature = "Win32_Graphics_GdiPlus"))]
     Scale: usize,
     pub DiscardEdit: unsafe extern "system" fn(*mut core::ffi::c_void) -> windows_core::HRESULT,
     #[cfg(feature = "Win32_System_Com_StructuredStorage")]
@@ -37435,7 +37469,7 @@ pub struct IShellImageData_Vtbl {
     pub CloneFrame: unsafe extern "system" fn(*mut core::ffi::c_void, *mut *mut u8) -> windows_core::HRESULT,
     pub ReplaceFrame: unsafe extern "system" fn(*mut core::ffi::c_void, *mut u8) -> windows_core::HRESULT,
 }
-#[cfg(all(feature = "Win32_Graphics_Gdi", feature = "Win32_Graphics_GdiPlus", feature = "Win32_System_Com_StructuredStorage"))]
+#[cfg(all(feature = "Win32_Graphics_Gdi", feature = "Win32_System_Com_StructuredStorage"))]
 pub trait IShellImageData_Impl: windows_core::IUnknownImpl {
     fn Decode(&self, dwflags: u32, cxdesired: u32, cydesired: u32) -> windows_core::Result<()>;
     fn Draw(&self, hdc: super::super::Graphics::Gdi::HDC, prcdest: *mut super::super::Foundation::RECT, prcsrc: *mut super::super::Foundation::RECT) -> windows_core::Result<()>;
@@ -37458,7 +37492,6 @@ pub trait IShellImageData_Impl: windows_core::IUnknownImpl {
     fn GetDelay(&self, pdwdelay: *mut u32) -> windows_core::Result<()>;
     fn GetProperties(&self, dwmode: u32) -> windows_core::Result<super::super::System::Com::StructuredStorage::IPropertySetStorage>;
     fn Rotate(&self, dwangle: u32) -> windows_core::Result<()>;
-    fn Scale(&self, cx: u32, cy: u32, hints: super::super::Graphics::GdiPlus::InterpolationMode) -> windows_core::Result<()>;
     fn DiscardEdit(&self) -> windows_core::Result<()>;
     fn SetEncoderParams(&self, pbagenc: windows_core::Ref<'_, super::super::System::Com::StructuredStorage::IPropertyBag>) -> windows_core::Result<()>;
     fn DisplayName(&self, wszname: &windows_core::PCWSTR, cch: u32) -> windows_core::Result<()>;
@@ -37468,7 +37501,7 @@ pub trait IShellImageData_Impl: windows_core::IUnknownImpl {
     fn CloneFrame(&self, ppimg: *mut *mut u8) -> windows_core::Result<()>;
     fn ReplaceFrame(&self, pimg: *mut u8) -> windows_core::Result<()>;
 }
-#[cfg(all(feature = "Win32_Graphics_Gdi", feature = "Win32_Graphics_GdiPlus", feature = "Win32_System_Com_StructuredStorage"))]
+#[cfg(all(feature = "Win32_Graphics_Gdi", feature = "Win32_System_Com_StructuredStorage"))]
 impl IShellImageData_Vtbl {
     pub const fn new<Identity: IShellImageData_Impl, const OFFSET: isize>() -> Self {
         unsafe extern "system" fn Decode<Identity: IShellImageData_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, dwflags: u32, cxdesired: u32, cydesired: u32) -> windows_core::HRESULT {
@@ -37603,12 +37636,6 @@ impl IShellImageData_Vtbl {
                 IShellImageData_Impl::Rotate(this, core::mem::transmute_copy(&dwangle)).into()
             }
         }
-        unsafe extern "system" fn Scale<Identity: IShellImageData_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, cx: u32, cy: u32, hints: super::super::Graphics::GdiPlus::InterpolationMode) -> windows_core::HRESULT {
-            unsafe {
-                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
-                IShellImageData_Impl::Scale(this, core::mem::transmute_copy(&cx), core::mem::transmute_copy(&cy), core::mem::transmute_copy(&hints)).into()
-            }
-        }
         unsafe extern "system" fn DiscardEdit<Identity: IShellImageData_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void) -> windows_core::HRESULT {
             unsafe {
                 let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
@@ -37686,7 +37713,7 @@ impl IShellImageData_Vtbl {
             GetDelay: GetDelay::<Identity, OFFSET>,
             GetProperties: GetProperties::<Identity, OFFSET>,
             Rotate: Rotate::<Identity, OFFSET>,
-            Scale: Scale::<Identity, OFFSET>,
+            Scale: 0,
             DiscardEdit: DiscardEdit::<Identity, OFFSET>,
             SetEncoderParams: SetEncoderParams::<Identity, OFFSET>,
             DisplayName: DisplayName::<Identity, OFFSET>,
@@ -37701,7 +37728,7 @@ impl IShellImageData_Vtbl {
         iid == &<IShellImageData as windows_core::Interface>::IID
     }
 }
-#[cfg(all(feature = "Win32_Graphics_Gdi", feature = "Win32_Graphics_GdiPlus", feature = "Win32_System_Com_StructuredStorage"))]
+#[cfg(all(feature = "Win32_Graphics_Gdi", feature = "Win32_System_Com_StructuredStorage"))]
 impl windows_core::RuntimeName for IShellImageData {}
 windows_core::imp::define_interface!(IShellImageDataAbort, IShellImageDataAbort_Vtbl, 0x53fb8e58_50c0_4003_b4aa_0c8df28e7f3a);
 windows_core::imp::interface_hierarchy!(IShellImageDataAbort, windows_core::IUnknown);

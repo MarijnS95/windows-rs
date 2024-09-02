@@ -1457,6 +1457,35 @@ impl Default for ADDRINFOEX6 {
 }
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ADDRINFOEX7 {
+    pub ai_flags: i32,
+    pub ai_family: i32,
+    pub ai_socktype: i32,
+    pub ai_protocol: i32,
+    pub ai_addrlen: usize,
+    pub ai_canonname: windows_core::PWSTR,
+    pub ai_addr: *mut SOCKADDR,
+    pub ai_blob: *mut core::ffi::c_void,
+    pub ai_bloblen: usize,
+    pub ai_provider: *mut windows_core::GUID,
+    pub ai_next: *mut ADDRINFOEX7,
+    pub ai_version: i32,
+    pub ai_fqdn: windows_core::PWSTR,
+    pub ai_interfaceindex: i32,
+    pub ai_resolutionhandle: super::super::Foundation::HANDLE,
+    pub ai_ttl: u32,
+    pub ai_numservers: u32,
+    pub ai_servers: *mut ADDRINFO_DNS_SERVER,
+    pub ai_responseflags: u64,
+    pub ai_extraflags: u64,
+}
+impl Default for ADDRINFOEX7 {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct ADDRINFOEXA {
     pub ai_flags: i32,
     pub ai_family: i32,
@@ -1500,6 +1529,7 @@ pub const ADDRINFOEX_VERSION_3: u32 = 3u32;
 pub const ADDRINFOEX_VERSION_4: u32 = 4u32;
 pub const ADDRINFOEX_VERSION_5: u32 = 5u32;
 pub const ADDRINFOEX_VERSION_6: u32 = 6u32;
+pub const ADDRINFOEX_VERSION_7: u32 = 7u32;
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct ADDRINFOW {
@@ -1535,6 +1565,7 @@ impl Default for ADDRINFO_DNS_SERVER {
 #[derive(Clone, Copy)]
 pub union ADDRINFO_DNS_SERVER_0 {
     pub ai_template: windows_core::PWSTR,
+    pub ai_hostname: windows_core::PWSTR,
 }
 impl Default for ADDRINFO_DNS_SERVER_0 {
     fn default() -> Self {
@@ -1598,10 +1629,12 @@ pub const AI_DNS_ONLY: u32 = 16u32;
 pub const AI_DNS_RESPONSE_HOSTFILE: u32 = 2u32;
 pub const AI_DNS_RESPONSE_SECURE: u32 = 1u32;
 pub const AI_DNS_SERVER_TYPE_DOH: u32 = 2u32;
+pub const AI_DNS_SERVER_TYPE_DOT: u32 = 3u32;
 pub const AI_DNS_SERVER_TYPE_UDP: u32 = 1u32;
 pub const AI_DNS_SERVER_UDP_FALLBACK: u32 = 1u32;
 pub const AI_EXCLUSIVE_CUSTOM_SERVERS: u32 = 2097152u32;
 pub const AI_EXTENDED: u32 = 2147483648u32;
+pub const AI_EXTRA_DNSSEC_REQUIRED: u64 = 1u64;
 pub const AI_FILESERVER: u32 = 262144u32;
 pub const AI_FORCE_CLEAR_TEXT: u32 = 32u32;
 pub const AI_FQDN: u32 = 131072u32;
@@ -3813,6 +3846,7 @@ pub const LUP_NEAREST: u32 = 8u32;
 pub const LUP_NOCONTAINERS: u32 = 4u32;
 pub const LUP_NON_AUTHORITATIVE: u32 = 16384u32;
 pub const LUP_REQUIRE_SECURE: u32 = 268435456u32;
+pub const LUP_RESERVED_UNUSED: u32 = 524288u32;
 pub const LUP_RESOLUTION_HANDLE: u32 = 2147483648u32;
 pub const LUP_RES_SERVICE: u32 = 32768u32;
 pub const LUP_RETURN_ADDR: u32 = 256u32;
@@ -4540,6 +4574,7 @@ pub struct NL_ROUTE_PROTOCOL(pub i32);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct NL_SUFFIX_ORIGIN(pub i32);
+pub const NMR_REG_KEY_PATH: windows_core::PCWSTR = windows_core::w!("\\Registry\\Machine\\System\\CurrentControlSet\\Control\\NMR\\providers");
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct NPI_MODULEID {
@@ -6305,6 +6340,47 @@ impl Default for TCP_INFO_v1 {
         unsafe { core::mem::zeroed() }
     }
 }
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct TCP_INFO_v2 {
+    pub State: TCPSTATE,
+    pub Mss: u32,
+    pub ConnectionTimeMs: u64,
+    pub TimestampsEnabled: bool,
+    pub RttUs: u32,
+    pub MinRttUs: u32,
+    pub BytesInFlight: u32,
+    pub Cwnd: u32,
+    pub SndWnd: u32,
+    pub RcvWnd: u32,
+    pub RcvBuf: u32,
+    pub BytesOut: u64,
+    pub BytesIn: u64,
+    pub BytesReordered: u32,
+    pub BytesRetrans: u32,
+    pub FastRetrans: u32,
+    pub DupAcksIn: u32,
+    pub TimeoutEpisodes: u32,
+    pub SynRetrans: u8,
+    pub SndLimTransRwin: u32,
+    pub SndLimTimeRwin: u32,
+    pub SndLimBytesRwin: u64,
+    pub SndLimTransCwnd: u32,
+    pub SndLimTimeCwnd: u32,
+    pub SndLimBytesCwnd: u64,
+    pub SndLimTransSnd: u32,
+    pub SndLimTimeSnd: u32,
+    pub SndLimBytesSnd: u64,
+    pub OutOfOrderPktsIn: u32,
+    pub EcnNegotiated: bool,
+    pub EceAcksIn: u32,
+    pub PtoEpisodes: u32,
+}
+impl Default for TCP_INFO_v2 {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
 pub const TCP_INITIAL_RTO_DEFAULT_MAX_SYN_RETRANSMISSIONS: u32 = 0u32;
 pub const TCP_INITIAL_RTO_DEFAULT_RTT: u32 = 0u32;
 pub const TCP_INITIAL_RTO_NO_SYN_RETRANSMISSIONS: u16 = 65534u16;
@@ -6440,6 +6516,7 @@ pub const TH_ACK: u32 = 16u32;
 pub const TH_CWR: u32 = 128u32;
 pub const TH_ECE: u32 = 64u32;
 pub const TH_FIN: u32 = 1u32;
+pub const TH_MAX_LEN: u32 = 60u32;
 pub const TH_NETDEV: u32 = 1u32;
 pub const TH_OPT_EOL: u32 = 0u32;
 pub const TH_OPT_FASTOPEN: u32 = 34u32;

@@ -31,3 +31,4 @@
     !Windows.Win32.System.WinRT.Xaml
     !Windows.Win32.UI.Xaml
     !Windows.Win32.Web.MsHtml
+    !Windows.Win32.Graphics.GdiPlus

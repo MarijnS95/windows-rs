@@ -4574,7 +4574,7 @@ impl IRawElementProviderWindowlessSite_Vtbl {
 }
 #[cfg(feature = "Win32_System_Com")]
 impl windows_core::RuntimeName for IRawElementProviderWindowlessSite {}
-windows_core::imp::define_interface!(IRichEditUiaInformation, IRichEditUiaInformation_Vtbl, 0);
+windows_core::imp::define_interface!(IRichEditUiaInformation, IRichEditUiaInformation_Vtbl, 0x23969a9d_8546_4032_a1bb_73750cbf3333);
 windows_core::imp::interface_hierarchy!(IRichEditUiaInformation, windows_core::IUnknown);
 impl IRichEditUiaInformation {
     pub unsafe fn GetBoundaryRectangle(&self, puiarect: *mut UiaRect) -> windows_core::Result<()> {
@@ -4619,7 +4619,7 @@ impl IRichEditUiaInformation_Vtbl {
     }
 }
 impl windows_core::RuntimeName for IRichEditUiaInformation {}
-windows_core::imp::define_interface!(IRicheditWindowlessAccessibility, IRicheditWindowlessAccessibility_Vtbl, 0);
+windows_core::imp::define_interface!(IRicheditWindowlessAccessibility, IRicheditWindowlessAccessibility_Vtbl, 0x983e572d_20cd_460b_9104_83111592dd10);
 windows_core::imp::interface_hierarchy!(IRicheditWindowlessAccessibility, windows_core::IUnknown);
 impl IRicheditWindowlessAccessibility {
     pub unsafe fn CreateProvider<P0>(&self, psite: P0) -> windows_core::Result<IRawElementProviderSimple>

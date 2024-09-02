@@ -54,10 +54,48 @@ pub const DXC_ARG_WARNINGS_ARE_ERRORS: windows_core::PCWSTR = windows_core::w!("
 pub struct DXC_CP(pub u32);
 pub const DXC_CP_ACP: DXC_CP = DXC_CP(0u32);
 pub const DXC_CP_UTF16: DXC_CP = DXC_CP(1200u32);
+pub const DXC_CP_UTF32: DXC_CP = DXC_CP(12000u32);
 pub const DXC_CP_UTF8: DXC_CP = DXC_CP(65001u32);
+pub const DXC_CP_WIDE: DXC_CP = DXC_CP(1200u32);
 pub const DXC_EXTRA_OUTPUT_NAME_STDERR: windows_core::PCWSTR = windows_core::w!("*stderr*");
 pub const DXC_EXTRA_OUTPUT_NAME_STDOUT: windows_core::PCWSTR = windows_core::w!("*stdout*");
-pub const DXC_HASHFLAG_INCLUDES_SOURCE: u32 = 1u32;
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct DXC_HASHFLAG(pub u32);
+impl DXC_HASHFLAG {
+    pub const fn contains(&self, other: Self) -> bool {
+        self.0 & other.0 == other.0
+    }
+}
+impl core::ops::BitOr for DXC_HASHFLAG {
+    type Output = Self;
+    fn bitor(self, other: Self) -> Self {
+        Self(self.0 | other.0)
+    }
+}
+impl core::ops::BitAnd for DXC_HASHFLAG {
+    type Output = Self;
+    fn bitand(self, other: Self) -> Self {
+        Self(self.0 & other.0)
+    }
+}
+impl core::ops::BitOrAssign for DXC_HASHFLAG {
+    fn bitor_assign(&mut self, other: Self) {
+        self.0.bitor_assign(other.0)
+    }
+}
+impl core::ops::BitAndAssign for DXC_HASHFLAG {
+    fn bitand_assign(&mut self, other: Self) {
+        self.0.bitand_assign(other.0)
+    }
+}
+impl core::ops::Not for DXC_HASHFLAG {
+    type Output = Self;
+    fn not(self) -> Self {
+        Self(self.0.not())
+    }
+}
+pub const DXC_HASHFLAG_INCLUDES_SOURCE: DXC_HASHFLAG = DXC_HASHFLAG(1u32);
 pub const DXC_OUT_DISASSEMBLY: DXC_OUT_KIND = DXC_OUT_KIND(5i32);
 pub const DXC_OUT_ERRORS: DXC_OUT_KIND = DXC_OUT_KIND(2i32);
 pub const DXC_OUT_EXTRA_OUTPUTS: DXC_OUT_KIND = DXC_OUT_KIND(10i32);
@@ -65,13 +103,31 @@ pub const DXC_OUT_HLSL: DXC_OUT_KIND = DXC_OUT_KIND(6i32);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct DXC_OUT_KIND(pub i32);
+pub const DXC_OUT_LAST: DXC_OUT_KIND = DXC_OUT_KIND(13i32);
 pub const DXC_OUT_NONE: DXC_OUT_KIND = DXC_OUT_KIND(0i32);
+pub const DXC_OUT_NUM_ENUMS: DXC_OUT_KIND = DXC_OUT_KIND(14i32);
 pub const DXC_OUT_OBJECT: DXC_OUT_KIND = DXC_OUT_KIND(1i32);
 pub const DXC_OUT_PDB: DXC_OUT_KIND = DXC_OUT_KIND(3i32);
 pub const DXC_OUT_REFLECTION: DXC_OUT_KIND = DXC_OUT_KIND(8i32);
+pub const DXC_OUT_REMARKS: DXC_OUT_KIND = DXC_OUT_KIND(11i32);
 pub const DXC_OUT_ROOT_SIGNATURE: DXC_OUT_KIND = DXC_OUT_KIND(9i32);
 pub const DXC_OUT_SHADER_HASH: DXC_OUT_KIND = DXC_OUT_KIND(4i32);
 pub const DXC_OUT_TEXT: DXC_OUT_KIND = DXC_OUT_KIND(7i32);
+pub const DXC_OUT_TIME_REPORT: DXC_OUT_KIND = DXC_OUT_KIND(12i32);
+pub const DXC_OUT_TIME_TRACE: DXC_OUT_KIND = DXC_OUT_KIND(13i32);
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct DXC_PART(pub u32);
+pub const DXC_PART_DXIL: DXC_PART = DXC_PART(1279875140u32);
+pub const DXC_PART_INPUT_SIGNATURE: DXC_PART = DXC_PART(826757961u32);
+pub const DXC_PART_OUTPUT_SIGNATURE: DXC_PART = DXC_PART(826757967u32);
+pub const DXC_PART_PATCH_CONSTANT_SIGNATURE: DXC_PART = DXC_PART(826757968u32);
+pub const DXC_PART_PDB: DXC_PART = DXC_PART(1111772233u32);
+pub const DXC_PART_PDB_NAME: DXC_PART = DXC_PART(1313098825u32);
+pub const DXC_PART_PRIVATE_DATA: DXC_PART = DXC_PART(1447645776u32);
+pub const DXC_PART_REFLECTION_DATA: DXC_PART = DXC_PART(1413567571u32);
+pub const DXC_PART_ROOT_SIGNATURE: DXC_PART = DXC_PART(810767442u32);
+pub const DXC_PART_SHADER_HASH: DXC_PART = DXC_PART(1213415752u32);
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct DxcArgPair {
@@ -88,7 +144,7 @@ impl Default for DxcArgPair {
 pub struct DxcBuffer {
     pub Ptr: *const core::ffi::c_void,
     pub Size: usize,
-    pub Encoding: u32,
+    pub Encoding: DXC_CP,
 }
 impl Default for DxcBuffer {
     fn default() -> Self {
@@ -112,7 +168,7 @@ impl Default for DxcDefine {
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct DxcShaderHash {
-    pub Flags: u32,
+    pub Flags: DXC_HASHFLAG,
     pub HashDigest: [u8; 16],
 }
 impl Default for DxcShaderHash {
@@ -656,13 +712,13 @@ impl IDxcContainerBuilder {
     {
         unsafe { (windows_core::Interface::vtable(self).Load)(windows_core::Interface::as_raw(self), pdxilcontainerheader.param().abi()).ok() }
     }
-    pub unsafe fn AddPart<P1>(&self, fourcc: u32, psource: P1) -> windows_core::Result<()>
+    pub unsafe fn AddPart<P1>(&self, fourcc: DXC_PART, psource: P1) -> windows_core::Result<()>
     where
         P1: windows_core::Param<IDxcBlob>,
     {
         unsafe { (windows_core::Interface::vtable(self).AddPart)(windows_core::Interface::as_raw(self), fourcc, psource.param().abi()).ok() }
     }
-    pub unsafe fn RemovePart(&self, fourcc: u32) -> windows_core::Result<()> {
+    pub unsafe fn RemovePart(&self, fourcc: DXC_PART) -> windows_core::Result<()> {
         unsafe { (windows_core::Interface::vtable(self).RemovePart)(windows_core::Interface::as_raw(self), fourcc).ok() }
     }
     pub unsafe fn SerializeContainer(&self) -> windows_core::Result<IDxcOperationResult> {
@@ -676,14 +732,14 @@ impl IDxcContainerBuilder {
 pub struct IDxcContainerBuilder_Vtbl {
     pub base__: windows_core::IUnknown_Vtbl,
     pub Load: unsafe extern "system" fn(*mut core::ffi::c_void, *mut core::ffi::c_void) -> windows_core::HRESULT,
-    pub AddPart: unsafe extern "system" fn(*mut core::ffi::c_void, u32, *mut core::ffi::c_void) -> windows_core::HRESULT,
-    pub RemovePart: unsafe extern "system" fn(*mut core::ffi::c_void, u32) -> windows_core::HRESULT,
+    pub AddPart: unsafe extern "system" fn(*mut core::ffi::c_void, DXC_PART, *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub RemovePart: unsafe extern "system" fn(*mut core::ffi::c_void, DXC_PART) -> windows_core::HRESULT,
     pub SerializeContainer: unsafe extern "system" fn(*mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
 }
 pub trait IDxcContainerBuilder_Impl: windows_core::IUnknownImpl {
     fn Load(&self, pdxilcontainerheader: windows_core::Ref<'_, IDxcBlob>) -> windows_core::Result<()>;
-    fn AddPart(&self, fourcc: u32, psource: windows_core::Ref<'_, IDxcBlob>) -> windows_core::Result<()>;
-    fn RemovePart(&self, fourcc: u32) -> windows_core::Result<()>;
+    fn AddPart(&self, fourcc: DXC_PART, psource: windows_core::Ref<'_, IDxcBlob>) -> windows_core::Result<()>;
+    fn RemovePart(&self, fourcc: DXC_PART) -> windows_core::Result<()>;
     fn SerializeContainer(&self) -> windows_core::Result<IDxcOperationResult>;
 }
 impl IDxcContainerBuilder_Vtbl {
@@ -694,13 +750,13 @@ impl IDxcContainerBuilder_Vtbl {
                 IDxcContainerBuilder_Impl::Load(this, core::mem::transmute_copy(&pdxilcontainerheader)).into()
             }
         }
-        unsafe extern "system" fn AddPart<Identity: IDxcContainerBuilder_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, fourcc: u32, psource: *mut core::ffi::c_void) -> windows_core::HRESULT {
+        unsafe extern "system" fn AddPart<Identity: IDxcContainerBuilder_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, fourcc: DXC_PART, psource: *mut core::ffi::c_void) -> windows_core::HRESULT {
             unsafe {
                 let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
                 IDxcContainerBuilder_Impl::AddPart(this, core::mem::transmute_copy(&fourcc), core::mem::transmute_copy(&psource)).into()
             }
         }
-        unsafe extern "system" fn RemovePart<Identity: IDxcContainerBuilder_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, fourcc: u32) -> windows_core::HRESULT {
+        unsafe extern "system" fn RemovePart<Identity: IDxcContainerBuilder_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, fourcc: DXC_PART) -> windows_core::HRESULT {
             unsafe {
                 let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
                 IDxcContainerBuilder_Impl::RemovePart(this, core::mem::transmute_copy(&fourcc)).into()
@@ -746,7 +802,7 @@ impl IDxcContainerReflection {
             (windows_core::Interface::vtable(self).GetPartCount)(windows_core::Interface::as_raw(self), &mut result__).map(|| result__)
         }
     }
-    pub unsafe fn GetPartKind(&self, idx: u32) -> windows_core::Result<u32> {
+    pub unsafe fn GetPartKind(&self, idx: u32) -> windows_core::Result<DXC_PART> {
         unsafe {
             let mut result__ = core::mem::zeroed();
             (windows_core::Interface::vtable(self).GetPartKind)(windows_core::Interface::as_raw(self), idx, &mut result__).map(|| result__)
@@ -758,14 +814,18 @@ impl IDxcContainerReflection {
             (windows_core::Interface::vtable(self).GetPartContent)(windows_core::Interface::as_raw(self), idx, &mut result__).and_then(|| windows_core::Type::from_abi(result__))
         }
     }
-    pub unsafe fn FindFirstPartKind(&self, kind: u32) -> windows_core::Result<u32> {
+    pub unsafe fn FindFirstPartKind(&self, kind: DXC_PART) -> windows_core::Result<u32> {
         unsafe {
             let mut result__ = core::mem::zeroed();
             (windows_core::Interface::vtable(self).FindFirstPartKind)(windows_core::Interface::as_raw(self), kind, &mut result__).map(|| result__)
         }
     }
-    pub unsafe fn GetPartReflection(&self, idx: u32, iid: *const windows_core::GUID, ppvobject: *mut *mut core::ffi::c_void) -> windows_core::Result<()> {
-        unsafe { (windows_core::Interface::vtable(self).GetPartReflection)(windows_core::Interface::as_raw(self), idx, iid, ppvobject as _).ok() }
+    pub unsafe fn GetPartReflection<T>(&self, idx: u32) -> windows_core::Result<T>
+    where
+        T: windows_core::Interface,
+    {
+        let mut result__ = core::ptr::null_mut();
+        unsafe { (windows_core::Interface::vtable(self).GetPartReflection)(windows_core::Interface::as_raw(self), idx, &T::IID, &mut result__).and_then(|| windows_core::Type::from_abi(result__)) }
     }
 }
 #[repr(C)]
@@ -773,17 +833,17 @@ pub struct IDxcContainerReflection_Vtbl {
     pub base__: windows_core::IUnknown_Vtbl,
     pub Load: unsafe extern "system" fn(*mut core::ffi::c_void, *mut core::ffi::c_void) -> windows_core::HRESULT,
     pub GetPartCount: unsafe extern "system" fn(*mut core::ffi::c_void, *mut u32) -> windows_core::HRESULT,
-    pub GetPartKind: unsafe extern "system" fn(*mut core::ffi::c_void, u32, *mut u32) -> windows_core::HRESULT,
+    pub GetPartKind: unsafe extern "system" fn(*mut core::ffi::c_void, u32, *mut DXC_PART) -> windows_core::HRESULT,
     pub GetPartContent: unsafe extern "system" fn(*mut core::ffi::c_void, u32, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
-    pub FindFirstPartKind: unsafe extern "system" fn(*mut core::ffi::c_void, u32, *mut u32) -> windows_core::HRESULT,
+    pub FindFirstPartKind: unsafe extern "system" fn(*mut core::ffi::c_void, DXC_PART, *mut u32) -> windows_core::HRESULT,
     pub GetPartReflection: unsafe extern "system" fn(*mut core::ffi::c_void, u32, *const windows_core::GUID, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
 }
 pub trait IDxcContainerReflection_Impl: windows_core::IUnknownImpl {
     fn Load(&self, pcontainer: windows_core::Ref<'_, IDxcBlob>) -> windows_core::Result<()>;
     fn GetPartCount(&self) -> windows_core::Result<u32>;
-    fn GetPartKind(&self, idx: u32) -> windows_core::Result<u32>;
+    fn GetPartKind(&self, idx: u32) -> windows_core::Result<DXC_PART>;
     fn GetPartContent(&self, idx: u32) -> windows_core::Result<IDxcBlob>;
-    fn FindFirstPartKind(&self, kind: u32) -> windows_core::Result<u32>;
+    fn FindFirstPartKind(&self, kind: DXC_PART) -> windows_core::Result<u32>;
     fn GetPartReflection(&self, idx: u32, iid: *const windows_core::GUID, ppvobject: *mut *mut core::ffi::c_void) -> windows_core::Result<()>;
 }
 impl IDxcContainerReflection_Vtbl {
@@ -806,7 +866,7 @@ impl IDxcContainerReflection_Vtbl {
                 }
             }
         }
-        unsafe extern "system" fn GetPartKind<Identity: IDxcContainerReflection_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, idx: u32, presult: *mut u32) -> windows_core::HRESULT {
+        unsafe extern "system" fn GetPartKind<Identity: IDxcContainerReflection_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, idx: u32, presult: *mut DXC_PART) -> windows_core::HRESULT {
             unsafe {
                 let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
                 match IDxcContainerReflection_Impl::GetPartKind(this, core::mem::transmute_copy(&idx)) {
@@ -830,7 +890,7 @@ impl IDxcContainerReflection_Vtbl {
                 }
             }
         }
-        unsafe extern "system" fn FindFirstPartKind<Identity: IDxcContainerReflection_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, kind: u32, presult: *mut u32) -> windows_core::HRESULT {
+        unsafe extern "system" fn FindFirstPartKind<Identity: IDxcContainerReflection_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, kind: DXC_PART, presult: *mut u32) -> windows_core::HRESULT {
             unsafe {
                 let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
                 match IDxcContainerReflection_Impl::FindFirstPartKind(this, core::mem::transmute_copy(&kind)) {
@@ -1028,13 +1088,13 @@ impl IDxcLibrary {
             (windows_core::Interface::vtable(self).GetBlobAsUtf8)(windows_core::Interface::as_raw(self), pblob.param().abi(), &mut result__).and_then(|| windows_core::Type::from_abi(result__))
         }
     }
-    pub unsafe fn GetBlobAsUtf16<P0>(&self, pblob: P0) -> windows_core::Result<IDxcBlobEncoding>
+    pub unsafe fn GetBlobAsWide<P0>(&self, pblob: P0) -> windows_core::Result<IDxcBlobEncoding>
     where
         P0: windows_core::Param<IDxcBlob>,
     {
         unsafe {
             let mut result__ = core::mem::zeroed();
-            (windows_core::Interface::vtable(self).GetBlobAsUtf16)(windows_core::Interface::as_raw(self), pblob.param().abi(), &mut result__).and_then(|| windows_core::Type::from_abi(result__))
+            (windows_core::Interface::vtable(self).GetBlobAsWide)(windows_core::Interface::as_raw(self), pblob.param().abi(), &mut result__).and_then(|| windows_core::Type::from_abi(result__))
         }
     }
 }
@@ -1059,7 +1119,7 @@ pub struct IDxcLibrary_Vtbl {
     #[cfg(not(feature = "Win32_System_Com"))]
     CreateStreamFromBlobReadOnly: usize,
     pub GetBlobAsUtf8: unsafe extern "system" fn(*mut core::ffi::c_void, *mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
-    pub GetBlobAsUtf16: unsafe extern "system" fn(*mut core::ffi::c_void, *mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub GetBlobAsWide: unsafe extern "system" fn(*mut core::ffi::c_void, *mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
 }
 #[cfg(feature = "Win32_System_Com")]
 pub trait IDxcLibrary_Impl: windows_core::IUnknownImpl {
@@ -1072,7 +1132,7 @@ pub trait IDxcLibrary_Impl: windows_core::IUnknownImpl {
     fn CreateIncludeHandler(&self) -> windows_core::Result<IDxcIncludeHandler>;
     fn CreateStreamFromBlobReadOnly(&self, pblob: windows_core::Ref<'_, IDxcBlob>) -> windows_core::Result<super::super::super::System::Com::IStream>;
     fn GetBlobAsUtf8(&self, pblob: windows_core::Ref<'_, IDxcBlob>) -> windows_core::Result<IDxcBlobEncoding>;
-    fn GetBlobAsUtf16(&self, pblob: windows_core::Ref<'_, IDxcBlob>) -> windows_core::Result<IDxcBlobEncoding>;
+    fn GetBlobAsWide(&self, pblob: windows_core::Ref<'_, IDxcBlob>) -> windows_core::Result<IDxcBlobEncoding>;
 }
 #[cfg(feature = "Win32_System_Com")]
 impl IDxcLibrary_Vtbl {
@@ -1179,10 +1239,10 @@ impl IDxcLibrary_Vtbl {
                 }
             }
         }
-        unsafe extern "system" fn GetBlobAsUtf16<Identity: IDxcLibrary_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pblob: *mut core::ffi::c_void, pblobencoding: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+        unsafe extern "system" fn GetBlobAsWide<Identity: IDxcLibrary_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pblob: *mut core::ffi::c_void, pblobencoding: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
             unsafe {
                 let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
-                match IDxcLibrary_Impl::GetBlobAsUtf16(this, core::mem::transmute_copy(&pblob)) {
+                match IDxcLibrary_Impl::GetBlobAsWide(this, core::mem::transmute_copy(&pblob)) {
                     Ok(ok__) => {
                         pblobencoding.write(core::mem::transmute(ok__));
                         windows_core::HRESULT(0)
@@ -1202,7 +1262,7 @@ impl IDxcLibrary_Vtbl {
             CreateIncludeHandler: CreateIncludeHandler::<Identity, OFFSET>,
             CreateStreamFromBlobReadOnly: CreateStreamFromBlobReadOnly::<Identity, OFFSET>,
             GetBlobAsUtf8: GetBlobAsUtf8::<Identity, OFFSET>,
-            GetBlobAsUtf16: GetBlobAsUtf16::<Identity, OFFSET>,
+            GetBlobAsWide: GetBlobAsWide::<Identity, OFFSET>,
         }
     }
     pub fn matches(iid: &windows_core::GUID) -> bool {
@@ -2041,6 +2101,501 @@ impl IDxcPdbUtils_Vtbl {
     }
 }
 impl windows_core::RuntimeName for IDxcPdbUtils {}
+windows_core::imp::define_interface!(IDxcPdbUtils2, IDxcPdbUtils2_Vtbl, 0x4315d938_f369_4f93_95a2_252017cc3807);
+windows_core::imp::interface_hierarchy!(IDxcPdbUtils2, windows_core::IUnknown);
+impl IDxcPdbUtils2 {
+    pub unsafe fn Load<P0>(&self, ppdbordxil: P0) -> windows_core::Result<()>
+    where
+        P0: windows_core::Param<IDxcBlob>,
+    {
+        unsafe { (windows_core::Interface::vtable(self).Load)(windows_core::Interface::as_raw(self), ppdbordxil.param().abi()).ok() }
+    }
+    pub unsafe fn GetSourceCount(&self) -> windows_core::Result<u32> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetSourceCount)(windows_core::Interface::as_raw(self), &mut result__).map(|| result__)
+        }
+    }
+    pub unsafe fn GetSource(&self, uindex: u32) -> windows_core::Result<IDxcBlobEncoding> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetSource)(windows_core::Interface::as_raw(self), uindex, &mut result__).and_then(|| windows_core::Type::from_abi(result__))
+        }
+    }
+    pub unsafe fn GetSourceName(&self, uindex: u32) -> windows_core::Result<IDxcBlobUtf16> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetSourceName)(windows_core::Interface::as_raw(self), uindex, &mut result__).and_then(|| windows_core::Type::from_abi(result__))
+        }
+    }
+    pub unsafe fn GetLibraryPDBCount(&self, pcount: *mut u32) -> windows_core::Result<()> {
+        unsafe { (windows_core::Interface::vtable(self).GetLibraryPDBCount)(windows_core::Interface::as_raw(self), pcount as _).ok() }
+    }
+    pub unsafe fn GetLibraryPDB(&self, uindex: u32, ppoutpdbutils: *mut Option<IDxcPdbUtils2>, pplibraryname: Option<*mut Option<IDxcBlobUtf16>>) -> windows_core::Result<()> {
+        unsafe { (windows_core::Interface::vtable(self).GetLibraryPDB)(windows_core::Interface::as_raw(self), uindex, core::mem::transmute(ppoutpdbutils), pplibraryname.unwrap_or(core::mem::zeroed()) as _).ok() }
+    }
+    pub unsafe fn GetFlagCount(&self) -> windows_core::Result<u32> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetFlagCount)(windows_core::Interface::as_raw(self), &mut result__).map(|| result__)
+        }
+    }
+    pub unsafe fn GetFlag(&self, uindex: u32) -> windows_core::Result<IDxcBlobUtf16> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetFlag)(windows_core::Interface::as_raw(self), uindex, &mut result__).and_then(|| windows_core::Type::from_abi(result__))
+        }
+    }
+    pub unsafe fn GetArgCount(&self) -> windows_core::Result<u32> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetArgCount)(windows_core::Interface::as_raw(self), &mut result__).map(|| result__)
+        }
+    }
+    pub unsafe fn GetArg(&self, uindex: u32) -> windows_core::Result<IDxcBlobUtf16> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetArg)(windows_core::Interface::as_raw(self), uindex, &mut result__).and_then(|| windows_core::Type::from_abi(result__))
+        }
+    }
+    pub unsafe fn GetArgPairCount(&self) -> windows_core::Result<u32> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetArgPairCount)(windows_core::Interface::as_raw(self), &mut result__).map(|| result__)
+        }
+    }
+    pub unsafe fn GetArgPair(&self, uindex: u32, ppname: *mut Option<IDxcBlobUtf16>, ppvalue: *mut Option<IDxcBlobUtf16>) -> windows_core::Result<()> {
+        unsafe { (windows_core::Interface::vtable(self).GetArgPair)(windows_core::Interface::as_raw(self), uindex, core::mem::transmute(ppname), core::mem::transmute(ppvalue)).ok() }
+    }
+    pub unsafe fn GetDefineCount(&self) -> windows_core::Result<u32> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetDefineCount)(windows_core::Interface::as_raw(self), &mut result__).map(|| result__)
+        }
+    }
+    pub unsafe fn GetDefine(&self, uindex: u32) -> windows_core::Result<IDxcBlobUtf16> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetDefine)(windows_core::Interface::as_raw(self), uindex, &mut result__).and_then(|| windows_core::Type::from_abi(result__))
+        }
+    }
+    pub unsafe fn GetTargetProfile(&self) -> windows_core::Result<IDxcBlobUtf16> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetTargetProfile)(windows_core::Interface::as_raw(self), &mut result__).and_then(|| windows_core::Type::from_abi(result__))
+        }
+    }
+    pub unsafe fn GetEntryPoint(&self) -> windows_core::Result<IDxcBlobUtf16> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetEntryPoint)(windows_core::Interface::as_raw(self), &mut result__).and_then(|| windows_core::Type::from_abi(result__))
+        }
+    }
+    pub unsafe fn GetMainFileName(&self) -> windows_core::Result<IDxcBlobUtf16> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetMainFileName)(windows_core::Interface::as_raw(self), &mut result__).and_then(|| windows_core::Type::from_abi(result__))
+        }
+    }
+    pub unsafe fn GetHash(&self) -> windows_core::Result<IDxcBlob> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetHash)(windows_core::Interface::as_raw(self), &mut result__).and_then(|| windows_core::Type::from_abi(result__))
+        }
+    }
+    pub unsafe fn GetName(&self) -> windows_core::Result<IDxcBlobUtf16> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetName)(windows_core::Interface::as_raw(self), &mut result__).and_then(|| windows_core::Type::from_abi(result__))
+        }
+    }
+    pub unsafe fn GetVersionInfo(&self) -> windows_core::Result<IDxcVersionInfo> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetVersionInfo)(windows_core::Interface::as_raw(self), &mut result__).and_then(|| windows_core::Type::from_abi(result__))
+        }
+    }
+    pub unsafe fn GetCustomToolchainID(&self) -> windows_core::Result<u32> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetCustomToolchainID)(windows_core::Interface::as_raw(self), &mut result__).map(|| result__)
+        }
+    }
+    pub unsafe fn GetCustomToolchainData(&self) -> windows_core::Result<IDxcBlob> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetCustomToolchainData)(windows_core::Interface::as_raw(self), &mut result__).and_then(|| windows_core::Type::from_abi(result__))
+        }
+    }
+    pub unsafe fn GetWholeDxil(&self) -> windows_core::Result<IDxcBlob> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetWholeDxil)(windows_core::Interface::as_raw(self), &mut result__).and_then(|| windows_core::Type::from_abi(result__))
+        }
+    }
+    pub unsafe fn IsFullPDB(&self) -> windows_core::BOOL {
+        unsafe { (windows_core::Interface::vtable(self).IsFullPDB)(windows_core::Interface::as_raw(self)) }
+    }
+    pub unsafe fn IsPDBRef(&self) -> windows_core::BOOL {
+        unsafe { (windows_core::Interface::vtable(self).IsPDBRef)(windows_core::Interface::as_raw(self)) }
+    }
+}
+#[repr(C)]
+pub struct IDxcPdbUtils2_Vtbl {
+    pub base__: windows_core::IUnknown_Vtbl,
+    pub Load: unsafe extern "system" fn(*mut core::ffi::c_void, *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub GetSourceCount: unsafe extern "system" fn(*mut core::ffi::c_void, *mut u32) -> windows_core::HRESULT,
+    pub GetSource: unsafe extern "system" fn(*mut core::ffi::c_void, u32, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub GetSourceName: unsafe extern "system" fn(*mut core::ffi::c_void, u32, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub GetLibraryPDBCount: unsafe extern "system" fn(*mut core::ffi::c_void, *mut u32) -> windows_core::HRESULT,
+    pub GetLibraryPDB: unsafe extern "system" fn(*mut core::ffi::c_void, u32, *mut *mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub GetFlagCount: unsafe extern "system" fn(*mut core::ffi::c_void, *mut u32) -> windows_core::HRESULT,
+    pub GetFlag: unsafe extern "system" fn(*mut core::ffi::c_void, u32, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub GetArgCount: unsafe extern "system" fn(*mut core::ffi::c_void, *mut u32) -> windows_core::HRESULT,
+    pub GetArg: unsafe extern "system" fn(*mut core::ffi::c_void, u32, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub GetArgPairCount: unsafe extern "system" fn(*mut core::ffi::c_void, *mut u32) -> windows_core::HRESULT,
+    pub GetArgPair: unsafe extern "system" fn(*mut core::ffi::c_void, u32, *mut *mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub GetDefineCount: unsafe extern "system" fn(*mut core::ffi::c_void, *mut u32) -> windows_core::HRESULT,
+    pub GetDefine: unsafe extern "system" fn(*mut core::ffi::c_void, u32, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub GetTargetProfile: unsafe extern "system" fn(*mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub GetEntryPoint: unsafe extern "system" fn(*mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub GetMainFileName: unsafe extern "system" fn(*mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub GetHash: unsafe extern "system" fn(*mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub GetName: unsafe extern "system" fn(*mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub GetVersionInfo: unsafe extern "system" fn(*mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub GetCustomToolchainID: unsafe extern "system" fn(*mut core::ffi::c_void, *mut u32) -> windows_core::HRESULT,
+    pub GetCustomToolchainData: unsafe extern "system" fn(*mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub GetWholeDxil: unsafe extern "system" fn(*mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub IsFullPDB: unsafe extern "system" fn(*mut core::ffi::c_void) -> windows_core::BOOL,
+    pub IsPDBRef: unsafe extern "system" fn(*mut core::ffi::c_void) -> windows_core::BOOL,
+}
+pub trait IDxcPdbUtils2_Impl: windows_core::IUnknownImpl {
+    fn Load(&self, ppdbordxil: windows_core::Ref<'_, IDxcBlob>) -> windows_core::Result<()>;
+    fn GetSourceCount(&self) -> windows_core::Result<u32>;
+    fn GetSource(&self, uindex: u32) -> windows_core::Result<IDxcBlobEncoding>;
+    fn GetSourceName(&self, uindex: u32) -> windows_core::Result<IDxcBlobUtf16>;
+    fn GetLibraryPDBCount(&self, pcount: *mut u32) -> windows_core::Result<()>;
+    fn GetLibraryPDB(&self, uindex: u32, ppoutpdbutils: windows_core::OutRef<'_, IDxcPdbUtils2>, pplibraryname: windows_core::OutRef<'_, IDxcBlobUtf16>) -> windows_core::Result<()>;
+    fn GetFlagCount(&self) -> windows_core::Result<u32>;
+    fn GetFlag(&self, uindex: u32) -> windows_core::Result<IDxcBlobUtf16>;
+    fn GetArgCount(&self) -> windows_core::Result<u32>;
+    fn GetArg(&self, uindex: u32) -> windows_core::Result<IDxcBlobUtf16>;
+    fn GetArgPairCount(&self) -> windows_core::Result<u32>;
+    fn GetArgPair(&self, uindex: u32, ppname: windows_core::OutRef<'_, IDxcBlobUtf16>, ppvalue: windows_core::OutRef<'_, IDxcBlobUtf16>) -> windows_core::Result<()>;
+    fn GetDefineCount(&self) -> windows_core::Result<u32>;
+    fn GetDefine(&self, uindex: u32) -> windows_core::Result<IDxcBlobUtf16>;
+    fn GetTargetProfile(&self) -> windows_core::Result<IDxcBlobUtf16>;
+    fn GetEntryPoint(&self) -> windows_core::Result<IDxcBlobUtf16>;
+    fn GetMainFileName(&self) -> windows_core::Result<IDxcBlobUtf16>;
+    fn GetHash(&self) -> windows_core::Result<IDxcBlob>;
+    fn GetName(&self) -> windows_core::Result<IDxcBlobUtf16>;
+    fn GetVersionInfo(&self) -> windows_core::Result<IDxcVersionInfo>;
+    fn GetCustomToolchainID(&self) -> windows_core::Result<u32>;
+    fn GetCustomToolchainData(&self) -> windows_core::Result<IDxcBlob>;
+    fn GetWholeDxil(&self) -> windows_core::Result<IDxcBlob>;
+    fn IsFullPDB(&self) -> windows_core::BOOL;
+    fn IsPDBRef(&self) -> windows_core::BOOL;
+}
+impl IDxcPdbUtils2_Vtbl {
+    pub const fn new<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>() -> Self {
+        unsafe extern "system" fn Load<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, ppdbordxil: *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                IDxcPdbUtils2_Impl::Load(this, core::mem::transmute_copy(&ppdbordxil)).into()
+            }
+        }
+        unsafe extern "system" fn GetSourceCount<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pcount: *mut u32) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IDxcPdbUtils2_Impl::GetSourceCount(this) {
+                    Ok(ok__) => {
+                        pcount.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn GetSource<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, uindex: u32, ppresult: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IDxcPdbUtils2_Impl::GetSource(this, core::mem::transmute_copy(&uindex)) {
+                    Ok(ok__) => {
+                        ppresult.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn GetSourceName<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, uindex: u32, ppresult: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IDxcPdbUtils2_Impl::GetSourceName(this, core::mem::transmute_copy(&uindex)) {
+                    Ok(ok__) => {
+                        ppresult.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn GetLibraryPDBCount<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pcount: *mut u32) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                IDxcPdbUtils2_Impl::GetLibraryPDBCount(this, core::mem::transmute_copy(&pcount)).into()
+            }
+        }
+        unsafe extern "system" fn GetLibraryPDB<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, uindex: u32, ppoutpdbutils: *mut *mut core::ffi::c_void, pplibraryname: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                IDxcPdbUtils2_Impl::GetLibraryPDB(this, core::mem::transmute_copy(&uindex), core::mem::transmute_copy(&ppoutpdbutils), core::mem::transmute_copy(&pplibraryname)).into()
+            }
+        }
+        unsafe extern "system" fn GetFlagCount<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pcount: *mut u32) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IDxcPdbUtils2_Impl::GetFlagCount(this) {
+                    Ok(ok__) => {
+                        pcount.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn GetFlag<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, uindex: u32, ppresult: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IDxcPdbUtils2_Impl::GetFlag(this, core::mem::transmute_copy(&uindex)) {
+                    Ok(ok__) => {
+                        ppresult.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn GetArgCount<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pcount: *mut u32) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IDxcPdbUtils2_Impl::GetArgCount(this) {
+                    Ok(ok__) => {
+                        pcount.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn GetArg<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, uindex: u32, ppresult: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IDxcPdbUtils2_Impl::GetArg(this, core::mem::transmute_copy(&uindex)) {
+                    Ok(ok__) => {
+                        ppresult.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn GetArgPairCount<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pcount: *mut u32) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IDxcPdbUtils2_Impl::GetArgPairCount(this) {
+                    Ok(ok__) => {
+                        pcount.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn GetArgPair<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, uindex: u32, ppname: *mut *mut core::ffi::c_void, ppvalue: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                IDxcPdbUtils2_Impl::GetArgPair(this, core::mem::transmute_copy(&uindex), core::mem::transmute_copy(&ppname), core::mem::transmute_copy(&ppvalue)).into()
+            }
+        }
+        unsafe extern "system" fn GetDefineCount<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pcount: *mut u32) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IDxcPdbUtils2_Impl::GetDefineCount(this) {
+                    Ok(ok__) => {
+                        pcount.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn GetDefine<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, uindex: u32, ppresult: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IDxcPdbUtils2_Impl::GetDefine(this, core::mem::transmute_copy(&uindex)) {
+                    Ok(ok__) => {
+                        ppresult.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn GetTargetProfile<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, ppresult: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IDxcPdbUtils2_Impl::GetTargetProfile(this) {
+                    Ok(ok__) => {
+                        ppresult.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn GetEntryPoint<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, ppresult: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IDxcPdbUtils2_Impl::GetEntryPoint(this) {
+                    Ok(ok__) => {
+                        ppresult.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn GetMainFileName<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, ppresult: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IDxcPdbUtils2_Impl::GetMainFileName(this) {
+                    Ok(ok__) => {
+                        ppresult.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn GetHash<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, ppresult: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IDxcPdbUtils2_Impl::GetHash(this) {
+                    Ok(ok__) => {
+                        ppresult.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn GetName<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, ppresult: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IDxcPdbUtils2_Impl::GetName(this) {
+                    Ok(ok__) => {
+                        ppresult.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn GetVersionInfo<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, ppversioninfo: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IDxcPdbUtils2_Impl::GetVersionInfo(this) {
+                    Ok(ok__) => {
+                        ppversioninfo.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn GetCustomToolchainID<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pid: *mut u32) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IDxcPdbUtils2_Impl::GetCustomToolchainID(this) {
+                    Ok(ok__) => {
+                        pid.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn GetCustomToolchainData<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, ppblob: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IDxcPdbUtils2_Impl::GetCustomToolchainData(this) {
+                    Ok(ok__) => {
+                        ppblob.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn GetWholeDxil<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, ppresult: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IDxcPdbUtils2_Impl::GetWholeDxil(this) {
+                    Ok(ok__) => {
+                        ppresult.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn IsFullPDB<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void) -> windows_core::BOOL {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                IDxcPdbUtils2_Impl::IsFullPDB(this)
+            }
+        }
+        unsafe extern "system" fn IsPDBRef<Identity: IDxcPdbUtils2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void) -> windows_core::BOOL {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                IDxcPdbUtils2_Impl::IsPDBRef(this)
+            }
+        }
+        Self {
+            base__: windows_core::IUnknown_Vtbl::new::<Identity, OFFSET>(),
+            Load: Load::<Identity, OFFSET>,
+            GetSourceCount: GetSourceCount::<Identity, OFFSET>,
+            GetSource: GetSource::<Identity, OFFSET>,
+            GetSourceName: GetSourceName::<Identity, OFFSET>,
+            GetLibraryPDBCount: GetLibraryPDBCount::<Identity, OFFSET>,
+            GetLibraryPDB: GetLibraryPDB::<Identity, OFFSET>,
+            GetFlagCount: GetFlagCount::<Identity, OFFSET>,
+            GetFlag: GetFlag::<Identity, OFFSET>,
+            GetArgCount: GetArgCount::<Identity, OFFSET>,
+            GetArg: GetArg::<Identity, OFFSET>,
+            GetArgPairCount: GetArgPairCount::<Identity, OFFSET>,
+            GetArgPair: GetArgPair::<Identity, OFFSET>,
+            GetDefineCount: GetDefineCount::<Identity, OFFSET>,
+            GetDefine: GetDefine::<Identity, OFFSET>,
+            GetTargetProfile: GetTargetProfile::<Identity, OFFSET>,
+            GetEntryPoint: GetEntryPoint::<Identity, OFFSET>,
+            GetMainFileName: GetMainFileName::<Identity, OFFSET>,
+            GetHash: GetHash::<Identity, OFFSET>,
+            GetName: GetName::<Identity, OFFSET>,
+            GetVersionInfo: GetVersionInfo::<Identity, OFFSET>,
+            GetCustomToolchainID: GetCustomToolchainID::<Identity, OFFSET>,
+            GetCustomToolchainData: GetCustomToolchainData::<Identity, OFFSET>,
+            GetWholeDxil: GetWholeDxil::<Identity, OFFSET>,
+            IsFullPDB: IsFullPDB::<Identity, OFFSET>,
+            IsPDBRef: IsPDBRef::<Identity, OFFSET>,
+        }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<IDxcPdbUtils2 as windows_core::Interface>::IID
+    }
+}
+impl windows_core::RuntimeName for IDxcPdbUtils2 {}
 windows_core::imp::define_interface!(IDxcResult, IDxcResult_Vtbl, 0x58346cda_dde7_4497_9461_6f87af5e0659);
 impl core::ops::Deref for IDxcResult {
     type Target = IDxcOperationResult;
@@ -2199,20 +2754,24 @@ impl IDxcUtils {
             (windows_core::Interface::vtable(self).GetBlobAsUtf8)(windows_core::Interface::as_raw(self), pblob.param().abi(), &mut result__).and_then(|| windows_core::Type::from_abi(result__))
         }
     }
-    pub unsafe fn GetBlobAsUtf16<P0>(&self, pblob: P0) -> windows_core::Result<IDxcBlobUtf16>
+    pub unsafe fn GetBlobAsWide<P0>(&self, pblob: P0) -> windows_core::Result<IDxcBlobUtf16>
     where
         P0: windows_core::Param<IDxcBlob>,
     {
         unsafe {
             let mut result__ = core::mem::zeroed();
-            (windows_core::Interface::vtable(self).GetBlobAsUtf16)(windows_core::Interface::as_raw(self), pblob.param().abi(), &mut result__).and_then(|| windows_core::Type::from_abi(result__))
+            (windows_core::Interface::vtable(self).GetBlobAsWide)(windows_core::Interface::as_raw(self), pblob.param().abi(), &mut result__).and_then(|| windows_core::Type::from_abi(result__))
         }
     }
-    pub unsafe fn GetDxilContainerPart(&self, pshader: *const DxcBuffer, dxcpart: u32, pppartdata: *mut *mut core::ffi::c_void, ppartsizeinbytes: *mut u32) -> windows_core::Result<()> {
+    pub unsafe fn GetDxilContainerPart(&self, pshader: *const DxcBuffer, dxcpart: DXC_PART, pppartdata: *mut *mut core::ffi::c_void, ppartsizeinbytes: *mut u32) -> windows_core::Result<()> {
         unsafe { (windows_core::Interface::vtable(self).GetDxilContainerPart)(windows_core::Interface::as_raw(self), pshader, dxcpart, pppartdata as _, ppartsizeinbytes as _).ok() }
     }
-    pub unsafe fn CreateReflection(&self, pdata: *const DxcBuffer, iid: *const windows_core::GUID, ppvreflection: *mut *mut core::ffi::c_void) -> windows_core::Result<()> {
-        unsafe { (windows_core::Interface::vtable(self).CreateReflection)(windows_core::Interface::as_raw(self), pdata, iid, ppvreflection as _).ok() }
+    pub unsafe fn CreateReflection<T>(&self, pdata: *const DxcBuffer) -> windows_core::Result<T>
+    where
+        T: windows_core::Interface,
+    {
+        let mut result__ = core::ptr::null_mut();
+        unsafe { (windows_core::Interface::vtable(self).CreateReflection)(windows_core::Interface::as_raw(self), pdata, &T::IID, &mut result__).and_then(|| windows_core::Type::from_abi(result__)) }
     }
     pub unsafe fn BuildArguments<P0, P1, P2>(&self, psourcename: P0, pentrypoint: P1, ptargetprofile: P2, parguments: Option<&[windows_core::PCWSTR]>, pdefines: &[DxcDefine]) -> windows_core::Result<IDxcCompilerArgs>
     where
@@ -2249,8 +2808,8 @@ pub struct IDxcUtils_Vtbl {
     CreateReadOnlyStreamFromBlob: usize,
     pub CreateDefaultIncludeHandler: unsafe extern "system" fn(*mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
     pub GetBlobAsUtf8: unsafe extern "system" fn(*mut core::ffi::c_void, *mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
-    pub GetBlobAsUtf16: unsafe extern "system" fn(*mut core::ffi::c_void, *mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
-    pub GetDxilContainerPart: unsafe extern "system" fn(*mut core::ffi::c_void, *const DxcBuffer, u32, *mut *mut core::ffi::c_void, *mut u32) -> windows_core::HRESULT,
+    pub GetBlobAsWide: unsafe extern "system" fn(*mut core::ffi::c_void, *mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub GetDxilContainerPart: unsafe extern "system" fn(*mut core::ffi::c_void, *const DxcBuffer, DXC_PART, *mut *mut core::ffi::c_void, *mut u32) -> windows_core::HRESULT,
     pub CreateReflection: unsafe extern "system" fn(*mut core::ffi::c_void, *const DxcBuffer, *const windows_core::GUID, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
     pub BuildArguments: unsafe extern "system" fn(*mut core::ffi::c_void, windows_core::PCWSTR, windows_core::PCWSTR, windows_core::PCWSTR, *const windows_core::PCWSTR, u32, *const DxcDefine, u32, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
     pub GetPDBContents: unsafe extern "system" fn(*mut core::ffi::c_void, *mut core::ffi::c_void, *mut *mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
@@ -2265,8 +2824,8 @@ pub trait IDxcUtils_Impl: windows_core::IUnknownImpl {
     fn CreateReadOnlyStreamFromBlob(&self, pblob: windows_core::Ref<'_, IDxcBlob>) -> windows_core::Result<super::super::super::System::Com::IStream>;
     fn CreateDefaultIncludeHandler(&self) -> windows_core::Result<IDxcIncludeHandler>;
     fn GetBlobAsUtf8(&self, pblob: windows_core::Ref<'_, IDxcBlob>) -> windows_core::Result<IDxcBlobUtf8>;
-    fn GetBlobAsUtf16(&self, pblob: windows_core::Ref<'_, IDxcBlob>) -> windows_core::Result<IDxcBlobUtf16>;
-    fn GetDxilContainerPart(&self, pshader: *const DxcBuffer, dxcpart: u32, pppartdata: *mut *mut core::ffi::c_void, ppartsizeinbytes: *mut u32) -> windows_core::Result<()>;
+    fn GetBlobAsWide(&self, pblob: windows_core::Ref<'_, IDxcBlob>) -> windows_core::Result<IDxcBlobUtf16>;
+    fn GetDxilContainerPart(&self, pshader: *const DxcBuffer, dxcpart: DXC_PART, pppartdata: *mut *mut core::ffi::c_void, ppartsizeinbytes: *mut u32) -> windows_core::Result<()>;
     fn CreateReflection(&self, pdata: *const DxcBuffer, iid: *const windows_core::GUID, ppvreflection: *mut *mut core::ffi::c_void) -> windows_core::Result<()>;
     fn BuildArguments(&self, psourcename: &windows_core::PCWSTR, pentrypoint: &windows_core::PCWSTR, ptargetprofile: &windows_core::PCWSTR, parguments: *const windows_core::PCWSTR, argcount: u32, pdefines: *const DxcDefine, definecount: u32) -> windows_core::Result<IDxcCompilerArgs>;
     fn GetPDBContents(&self, ppdbblob: windows_core::Ref<'_, IDxcBlob>, pphash: windows_core::OutRef<'_, IDxcBlob>, ppcontainer: windows_core::OutRef<'_, IDxcBlob>) -> windows_core::Result<()>;
@@ -2286,48 +2845,48 @@ impl IDxcUtils_Vtbl {
                 }
             }
         }
-        unsafe extern "system" fn CreateBlobFromPinned<Identity: IDxcUtils_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pdata: *const core::ffi::c_void, size: u32, codepage: DXC_CP, pblobencoding: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+        unsafe extern "system" fn CreateBlobFromPinned<Identity: IDxcUtils_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pdata: *const core::ffi::c_void, size: u32, codepage: DXC_CP, ppblobencoding: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
             unsafe {
                 let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
                 match IDxcUtils_Impl::CreateBlobFromPinned(this, core::mem::transmute_copy(&pdata), core::mem::transmute_copy(&size), core::mem::transmute_copy(&codepage)) {
                     Ok(ok__) => {
-                        pblobencoding.write(core::mem::transmute(ok__));
+                        ppblobencoding.write(core::mem::transmute(ok__));
                         windows_core::HRESULT(0)
                     }
                     Err(err) => err.into(),
                 }
             }
         }
-        unsafe extern "system" fn MoveToBlob<Identity: IDxcUtils_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pdata: *const core::ffi::c_void, pimalloc: *mut core::ffi::c_void, size: u32, codepage: DXC_CP, pblobencoding: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+        unsafe extern "system" fn MoveToBlob<Identity: IDxcUtils_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pdata: *const core::ffi::c_void, pimalloc: *mut core::ffi::c_void, size: u32, codepage: DXC_CP, ppblobencoding: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
             unsafe {
                 let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
                 match IDxcUtils_Impl::MoveToBlob(this, core::mem::transmute_copy(&pdata), core::mem::transmute_copy(&pimalloc), core::mem::transmute_copy(&size), core::mem::transmute_copy(&codepage)) {
                     Ok(ok__) => {
-                        pblobencoding.write(core::mem::transmute(ok__));
+                        ppblobencoding.write(core::mem::transmute(ok__));
                         windows_core::HRESULT(0)
                     }
                     Err(err) => err.into(),
                 }
             }
         }
-        unsafe extern "system" fn CreateBlob<Identity: IDxcUtils_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pdata: *const core::ffi::c_void, size: u32, codepage: DXC_CP, pblobencoding: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+        unsafe extern "system" fn CreateBlob<Identity: IDxcUtils_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pdata: *const core::ffi::c_void, size: u32, codepage: DXC_CP, ppblobencoding: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
             unsafe {
                 let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
                 match IDxcUtils_Impl::CreateBlob(this, core::mem::transmute_copy(&pdata), core::mem::transmute_copy(&size), core::mem::transmute_copy(&codepage)) {
                     Ok(ok__) => {
-                        pblobencoding.write(core::mem::transmute(ok__));
+                        ppblobencoding.write(core::mem::transmute(ok__));
                         windows_core::HRESULT(0)
                     }
                     Err(err) => err.into(),
                 }
             }
         }
-        unsafe extern "system" fn LoadFile<Identity: IDxcUtils_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pfilename: windows_core::PCWSTR, pcodepage: *const DXC_CP, pblobencoding: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+        unsafe extern "system" fn LoadFile<Identity: IDxcUtils_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pfilename: windows_core::PCWSTR, pcodepage: *const DXC_CP, ppblobencoding: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
             unsafe {
                 let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
                 match IDxcUtils_Impl::LoadFile(this, core::mem::transmute(&pfilename), core::mem::transmute_copy(&pcodepage)) {
                     Ok(ok__) => {
-                        pblobencoding.write(core::mem::transmute(ok__));
+                        ppblobencoding.write(core::mem::transmute(ok__));
                         windows_core::HRESULT(0)
                     }
                     Err(err) => err.into(),
@@ -2358,31 +2917,31 @@ impl IDxcUtils_Vtbl {
                 }
             }
         }
-        unsafe extern "system" fn GetBlobAsUtf8<Identity: IDxcUtils_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pblob: *mut core::ffi::c_void, pblobencoding: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+        unsafe extern "system" fn GetBlobAsUtf8<Identity: IDxcUtils_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pblob: *mut core::ffi::c_void, ppblobencoding: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
             unsafe {
                 let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
                 match IDxcUtils_Impl::GetBlobAsUtf8(this, core::mem::transmute_copy(&pblob)) {
                     Ok(ok__) => {
-                        pblobencoding.write(core::mem::transmute(ok__));
+                        ppblobencoding.write(core::mem::transmute(ok__));
                         windows_core::HRESULT(0)
                     }
                     Err(err) => err.into(),
                 }
             }
         }
-        unsafe extern "system" fn GetBlobAsUtf16<Identity: IDxcUtils_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pblob: *mut core::ffi::c_void, pblobencoding: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+        unsafe extern "system" fn GetBlobAsWide<Identity: IDxcUtils_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pblob: *mut core::ffi::c_void, ppblobencoding: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
             unsafe {
                 let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
-                match IDxcUtils_Impl::GetBlobAsUtf16(this, core::mem::transmute_copy(&pblob)) {
+                match IDxcUtils_Impl::GetBlobAsWide(this, core::mem::transmute_copy(&pblob)) {
                     Ok(ok__) => {
-                        pblobencoding.write(core::mem::transmute(ok__));
+                        ppblobencoding.write(core::mem::transmute(ok__));
                         windows_core::HRESULT(0)
                     }
                     Err(err) => err.into(),
                 }
             }
         }
-        unsafe extern "system" fn GetDxilContainerPart<Identity: IDxcUtils_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pshader: *const DxcBuffer, dxcpart: u32, pppartdata: *mut *mut core::ffi::c_void, ppartsizeinbytes: *mut u32) -> windows_core::HRESULT {
+        unsafe extern "system" fn GetDxilContainerPart<Identity: IDxcUtils_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pshader: *const DxcBuffer, dxcpart: DXC_PART, pppartdata: *mut *mut core::ffi::c_void, ppartsizeinbytes: *mut u32) -> windows_core::HRESULT {
             unsafe {
                 let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
                 IDxcUtils_Impl::GetDxilContainerPart(this, core::mem::transmute_copy(&pshader), core::mem::transmute_copy(&dxcpart), core::mem::transmute_copy(&pppartdata), core::mem::transmute_copy(&ppartsizeinbytes)).into()
@@ -2422,7 +2981,7 @@ impl IDxcUtils_Vtbl {
             CreateReadOnlyStreamFromBlob: CreateReadOnlyStreamFromBlob::<Identity, OFFSET>,
             CreateDefaultIncludeHandler: CreateDefaultIncludeHandler::<Identity, OFFSET>,
             GetBlobAsUtf8: GetBlobAsUtf8::<Identity, OFFSET>,
-            GetBlobAsUtf16: GetBlobAsUtf16::<Identity, OFFSET>,
+            GetBlobAsWide: GetBlobAsWide::<Identity, OFFSET>,
             GetDxilContainerPart: GetDxilContainerPart::<Identity, OFFSET>,
             CreateReflection: CreateReflection::<Identity, OFFSET>,
             BuildArguments: BuildArguments::<Identity, OFFSET>,
