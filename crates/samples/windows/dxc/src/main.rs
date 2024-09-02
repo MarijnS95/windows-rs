@@ -6,7 +6,7 @@ use libloading::{Library, Symbol};
 use std::path::Path;
 use windows::{
     core::{w, Interface},
-    Win32::{Foundation::BOOL, Graphics::Direct3D::Dxc::*},
+    Win32::{Foundation::BOOL, Graphics::Direct3D::Dxc::*, Graphics::Direct3D12::ID3D12ShaderReflection },
 };
 
 #[cfg(not(windows))]
@@ -155,8 +155,23 @@ fn main() -> Result<()> {
         )
         .ok()?
     };
+    let mut reflection = None::<IDxcContainerReflection>;
+    unsafe {
+        (create.unwrap())(
+            &CLSID_DxcContainerReflection,
+            &IDxcContainerReflection::IID,
+            <*mut _>::cast(&mut reflection),
+        )
+        .ok()?
+    };
+    let mut utils = None::<IDxcUtils>;
+    unsafe {
+        (create.unwrap())(&CLSID_DxcUtils, &IDxcUtils::IID, <*mut _>::cast(&mut utils)).ok()?
+    };
     let compiler = compiler.unwrap();
     let library = library.unwrap();
+    let reflection = reflection.unwrap();
+    let utils = utils.unwrap();
 
     dbg!(&compiler, &library);
 
@@ -196,9 +211,46 @@ fn main() -> Result<()> {
         let shader = unsafe {
             std::slice::from_raw_parts(blob.GetBufferPointer().cast::<u8>(), blob.GetBufferSize())
         };
-        for c in shader.chunks(16) {
-            println!("{:02x?}", c);
+        let buffer = DxcBuffer {
+            Ptr: unsafe { blob.GetBufferPointer() },
+            Size: unsafe { blob.GetBufferSize() },
+            Encoding: DXC_CP_ACP.0,
+        };
+        unsafe {
+            reflection.Load(&blob).unwrap();
+            for i in 0..reflection.GetPartCount()? {
+                let k = dbg!(reflection.GetPartKind(i)?);
+                dbg!(std::str::from_utf8(&k.to_le_bytes()));
+                dbg!(reflection.FindFirstPartKind(k));
+
+                let mut data = std::ptr::null_mut();
+                let mut size = 0;
+
+                utils.GetDxilContainerPart(&buffer, k, &mut data, &mut size)?;
+                dbg!(data);
+                dbg!(size);
+            }
         }
+
+        unsafe {
+            // let reflection: IDxcContainerReflection = utils.CreateReflection(&buffer)?;
+            let mut reflection = None::<ID3D12ShaderReflection>;
+            unsafe {
+                utils.CreateReflection(
+                    &buffer,
+                    &ID3D12ShaderReflection::IID,
+                    std::mem::transmute(&mut reflection),
+                )
+            }?;
+            let reflection = reflection.unwrap();
+            let mut desc = Default::default();
+            reflection.GetDesc(&mut desc)?;
+            dbg!(desc.Creator.to_string());
+            dbg!(desc);
+        }
+        // for c in shader.chunks(16) {
+        //     println!("{:02x?}", c);
+        // }
         Ok(())
     }
 }
