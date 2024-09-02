@@ -26,7 +26,16 @@ impl TypeMap {
                         let mut item_dependencies = Self::new();
 
                         for ty in types {
-                            ty.dependencies(&mut item_dependencies);
+                            // WORKAROUND: CppConst (enum) defined inside GdiplusStartupInputEx struct
+                            if *namespace == "Windows.Win32.Graphics.GdiPlus" && *name == "V3"
+                                || *name == "V2"
+                            {
+                                // let ty = reader.unwrap_full_name(*namespace, "GdiplusStartupInputEx.Version");
+                                // let ty = reader.unwrap_full_name(&format!("{namespace}.GdiplusStartupInputEx"), "Version");
+                                // ty.dependencies(&mut item_dependencies);
+                            } else {
+                                ty.dependencies(&mut item_dependencies);
+                            }
                         }
 
                         if item_dependencies.excluded(filter) {

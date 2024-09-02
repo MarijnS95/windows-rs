@@ -95,6 +95,7 @@ pub const CacheData: PROCESSOR_CACHE_TYPE = 2i32;
 pub const CacheInstruction: PROCESSOR_CACHE_TYPE = 1i32;
 pub const CacheTrace: PROCESSOR_CACHE_TYPE = 3i32;
 pub const CacheUnified: PROCESSOR_CACHE_TYPE = 0i32;
+pub const CacheUnknown: PROCESSOR_CACHE_TYPE = 4i32;
 pub const ComputerNameDnsDomain: COMPUTER_NAME_FORMAT = 2i32;
 pub const ComputerNameDnsFullyQualified: COMPUTER_NAME_FORMAT = 3i32;
 pub const ComputerNameDnsHostname: COMPUTER_NAME_FORMAT = 1i32;
@@ -200,6 +201,20 @@ pub struct GROUP_AFFINITY {
 }
 #[repr(C)]
 #[derive(Clone, Copy)]
+pub struct GROUP_AFFINITY32 {
+    pub Mask: u32,
+    pub Group: u16,
+    pub Reserved: [u16; 3],
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct GROUP_AFFINITY64 {
+    pub Mask: u64,
+    pub Group: u16,
+    pub Reserved: [u16; 3],
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
 pub struct GROUP_RELATIONSHIP {
     pub MaximumGroupCount: u16,
     pub ActiveGroupCount: u16,
@@ -216,10 +231,9 @@ pub const GlobalDataIdLastSystemRITEventTickCount: RTL_SYSTEM_GLOBAL_DATA_ID = 1
 pub const GlobalDataIdNtMajorVersion: RTL_SYSTEM_GLOBAL_DATA_ID = 7i32;
 pub const GlobalDataIdNtMinorVersion: RTL_SYSTEM_GLOBAL_DATA_ID = 8i32;
 pub const GlobalDataIdNtSystemRootDrive: RTL_SYSTEM_GLOBAL_DATA_ID = 15i32;
-pub const GlobalDataIdQpcBias: RTL_SYSTEM_GLOBAL_DATA_ID = 19i32;
-pub const GlobalDataIdQpcBypassEnabled: RTL_SYSTEM_GLOBAL_DATA_ID = 17i32;
-pub const GlobalDataIdQpcData: RTL_SYSTEM_GLOBAL_DATA_ID = 18i32;
-pub const GlobalDataIdQpcShift: RTL_SYSTEM_GLOBAL_DATA_ID = 16i32;
+pub const GlobalDataIdQpcBias: RTL_SYSTEM_GLOBAL_DATA_ID = 18i32;
+pub const GlobalDataIdQpcBypassEnabled: RTL_SYSTEM_GLOBAL_DATA_ID = 16i32;
+pub const GlobalDataIdQpcData: RTL_SYSTEM_GLOBAL_DATA_ID = 17i32;
 pub const GlobalDataIdRngSeedVersion: RTL_SYSTEM_GLOBAL_DATA_ID = 1i32;
 pub const GlobalDataIdSafeBootMode: RTL_SYSTEM_GLOBAL_DATA_ID = 12i32;
 pub const GlobalDataIdSystemExpirationDate: RTL_SYSTEM_GLOBAL_DATA_ID = 9i32;
@@ -286,7 +300,7 @@ pub struct MEMORYSTATUSEX {
     pub ullAvailExtendedVirtual: u64,
 }
 pub const NTDDI_LONGHORN: u32 = 100663296u32;
-pub const NTDDI_VERSION: u32 = 167772172u32;
+pub const NTDDI_VERSION: u32 = 167772176u32;
 pub const NTDDI_VISTA: u32 = 100663296u32;
 pub const NTDDI_VISTASP1: u32 = 100663552u32;
 pub const NTDDI_VISTASP2: u32 = 100663808u32;
@@ -295,6 +309,7 @@ pub const NTDDI_VISTASP4: u32 = 100664320u32;
 pub const NTDDI_WIN10: u32 = 167772160u32;
 pub const NTDDI_WIN10_19H1: u32 = 167772167u32;
 pub const NTDDI_WIN10_CO: u32 = 167772171u32;
+pub const NTDDI_WIN10_CU: u32 = 167772173u32;
 pub const NTDDI_WIN10_FE: u32 = 167772170u32;
 pub const NTDDI_WIN10_MN: u32 = 167772169u32;
 pub const NTDDI_WIN10_NI: u32 = 167772172u32;
@@ -305,6 +320,9 @@ pub const NTDDI_WIN10_RS4: u32 = 167772165u32;
 pub const NTDDI_WIN10_RS5: u32 = 167772166u32;
 pub const NTDDI_WIN10_TH2: u32 = 167772161u32;
 pub const NTDDI_WIN10_VB: u32 = 167772168u32;
+pub const NTDDI_WIN11_GA: u32 = 167772175u32;
+pub const NTDDI_WIN11_GE: u32 = 167772176u32;
+pub const NTDDI_WIN11_ZN: u32 = 167772174u32;
 pub const NTDDI_WIN2K: u32 = 83886080u32;
 pub const NTDDI_WIN2KSP1: u32 = 83886336u32;
 pub const NTDDI_WIN2KSP2: u32 = 83886592u32;
@@ -692,7 +710,7 @@ pub const VER_PRODUCT_TYPE: VER_FLAGS = 128u32;
 pub const VER_SERVICEPACKMAJOR: VER_FLAGS = 32u32;
 pub const VER_SERVICEPACKMINOR: VER_FLAGS = 16u32;
 pub const VER_SUITENAME: VER_FLAGS = 64u32;
-pub const WDK_NTDDI_VERSION: u32 = 167772172u32;
+pub const WDK_NTDDI_VERSION: u32 = 167772176u32;
 pub const _WIN32_IE_IE100: u32 = 2560u32;
 pub const _WIN32_IE_IE110: u32 = 2560u32;
 pub const _WIN32_IE_IE20: u32 = 512u32;

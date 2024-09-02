@@ -1,11 +1,11 @@
 windows_targets::link!("advapi32.dll" "system" fn CloseTrace(tracehandle : PROCESSTRACE_HANDLE) -> super::super::super::Foundation:: WIN32_ERROR);
-windows_targets::link!("advapi32.dll" "system" fn ControlTraceA(tracehandle : CONTROLTRACE_HANDLE, instancename : windows_sys::core::PCSTR, properties : *mut EVENT_TRACE_PROPERTIES, controlcode : EVENT_TRACE_CONTROL) -> super::super::super::Foundation:: WIN32_ERROR);
-windows_targets::link!("advapi32.dll" "system" fn ControlTraceW(tracehandle : CONTROLTRACE_HANDLE, instancename : windows_sys::core::PCWSTR, properties : *mut EVENT_TRACE_PROPERTIES, controlcode : EVENT_TRACE_CONTROL) -> super::super::super::Foundation:: WIN32_ERROR);
+windows_targets::link!("advapi32.dll" "system" fn ControlTraceA(traceid : u64, instancename : windows_sys::core::PCSTR, properties : *mut EVENT_TRACE_PROPERTIES, controlcode : EVENT_TRACE_CONTROL) -> super::super::super::Foundation:: WIN32_ERROR);
+windows_targets::link!("advapi32.dll" "system" fn ControlTraceW(traceid : u64, instancename : windows_sys::core::PCWSTR, properties : *mut EVENT_TRACE_PROPERTIES, controlcode : EVENT_TRACE_CONTROL) -> super::super::super::Foundation:: WIN32_ERROR);
 windows_targets::link!("advapi32.dll" "system" fn CreateTraceInstanceId(reghandle : super::super::super::Foundation:: HANDLE, instinfo : *mut EVENT_INSTANCE_INFO) -> super::super::super::Foundation:: WIN32_ERROR);
 windows_targets::link!("advapi32.dll" "system" fn CveEventWrite(cveid : windows_sys::core::PCWSTR, additionaldetails : windows_sys::core::PCWSTR) -> i32);
-windows_targets::link!("advapi32.dll" "system" fn EnableTrace(enable : u32, enableflag : u32, enablelevel : u32, controlguid : *const windows_sys::core::GUID, tracehandle : CONTROLTRACE_HANDLE) -> super::super::super::Foundation:: WIN32_ERROR);
-windows_targets::link!("advapi32.dll" "system" fn EnableTraceEx(providerid : *const windows_sys::core::GUID, sourceid : *const windows_sys::core::GUID, tracehandle : CONTROLTRACE_HANDLE, isenabled : u32, level : u8, matchanykeyword : u64, matchallkeyword : u64, enableproperty : u32, enablefilterdesc : *const EVENT_FILTER_DESCRIPTOR) -> super::super::super::Foundation:: WIN32_ERROR);
-windows_targets::link!("advapi32.dll" "system" fn EnableTraceEx2(tracehandle : CONTROLTRACE_HANDLE, providerid : *const windows_sys::core::GUID, controlcode : u32, level : u8, matchanykeyword : u64, matchallkeyword : u64, timeout : u32, enableparameters : *const ENABLE_TRACE_PARAMETERS) -> super::super::super::Foundation:: WIN32_ERROR);
+windows_targets::link!("advapi32.dll" "system" fn EnableTrace(enable : u32, enableflag : u32, enablelevel : u32, controlguid : *const windows_sys::core::GUID, traceid : u64) -> super::super::super::Foundation:: WIN32_ERROR);
+windows_targets::link!("advapi32.dll" "system" fn EnableTraceEx(providerid : *const windows_sys::core::GUID, sourceid : *const windows_sys::core::GUID, traceid : u64, isenabled : u32, level : u8, matchanykeyword : u64, matchallkeyword : u64, enableproperty : u32, enablefilterdesc : *const EVENT_FILTER_DESCRIPTOR) -> super::super::super::Foundation:: WIN32_ERROR);
+windows_targets::link!("advapi32.dll" "system" fn EnableTraceEx2(traceid : u64, providerid : *const windows_sys::core::GUID, controlcode : u32, level : u8, matchanykeyword : u64, matchallkeyword : u64, timeout : u32, enableparameters : *const ENABLE_TRACE_PARAMETERS) -> super::super::super::Foundation:: WIN32_ERROR);
 windows_targets::link!("advapi32.dll" "system" fn EnumerateTraceGuids(guidpropertiesarray : *mut *mut TRACE_GUID_PROPERTIES, propertyarraycount : u32, guidcount : *mut u32) -> super::super::super::Foundation:: WIN32_ERROR);
 windows_targets::link!("advapi32.dll" "system" fn EnumerateTraceGuidsEx(tracequeryinfoclass : TRACE_QUERY_INFO_CLASS, inbuffer : *const core::ffi::c_void, inbuffersize : u32, outbuffer : *mut core::ffi::c_void, outbuffersize : u32, returnlength : *mut u32) -> super::super::super::Foundation:: WIN32_ERROR);
 #[cfg(feature = "Win32_Security")]
@@ -23,40 +23,40 @@ windows_targets::link!("advapi32.dll" "system" fn EventWrite(reghandle : REGHAND
 windows_targets::link!("advapi32.dll" "system" fn EventWriteEx(reghandle : REGHANDLE, eventdescriptor : *const EVENT_DESCRIPTOR, filter : u64, flags : u32, activityid : *const windows_sys::core::GUID, relatedactivityid : *const windows_sys::core::GUID, userdatacount : u32, userdata : *const EVENT_DATA_DESCRIPTOR) -> u32);
 windows_targets::link!("advapi32.dll" "system" fn EventWriteString(reghandle : REGHANDLE, level : u8, keyword : u64, string : windows_sys::core::PCWSTR) -> u32);
 windows_targets::link!("advapi32.dll" "system" fn EventWriteTransfer(reghandle : REGHANDLE, eventdescriptor : *const EVENT_DESCRIPTOR, activityid : *const windows_sys::core::GUID, relatedactivityid : *const windows_sys::core::GUID, userdatacount : u32, userdata : *const EVENT_DATA_DESCRIPTOR) -> u32);
-windows_targets::link!("advapi32.dll" "system" fn FlushTraceA(tracehandle : CONTROLTRACE_HANDLE, instancename : windows_sys::core::PCSTR, properties : *mut EVENT_TRACE_PROPERTIES) -> super::super::super::Foundation:: WIN32_ERROR);
-windows_targets::link!("advapi32.dll" "system" fn FlushTraceW(tracehandle : CONTROLTRACE_HANDLE, instancename : windows_sys::core::PCWSTR, properties : *mut EVENT_TRACE_PROPERTIES) -> super::super::super::Foundation:: WIN32_ERROR);
+windows_targets::link!("advapi32.dll" "system" fn FlushTraceA(traceid : u64, instancename : windows_sys::core::PCSTR, properties : *mut EVENT_TRACE_PROPERTIES) -> super::super::super::Foundation:: WIN32_ERROR);
+windows_targets::link!("advapi32.dll" "system" fn FlushTraceW(traceid : u64, instancename : windows_sys::core::PCWSTR, properties : *mut EVENT_TRACE_PROPERTIES) -> super::super::super::Foundation:: WIN32_ERROR);
 windows_targets::link!("advapi32.dll" "system" fn GetTraceEnableFlags(tracehandle : u64) -> u32);
 windows_targets::link!("advapi32.dll" "system" fn GetTraceEnableLevel(tracehandle : u64) -> u8);
 windows_targets::link!("advapi32.dll" "system" fn GetTraceLoggerHandle(buffer : *const core::ffi::c_void) -> u64);
 #[cfg(feature = "Win32_System_Time")]
 windows_targets::link!("advapi32.dll" "system" fn OpenTraceA(logfile : *mut EVENT_TRACE_LOGFILEA) -> PROCESSTRACE_HANDLE);
 #[cfg(feature = "Win32_System_Time")]
-windows_targets::link!("advapi32.dll" "system" fn OpenTraceFromBufferStream(options : *const ETW_OPEN_TRACE_OPTIONS, buffercompletioncallback : PETW_BUFFER_COMPLETION_CALLBACK, buffercompletioncontext : *const core::ffi::c_void) -> u64);
+windows_targets::link!("advapi32.dll" "system" fn OpenTraceFromBufferStream(options : *const ETW_OPEN_TRACE_OPTIONS, buffercompletioncallback : PETW_BUFFER_COMPLETION_CALLBACK, buffercompletioncontext : *const core::ffi::c_void) -> PROCESSTRACE_HANDLE);
 #[cfg(feature = "Win32_System_Time")]
-windows_targets::link!("advapi32.dll" "system" fn OpenTraceFromFile(logfilename : windows_sys::core::PCWSTR, options : *const ETW_OPEN_TRACE_OPTIONS, logfileheader : *mut TRACE_LOGFILE_HEADER) -> u64);
+windows_targets::link!("advapi32.dll" "system" fn OpenTraceFromFile(logfilename : windows_sys::core::PCWSTR, options : *const ETW_OPEN_TRACE_OPTIONS, logfileheader : *mut TRACE_LOGFILE_HEADER) -> PROCESSTRACE_HANDLE);
 #[cfg(feature = "Win32_System_Time")]
-windows_targets::link!("advapi32.dll" "system" fn OpenTraceFromRealTimeLogger(loggername : windows_sys::core::PCWSTR, options : *const ETW_OPEN_TRACE_OPTIONS, logfileheader : *mut TRACE_LOGFILE_HEADER) -> u64);
+windows_targets::link!("advapi32.dll" "system" fn OpenTraceFromRealTimeLogger(loggername : windows_sys::core::PCWSTR, options : *const ETW_OPEN_TRACE_OPTIONS, logfileheader : *mut TRACE_LOGFILE_HEADER) -> PROCESSTRACE_HANDLE);
 #[cfg(feature = "Win32_System_Time")]
-windows_targets::link!("advapi32.dll" "system" fn OpenTraceFromRealTimeLoggerWithAllocationOptions(loggername : windows_sys::core::PCWSTR, options : *const ETW_OPEN_TRACE_OPTIONS, allocationsize : usize, memorypartitionhandle : super::super::super::Foundation:: HANDLE, logfileheader : *mut TRACE_LOGFILE_HEADER) -> u64);
+windows_targets::link!("advapi32.dll" "system" fn OpenTraceFromRealTimeLoggerWithAllocationOptions(loggername : windows_sys::core::PCWSTR, options : *const ETW_OPEN_TRACE_OPTIONS, allocationsize : usize, memorypartitionhandle : super::super::super::Foundation:: HANDLE, logfileheader : *mut TRACE_LOGFILE_HEADER) -> PROCESSTRACE_HANDLE);
 #[cfg(feature = "Win32_System_Time")]
 windows_targets::link!("advapi32.dll" "system" fn OpenTraceW(logfile : *mut EVENT_TRACE_LOGFILEW) -> PROCESSTRACE_HANDLE);
 windows_targets::link!("advapi32.dll" "system" fn ProcessTrace(handlearray : *const PROCESSTRACE_HANDLE, handlecount : u32, starttime : *const super::super::super::Foundation:: FILETIME, endtime : *const super::super::super::Foundation:: FILETIME) -> super::super::super::Foundation:: WIN32_ERROR);
-windows_targets::link!("advapi32.dll" "system" fn ProcessTraceAddBufferToBufferStream(tracehandle : u64, buffer : *const ETW_BUFFER_HEADER, buffersize : u32) -> u32);
+windows_targets::link!("advapi32.dll" "system" fn ProcessTraceAddBufferToBufferStream(tracehandle : PROCESSTRACE_HANDLE, buffer : *const ETW_BUFFER_HEADER, buffersize : u32) -> u32);
 windows_targets::link!("advapi32.dll" "system" fn ProcessTraceBufferDecrementReference(buffer : *const ETW_BUFFER_HEADER) -> u32);
-windows_targets::link!("advapi32.dll" "system" fn ProcessTraceBufferIncrementReference(tracehandle : u64, buffer : *const ETW_BUFFER_HEADER) -> u32);
+windows_targets::link!("advapi32.dll" "system" fn ProcessTraceBufferIncrementReference(tracehandle : PROCESSTRACE_HANDLE, buffer : *const ETW_BUFFER_HEADER) -> u32);
 windows_targets::link!("advapi32.dll" "system" fn QueryAllTracesA(propertyarray : *mut *mut EVENT_TRACE_PROPERTIES, propertyarraycount : u32, loggercount : *mut u32) -> super::super::super::Foundation:: WIN32_ERROR);
 windows_targets::link!("advapi32.dll" "system" fn QueryAllTracesW(propertyarray : *mut *mut EVENT_TRACE_PROPERTIES, propertyarraycount : u32, loggercount : *mut u32) -> super::super::super::Foundation:: WIN32_ERROR);
-windows_targets::link!("advapi32.dll" "system" fn QueryTraceA(tracehandle : CONTROLTRACE_HANDLE, instancename : windows_sys::core::PCSTR, properties : *mut EVENT_TRACE_PROPERTIES) -> super::super::super::Foundation:: WIN32_ERROR);
+windows_targets::link!("advapi32.dll" "system" fn QueryTraceA(traceid : u64, instancename : windows_sys::core::PCSTR, properties : *mut EVENT_TRACE_PROPERTIES) -> super::super::super::Foundation:: WIN32_ERROR);
 windows_targets::link!("advapi32.dll" "system" fn QueryTraceProcessingHandle(processinghandle : PROCESSTRACE_HANDLE, informationclass : ETW_PROCESS_HANDLE_INFO_TYPE, inbuffer : *const core::ffi::c_void, inbuffersize : u32, outbuffer : *mut core::ffi::c_void, outbuffersize : u32, returnlength : *mut u32) -> super::super::super::Foundation:: WIN32_ERROR);
-windows_targets::link!("advapi32.dll" "system" fn QueryTraceW(tracehandle : CONTROLTRACE_HANDLE, instancename : windows_sys::core::PCWSTR, properties : *mut EVENT_TRACE_PROPERTIES) -> super::super::super::Foundation:: WIN32_ERROR);
+windows_targets::link!("advapi32.dll" "system" fn QueryTraceW(traceid : u64, instancename : windows_sys::core::PCWSTR, properties : *mut EVENT_TRACE_PROPERTIES) -> super::super::super::Foundation:: WIN32_ERROR);
 windows_targets::link!("advapi32.dll" "system" fn RegisterTraceGuidsA(requestaddress : WMIDPREQUEST, requestcontext : *const core::ffi::c_void, controlguid : *const windows_sys::core::GUID, guidcount : u32, traceguidreg : *const TRACE_GUID_REGISTRATION, mofimagepath : windows_sys::core::PCSTR, mofresourcename : windows_sys::core::PCSTR, registrationhandle : *mut u64) -> u32);
 windows_targets::link!("advapi32.dll" "system" fn RegisterTraceGuidsW(requestaddress : WMIDPREQUEST, requestcontext : *const core::ffi::c_void, controlguid : *const windows_sys::core::GUID, guidcount : u32, traceguidreg : *const TRACE_GUID_REGISTRATION, mofimagepath : windows_sys::core::PCWSTR, mofresourcename : windows_sys::core::PCWSTR, registrationhandle : *mut u64) -> u32);
 windows_targets::link!("advapi32.dll" "system" fn RemoveTraceCallback(pguid : *const windows_sys::core::GUID) -> super::super::super::Foundation:: WIN32_ERROR);
 windows_targets::link!("advapi32.dll" "system" fn SetTraceCallback(pguid : *const windows_sys::core::GUID, eventcallback : PEVENT_CALLBACK) -> super::super::super::Foundation:: WIN32_ERROR);
-windows_targets::link!("advapi32.dll" "system" fn StartTraceA(tracehandle : *mut CONTROLTRACE_HANDLE, instancename : windows_sys::core::PCSTR, properties : *mut EVENT_TRACE_PROPERTIES) -> super::super::super::Foundation:: WIN32_ERROR);
-windows_targets::link!("advapi32.dll" "system" fn StartTraceW(tracehandle : *mut CONTROLTRACE_HANDLE, instancename : windows_sys::core::PCWSTR, properties : *mut EVENT_TRACE_PROPERTIES) -> super::super::super::Foundation:: WIN32_ERROR);
-windows_targets::link!("advapi32.dll" "system" fn StopTraceA(tracehandle : CONTROLTRACE_HANDLE, instancename : windows_sys::core::PCSTR, properties : *mut EVENT_TRACE_PROPERTIES) -> super::super::super::Foundation:: WIN32_ERROR);
-windows_targets::link!("advapi32.dll" "system" fn StopTraceW(tracehandle : CONTROLTRACE_HANDLE, instancename : windows_sys::core::PCWSTR, properties : *mut EVENT_TRACE_PROPERTIES) -> super::super::super::Foundation:: WIN32_ERROR);
+windows_targets::link!("advapi32.dll" "system" fn StartTraceA(traceid : *mut u64, instancename : windows_sys::core::PCSTR, properties : *mut EVENT_TRACE_PROPERTIES) -> super::super::super::Foundation:: WIN32_ERROR);
+windows_targets::link!("advapi32.dll" "system" fn StartTraceW(traceid : *mut u64, instancename : windows_sys::core::PCWSTR, properties : *mut EVENT_TRACE_PROPERTIES) -> super::super::super::Foundation:: WIN32_ERROR);
+windows_targets::link!("advapi32.dll" "system" fn StopTraceA(traceid : u64, instancename : windows_sys::core::PCSTR, properties : *mut EVENT_TRACE_PROPERTIES) -> super::super::super::Foundation:: WIN32_ERROR);
+windows_targets::link!("advapi32.dll" "system" fn StopTraceW(traceid : u64, instancename : windows_sys::core::PCWSTR, properties : *mut EVENT_TRACE_PROPERTIES) -> super::super::super::Foundation:: WIN32_ERROR);
 windows_targets::link!("tdh.dll" "system" fn TdhAggregatePayloadFilters(payloadfiltercount : u32, payloadfilterptrs : *const *const core::ffi::c_void, eventmatchallflags : *const bool, eventfilterdescriptor : *mut EVENT_FILTER_DESCRIPTOR) -> u32);
 windows_targets::link!("tdh.dll" "system" fn TdhCleanupPayloadEventFilterDescriptor(eventfilterdescriptor : *mut EVENT_FILTER_DESCRIPTOR) -> u32);
 windows_targets::link!("tdh.dll" "system" fn TdhCloseDecodingHandle(handle : TDH_HANDLE) -> u32);
@@ -84,15 +84,16 @@ windows_targets::link!("tdh.dll" "system" fn TdhQueryProviderFieldInformation(pg
 windows_targets::link!("tdh.dll" "system" fn TdhSetDecodingParameter(handle : TDH_HANDLE, tdhcontext : *const TDH_CONTEXT) -> u32);
 windows_targets::link!("tdh.dll" "system" fn TdhUnloadManifest(manifest : windows_sys::core::PCWSTR) -> u32);
 windows_targets::link!("tdh.dll" "system" fn TdhUnloadManifestFromMemory(pdata : *const core::ffi::c_void, cbdata : u32) -> u32);
+windows_targets::link!("advapi32.dll" "system" fn TraceConfigureLastBranchRecord(traceid : u64, lbrconfiguration : TRACE_LBR_CONFIGURATION, events : *const CLASSIC_EVENT_ID, eventcount : u32) -> u32);
 windows_targets::link!("advapi32.dll" "system" fn TraceEvent(tracehandle : u64, eventtrace : *const EVENT_TRACE_HEADER) -> super::super::super::Foundation:: WIN32_ERROR);
 windows_targets::link!("advapi32.dll" "system" fn TraceEventInstance(tracehandle : u64, eventtrace : *const EVENT_INSTANCE_HEADER, instinfo : *const EVENT_INSTANCE_INFO, parentinstinfo : *const EVENT_INSTANCE_INFO) -> u32);
 windows_targets::link!("advapi32.dll" "cdecl" fn TraceMessage(loggerhandle : u64, messageflags : TRACE_MESSAGE_FLAGS, messageguid : *const windows_sys::core::GUID, messagenumber : u16, ...) -> super::super::super::Foundation:: WIN32_ERROR);
 windows_targets::link!("advapi32.dll" "system" fn TraceMessageVa(loggerhandle : u64, messageflags : TRACE_MESSAGE_FLAGS, messageguid : *const windows_sys::core::GUID, messagenumber : u16, messagearglist : *const i8) -> super::super::super::Foundation:: WIN32_ERROR);
-windows_targets::link!("advapi32.dll" "system" fn TraceQueryInformation(sessionhandle : CONTROLTRACE_HANDLE, informationclass : TRACE_QUERY_INFO_CLASS, traceinformation : *mut core::ffi::c_void, informationlength : u32, returnlength : *mut u32) -> super::super::super::Foundation:: WIN32_ERROR);
-windows_targets::link!("advapi32.dll" "system" fn TraceSetInformation(sessionhandle : CONTROLTRACE_HANDLE, informationclass : TRACE_QUERY_INFO_CLASS, traceinformation : *const core::ffi::c_void, informationlength : u32) -> super::super::super::Foundation:: WIN32_ERROR);
+windows_targets::link!("advapi32.dll" "system" fn TraceQueryInformation(traceid : u64, informationclass : TRACE_QUERY_INFO_CLASS, traceinformation : *mut core::ffi::c_void, informationlength : u32, returnlength : *mut u32) -> super::super::super::Foundation:: WIN32_ERROR);
+windows_targets::link!("advapi32.dll" "system" fn TraceSetInformation(traceid : u64, informationclass : TRACE_QUERY_INFO_CLASS, traceinformation : *const core::ffi::c_void, informationlength : u32) -> super::super::super::Foundation:: WIN32_ERROR);
 windows_targets::link!("advapi32.dll" "system" fn UnregisterTraceGuids(registrationhandle : u64) -> u32);
-windows_targets::link!("advapi32.dll" "system" fn UpdateTraceA(tracehandle : CONTROLTRACE_HANDLE, instancename : windows_sys::core::PCSTR, properties : *mut EVENT_TRACE_PROPERTIES) -> super::super::super::Foundation:: WIN32_ERROR);
-windows_targets::link!("advapi32.dll" "system" fn UpdateTraceW(tracehandle : CONTROLTRACE_HANDLE, instancename : windows_sys::core::PCWSTR, properties : *mut EVENT_TRACE_PROPERTIES) -> super::super::super::Foundation:: WIN32_ERROR);
+windows_targets::link!("advapi32.dll" "system" fn UpdateTraceA(traceid : u64, instancename : windows_sys::core::PCSTR, properties : *mut EVENT_TRACE_PROPERTIES) -> super::super::super::Foundation:: WIN32_ERROR);
+windows_targets::link!("advapi32.dll" "system" fn UpdateTraceW(traceid : u64, instancename : windows_sys::core::PCWSTR, properties : *mut EVENT_TRACE_PROPERTIES) -> super::super::super::Foundation:: WIN32_ERROR);
 pub const ALPCGuid: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0x45d8cccd_539f_4b72_a8b7_5c683142609a);
 #[repr(C)]
 #[derive(Clone, Copy)]
@@ -148,7 +149,7 @@ pub const ETW_BOOL_TYPE_VALUE: u32 = 108u32;
 #[cfg(feature = "Win32_System_Time")]
 #[derive(Clone, Copy)]
 pub struct ETW_BUFFER_CALLBACK_INFORMATION {
-    pub TraceHandle: u64,
+    pub TraceHandle: PROCESSTRACE_HANDLE,
     pub LogfileHeader: *const TRACE_LOGFILE_HEADER,
     pub BuffersRead: u32,
 }
@@ -184,6 +185,7 @@ pub struct ETW_BUFFER_HEADER {
 pub const ETW_BYTE_TYPE_VALUE: u32 = 4u32;
 pub const ETW_CHAR_TYPE_VALUE: u32 = 11u32;
 pub type ETW_COMPRESSION_RESUMPTION_MODE = i32;
+pub type ETW_CONTEXT_REGISTER_TYPES = i32;
 pub const ETW_COUNTED_ANSISTRING_TYPE_VALUE: u32 = 109u32;
 pub const ETW_COUNTED_STRING_TYPE_VALUE: u32 = 104u32;
 pub const ETW_DATETIME_TYPE_VALUE: u32 = 119u32;
@@ -1109,6 +1111,9 @@ pub const EVENT_WRITE_FLAG_NO_FAULTING: u32 = 1u32;
 pub const EtwCompressionModeNoDisable: ETW_COMPRESSION_RESUMPTION_MODE = 1i32;
 pub const EtwCompressionModeNoRestart: ETW_COMPRESSION_RESUMPTION_MODE = 2i32;
 pub const EtwCompressionModeRestart: ETW_COMPRESSION_RESUMPTION_MODE = 0i32;
+pub const EtwContextRegisterTypeControl: ETW_CONTEXT_REGISTER_TYPES = 1i32;
+pub const EtwContextRegisterTypeInteger: ETW_CONTEXT_REGISTER_TYPES = 2i32;
+pub const EtwContextRegisterTypeNone: ETW_CONTEXT_REGISTER_TYPES = 0i32;
 pub const EtwPmcOwnerFree: ETW_PMC_COUNTER_OWNER_TYPE = 0i32;
 pub const EtwPmcOwnerTagged: ETW_PMC_COUNTER_OWNER_TYPE = 2i32;
 pub const EtwPmcOwnerTaggedWithSource: ETW_PMC_COUNTER_OWNER_TYPE = 3i32;
@@ -1146,6 +1151,7 @@ pub const ImageLoadGuid: windows_sys::core::GUID = windows_sys::core::GUID::from
 pub const KERNEL_LOGGER_NAME: windows_sys::core::PCWSTR = windows_sys::core::w!("NT Kernel Logger");
 pub const KERNEL_LOGGER_NAMEA: windows_sys::core::PCSTR = windows_sys::core::s!("NT Kernel Logger");
 pub const KERNEL_LOGGER_NAMEW: windows_sys::core::PCWSTR = windows_sys::core::w!("NT Kernel Logger");
+pub const LastBranchRecordProviderGuid: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0x99134383_5248_43fc_834b_529454e75df3);
 pub type MAP_FLAGS = i32;
 pub type MAP_VALUETYPE = i32;
 pub const MAX_EVENT_DATA_DESCRIPTORS: u32 = 128u32;
@@ -1165,7 +1171,7 @@ pub struct MOF_FIELD {
     pub DataType: u32,
 }
 pub const MaxEventInfo: EVENT_INFO_CLASS = 4i32;
-pub const MaxTraceSetInfoClass: TRACE_QUERY_INFO_CLASS = 28i32;
+pub const MaxTraceSetInfoClass: TRACE_QUERY_INFO_CLASS = 29i32;
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct OFFSETINSTANCEDATAANDLENGTH {
@@ -1297,6 +1303,7 @@ pub const SYSTEM_CONFIG_KW_STORAGE: u64 = 4u64;
 pub const SYSTEM_CONFIG_KW_SYSTEM: u64 = 1u64;
 pub const SYSTEM_CPU_KW_CACHE_FLUSH: u64 = 2u64;
 pub const SYSTEM_CPU_KW_CONFIG: u64 = 1u64;
+pub const SYSTEM_CPU_KW_DOMAIN_CHANGE: u64 = 8u64;
 pub const SYSTEM_CPU_KW_SPEC_CONTROL: u64 = 4u64;
 pub const SYSTEM_EVENT_TYPE: u32 = 1u32;
 pub const SYSTEM_HYPERVISOR_KW_CALLOUTS: u64 = 2u64;
@@ -1319,10 +1326,12 @@ pub const SYSTEM_IO_KW_DISK_INIT: u64 = 2u64;
 pub const SYSTEM_IO_KW_DRIVERS: u64 = 128u64;
 pub const SYSTEM_IO_KW_FILE: u64 = 16u64;
 pub const SYSTEM_IO_KW_FILENAME: u64 = 4u64;
+pub const SYSTEM_IO_KW_FILE_INIT: u64 = 1024u64;
 pub const SYSTEM_IO_KW_NETWORK: u64 = 512u64;
 pub const SYSTEM_IO_KW_OPTICAL: u64 = 32u64;
 pub const SYSTEM_IO_KW_OPTICAL_INIT: u64 = 64u64;
 pub const SYSTEM_IO_KW_SPLIT: u64 = 8u64;
+pub const SYSTEM_IO_KW_TIMER: u64 = 2048u64;
 pub const SYSTEM_LOCK_KW_SPINLOCK: u64 = 1u64;
 pub const SYSTEM_LOCK_KW_SPINLOCK_COUNTERS: u64 = 2u64;
 pub const SYSTEM_LOCK_KW_SYNC_OBJECTS: u64 = 4u64;
@@ -1370,14 +1379,20 @@ pub const SYSTEM_REGISTRY_KW_HIVE: u64 = 2u64;
 pub const SYSTEM_REGISTRY_KW_NOTIFICATION: u64 = 4u64;
 pub const SYSTEM_SCHEDULER_KW_AFFINITY: u64 = 64u64;
 pub const SYSTEM_SCHEDULER_KW_ANTI_STARVATION: u64 = 16u64;
+pub const SYSTEM_SCHEDULER_KW_AUTOBOOST: u64 = 65536u64;
 pub const SYSTEM_SCHEDULER_KW_COMPACT_CSWITCH: u64 = 1024u64;
 pub const SYSTEM_SCHEDULER_KW_CONTEXT_SWITCH: u64 = 512u64;
+pub const SYSTEM_SCHEDULER_KW_CPU_PARTITION: u64 = 8192u64;
 pub const SYSTEM_SCHEDULER_KW_DISPATCHER: u64 = 2u64;
 pub const SYSTEM_SCHEDULER_KW_IDEAL_PROCESSOR: u64 = 256u64;
 pub const SYSTEM_SCHEDULER_KW_KERNEL_QUEUE: u64 = 4u64;
 pub const SYSTEM_SCHEDULER_KW_LOAD_BALANCER: u64 = 32u64;
 pub const SYSTEM_SCHEDULER_KW_PRIORITY: u64 = 128u64;
+pub const SYSTEM_SCHEDULER_KW_READY_QUEUE: u64 = 4096u64;
+pub const SYSTEM_SCHEDULER_KW_SCHEDULE_THREAD: u64 = 2048u64;
 pub const SYSTEM_SCHEDULER_KW_SHOULD_YIELD: u64 = 8u64;
+pub const SYSTEM_SCHEDULER_KW_THREAD_FEEDBACK_READ: u64 = 16384u64;
+pub const SYSTEM_SCHEDULER_KW_WORKLOAD_CLASS_UPDATE: u64 = 32768u64;
 pub const SYSTEM_SCHEDULER_KW_XSCHEDULER: u64 = 1u64;
 pub const SYSTEM_SYSCALL_KW_GENERAL: u64 = 1u64;
 pub const SYSTEM_TIMER_KW_CLOCK_TIMER: u64 = 2u64;
@@ -1509,6 +1524,12 @@ pub const TRACELOG_LOG_EVENT: u32 = 512u32;
 pub const TRACELOG_REGISTER_GUIDS: u32 = 2048u32;
 #[repr(C)]
 #[derive(Clone, Copy)]
+pub struct TRACE_CONTEXT_REGISTER_INFO {
+    pub RegisterTypes: ETW_CONTEXT_REGISTER_TYPES,
+    pub Reserved: u32,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
 pub struct TRACE_ENABLE_INFO {
     pub IsEnabled: u32,
     pub Level: u8,
@@ -1593,6 +1614,21 @@ pub const TRACE_HEADER_FLAG_TRACED_GUID: u32 = 131072u32;
 pub const TRACE_HEADER_FLAG_USE_GUID_PTR: u32 = 524288u32;
 pub const TRACE_HEADER_FLAG_USE_MOF_PTR: u32 = 1048576u32;
 pub const TRACE_HEADER_FLAG_USE_TIMESTAMP: u32 = 512u32;
+pub type TRACE_LBR_CONFIGURATION = i32;
+pub const TRACE_LBR_CONFIGURATION_CALLSTACK_ENABLE: TRACE_LBR_CONFIGURATION = 512i32;
+pub const TRACE_LBR_CONFIGURATION_EXCLUDE_FAR_BRANCH: TRACE_LBR_CONFIGURATION = 256i32;
+pub const TRACE_LBR_CONFIGURATION_EXCLUDE_JCC: TRACE_LBR_CONFIGURATION = 4i32;
+pub const TRACE_LBR_CONFIGURATION_EXCLUDE_KERNEL: TRACE_LBR_CONFIGURATION = 1i32;
+pub const TRACE_LBR_CONFIGURATION_EXCLUDE_NEAR_IND_CALL: TRACE_LBR_CONFIGURATION = 16i32;
+pub const TRACE_LBR_CONFIGURATION_EXCLUDE_NEAR_IND_JMP: TRACE_LBR_CONFIGURATION = 64i32;
+pub const TRACE_LBR_CONFIGURATION_EXCLUDE_NEAR_REL_CALL: TRACE_LBR_CONFIGURATION = 8i32;
+pub const TRACE_LBR_CONFIGURATION_EXCLUDE_NEAR_REL_JMP: TRACE_LBR_CONFIGURATION = 128i32;
+pub const TRACE_LBR_CONFIGURATION_EXCLUDE_NEAR_RET: TRACE_LBR_CONFIGURATION = 32i32;
+pub const TRACE_LBR_CONFIGURATION_EXCLUDE_USER: TRACE_LBR_CONFIGURATION = 2i32;
+pub const TRACE_LBR_CONFIGURATION_NONE: TRACE_LBR_CONFIGURATION = 0i32;
+pub const TRACE_LBR_CONFIGURATION_SAMPLED: TRACE_LBR_CONFIGURATION = 1024i32;
+pub const TRACE_LBR_EVENT_OPCODE: u32 = 32u32;
+pub const TRACE_LBR_MAXIMUM_EVENTS: u32 = 4u32;
 pub const TRACE_LEVEL_CRITICAL: u32 = 1u32;
 pub const TRACE_LEVEL_ERROR: u32 = 2u32;
 pub const TRACE_LEVEL_FATAL: u32 = 1u32;
@@ -1825,6 +1861,7 @@ pub struct TRACE_VERSION_INFO {
 }
 pub const TcpIpGuid: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0x9a280ac0_c8e0_11d1_84e2_00c04fb998a2);
 pub const ThreadGuid: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0x3d6fa8d1_fe05_11d0_9dda_00c04fd7ba7c);
+pub const TraceContextRegisterInfo: TRACE_QUERY_INFO_CLASS = 28i32;
 pub const TraceDisallowListQuery: TRACE_QUERY_INFO_CLASS = 14i32;
 pub const TraceGroupQueryInfo: TRACE_QUERY_INFO_CLASS = 13i32;
 pub const TraceGroupQueryList: TRACE_QUERY_INFO_CLASS = 12i32;
@@ -2040,3 +2077,4 @@ pub struct WNODE_TOO_SMALL {
 }
 pub type _TDH_IN_TYPE = i32;
 pub type _TDH_OUT_TYPE = i32;
+pub const _typedef_TRACELOGGER_HANDLE: u32 = 1u32;

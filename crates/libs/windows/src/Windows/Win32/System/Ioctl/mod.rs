@@ -385,9 +385,10 @@ pub const CHANGER_VOLUME_UNDEFINE: CHANGER_FEATURES = CHANGER_FEATURES(16777216u
 pub const CHECKSUM_TYPE_CRC32: u32 = 1u32;
 pub const CHECKSUM_TYPE_CRC64: u32 = 2u32;
 pub const CHECKSUM_TYPE_ECC: u32 = 3u32;
-pub const CHECKSUM_TYPE_FIRST_UNUSED_TYPE: u32 = 5u32;
+pub const CHECKSUM_TYPE_FIRST_UNUSED_TYPE: u32 = 6u32;
 pub const CHECKSUM_TYPE_NONE: u32 = 0u32;
 pub const CHECKSUM_TYPE_SHA256: u32 = 4u32;
+pub const CHECKSUM_TYPE_XXH64: u32 = 5u32;
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct CLASS_MEDIA_CHANGE_CONTEXT {
@@ -1189,6 +1190,17 @@ impl Default for DEVICE_DSM_PHYSICAL_ADDRESSES_OUTPUT {
 }
 pub const DEVICE_DSM_PHYSICAL_ADDRESSES_OUTPUT_V1: u32 = 1u32;
 pub const DEVICE_DSM_PHYSICAL_ADDRESSES_OUTPUT_VERSION_V1: u32 = 1u32;
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct DEVICE_DSM_QUERY_PREFER_LOCAL_REPAIR_OUTPUT {
+    pub Version: u32,
+    pub PreferLocalRepair: bool,
+}
+impl Default for DEVICE_DSM_QUERY_PREFER_LOCAL_REPAIR_OUTPUT {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct DEVICE_DSM_RANGE_ERROR_INFO {
@@ -2150,6 +2162,8 @@ impl Default for ENCRYPTED_DATA_INFO {
         unsafe { core::mem::zeroed() }
     }
 }
+pub const ENCRYPTED_DATA_INFO_4K_SPARSE_UNIT: u32 = 4u32;
+pub const ENCRYPTED_DATA_INFO_SPARSE_DATA: u32 = 2u32;
 pub const ENCRYPTED_DATA_INFO_SPARSE_FILE: u32 = 1u32;
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -2361,11 +2375,14 @@ pub const FILE_DEVICE_DFS_VOLUME: u32 = 54u32;
 pub const FILE_DEVICE_DISK_FILE_SYSTEM: u32 = 8u32;
 pub const FILE_DEVICE_EHSTOR: u32 = 70u32;
 pub const FILE_DEVICE_EVENT_COLLECTOR: u32 = 95u32;
+pub const FILE_DEVICE_FABRIC_NVME: u32 = 98u32;
 pub const FILE_DEVICE_FILE_SYSTEM: u32 = 9u32;
 pub const FILE_DEVICE_FIPS: u32 = 58u32;
 pub const FILE_DEVICE_FULLSCREEN_VIDEO: u32 = 52u32;
 pub const FILE_DEVICE_GPIO: u32 = 72u32;
+pub const FILE_DEVICE_HARDWARE_ACCELERATOR: u32 = 100u32;
 pub const FILE_DEVICE_HOLOGRAPHIC: u32 = 91u32;
+pub const FILE_DEVICE_I3C: u32 = 101u32;
 pub const FILE_DEVICE_INFINIBAND: u32 = 59u32;
 pub const FILE_DEVICE_INPORT_PORT: u32 = 10u32;
 pub const FILE_DEVICE_KEYBOARD: u32 = 11u32;
@@ -2406,6 +2423,7 @@ pub const FILE_DEVICE_SOUND: u32 = 29u32;
 pub const FILE_DEVICE_SOUNDWIRE: u32 = 97u32;
 pub const FILE_DEVICE_STORAGE_REPLICATION: u32 = 85u32;
 pub const FILE_DEVICE_STREAMS: u32 = 30u32;
+pub const FILE_DEVICE_SVM: u32 = 99u32;
 pub const FILE_DEVICE_SYSENV: u32 = 82u32;
 pub const FILE_DEVICE_TAPE_FILE_SYSTEM: u32 = 32u32;
 pub const FILE_DEVICE_TERMSRV: u32 = 56u32;
@@ -3000,6 +3018,7 @@ pub const FSBPIO_OUTFL_VOLUME_STACK_BYPASS_PAUSED: FS_BPIO_OUTFLAGS = FS_BPIO_OU
 pub const FSCTL_ADD_OVERLAY: u32 = 623408u32;
 pub const FSCTL_ADVANCE_FILE_ID: u32 = 590532u32;
 pub const FSCTL_ALLOW_EXTENDED_DASD_IO: u32 = 589955u32;
+pub const FSCTL_CASCADES_REFS_SET_FILE_REMOTE: u32 = 591004u32;
 pub const FSCTL_CLEAN_VOLUME_METADATA: u32 = 590716u32;
 pub const FSCTL_CLEAR_ALL_LCN_WEAK_REFERENCES: u32 = 590956u32;
 pub const FSCTL_CLEAR_LCN_WEAK_REFERENCE: u32 = 590948u32;
@@ -3042,6 +3061,7 @@ pub const FSCTL_FILESYSTEM_GET_STATISTICS: u32 = 589920u32;
 pub const FSCTL_FILESYSTEM_GET_STATISTICS_EX: u32 = 590732u32;
 pub const FSCTL_FILE_LEVEL_TRIM: u32 = 623112u32;
 pub const FSCTL_FILE_PREFETCH: u32 = 590112u32;
+pub const FSCTL_FILE_SOV_CHECK_RANGE: u32 = 591000u32;
 pub const FSCTL_FILE_TYPE_NOTIFICATION: u32 = 590340u32;
 pub const FSCTL_FIND_FILES_BY_SID: u32 = 589967u32;
 pub const FSCTL_GET_BOOT_AREA_INFO: u32 = 590384u32;
@@ -3254,10 +3274,12 @@ pub const FSCTL_RECALL_FILE: u32 = 590103u32;
 pub const FSCTL_REFS_CHECKPOINT_VOLUME: u32 = 590972u32;
 pub const FSCTL_REFS_DEALLOCATE_RANGES: u32 = 590808u32;
 pub const FSCTL_REFS_DEALLOCATE_RANGES_EX: u32 = 590924u32;
+pub const FSCTL_REFS_QUERY_ROLLBACK_PROTECTION_INFO: u32 = 590996u32;
 pub const FSCTL_REFS_QUERY_VOLUME_COMPRESSION_INFO: u32 = 590936u32;
 pub const FSCTL_REFS_QUERY_VOLUME_DEDUP_INFO: u32 = 590964u32;
 pub const FSCTL_REFS_QUERY_VOLUME_IO_METRICS_INFO: u32 = 590988u32;
 pub const FSCTL_REFS_QUERY_VOLUME_TOTAL_SHARED_LCNS: u32 = 590976u32;
+pub const FSCTL_REFS_SET_ROLLBACK_PROTECTION_INFO: u32 = 590992u32;
 pub const FSCTL_REFS_SET_VOLUME_COMPRESSION_INFO: u32 = 590932u32;
 pub const FSCTL_REFS_SET_VOLUME_DEDUP_INFO: u32 = 590960u32;
 pub const FSCTL_REFS_SET_VOLUME_IO_METRICS_INFO: u32 = 590984u32;
@@ -3775,6 +3797,7 @@ pub const GUID_DEVINTERFACE_CDROM: windows_core::GUID = windows_core::GUID::from
 pub const GUID_DEVINTERFACE_COMPORT: windows_core::GUID = windows_core::GUID::from_u128(0x86e0d1e0_8089_11d0_9ce4_08003e301f73);
 pub const GUID_DEVINTERFACE_DISK: windows_core::GUID = windows_core::GUID::from_u128(0x53f56307_b6bf_11d0_94f2_00a0c91efb8b);
 pub const GUID_DEVINTERFACE_FLOPPY: windows_core::GUID = windows_core::GUID::from_u128(0x53f56311_b6bf_11d0_94f2_00a0c91efb8b);
+pub const GUID_DEVINTERFACE_HIDDEN_DISK: windows_core::GUID = windows_core::GUID::from_u128(0x7fccc86c_228a_40ad_8a58_f590af7bfdce);
 pub const GUID_DEVINTERFACE_HIDDEN_VOLUME: windows_core::GUID = windows_core::GUID::from_u128(0x7f108a28_9833_4b3b_b780_2c6b5fa5c062);
 pub const GUID_DEVINTERFACE_MEDIUMCHANGER: windows_core::GUID = windows_core::GUID::from_u128(0x53f56310_b6bf_11d0_94f2_00a0c91efb8b);
 pub const GUID_DEVINTERFACE_PARTITION: windows_core::GUID = windows_core::GUID::from_u128(0x53f5630a_b6bf_11d0_94f2_00a0c91efb8b);
@@ -4560,8 +4583,10 @@ impl Default for NTFS_VOLUME_DATA_BUFFER {
     }
 }
 pub const NVMeDataTypeFeature: STORAGE_PROTOCOL_NVME_DATA_TYPE = STORAGE_PROTOCOL_NVME_DATA_TYPE(3i32);
+pub const NVMeDataTypeFeatureEx: STORAGE_PROTOCOL_NVME_DATA_TYPE = STORAGE_PROTOCOL_NVME_DATA_TYPE(5i32);
 pub const NVMeDataTypeIdentify: STORAGE_PROTOCOL_NVME_DATA_TYPE = STORAGE_PROTOCOL_NVME_DATA_TYPE(1i32);
 pub const NVMeDataTypeLogPage: STORAGE_PROTOCOL_NVME_DATA_TYPE = STORAGE_PROTOCOL_NVME_DATA_TYPE(2i32);
+pub const NVMeDataTypeLogPageEx: STORAGE_PROTOCOL_NVME_DATA_TYPE = STORAGE_PROTOCOL_NVME_DATA_TYPE(4i32);
 pub const NVMeDataTypeUnknown: STORAGE_PROTOCOL_NVME_DATA_TYPE = STORAGE_PROTOCOL_NVME_DATA_TYPE(0i32);
 pub const OBSOLETE_DISK_GET_WRITE_CACHE_STATE: u32 = 475356u32;
 pub const OBSOLETE_IOCTL_STORAGE_RESET_BUS: u32 = 3002368u32;
@@ -5141,7 +5166,9 @@ pub struct REFS_VOLUME_DATA_BUFFER {
     pub DestagesFastTierToSlowTierRate: u32,
     pub MetadataChecksumType: u16,
     pub Reserved0: [u8; 6],
-    pub Reserved: [i64; 8],
+    pub DriverMajorVersion: u32,
+    pub DriverMinorVersion: u32,
+    pub Reserved: [i64; 7],
 }
 impl Default for REFS_VOLUME_DATA_BUFFER {
     fn default() -> Self {
@@ -6488,7 +6515,47 @@ impl Default for STORAGE_CRYPTO_CAPABILITY {
         unsafe { core::mem::zeroed() }
     }
 }
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct STORAGE_CRYPTO_CAPABILITY_V2 {
+    pub Version: u32,
+    pub Size: u32,
+    pub CryptoCapabilityIndex: u32,
+    pub AlgorithmId: STORAGE_CRYPTO_ALGORITHM_ID,
+    pub KeySize: STORAGE_CRYPTO_KEY_SIZE,
+    pub DataUnitSizeBitmask: u32,
+    pub MaxIVBitSize: u16,
+    pub Reserved: u16,
+    pub SecurityComplianceBitmask: STORAGE_CRYPTO_CAPABILITY_V2_0,
+}
+impl Default for STORAGE_CRYPTO_CAPABILITY_V2 {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub union STORAGE_CRYPTO_CAPABILITY_V2_0 {
+    pub Anonymous: STORAGE_CRYPTO_CAPABILITY_V2_0_0,
+    pub AsUchar: u8,
+}
+impl Default for STORAGE_CRYPTO_CAPABILITY_V2_0 {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct STORAGE_CRYPTO_CAPABILITY_V2_0_0 {
+    pub _bitfield: u8,
+}
+impl Default for STORAGE_CRYPTO_CAPABILITY_V2_0_0 {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
 pub const STORAGE_CRYPTO_CAPABILITY_VERSION_1: u32 = 1u32;
+pub const STORAGE_CRYPTO_CAPABILITY_VERSION_2: u32 = 2u32;
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct STORAGE_CRYPTO_DESCRIPTOR {
@@ -6503,7 +6570,45 @@ impl Default for STORAGE_CRYPTO_DESCRIPTOR {
         unsafe { core::mem::zeroed() }
     }
 }
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct STORAGE_CRYPTO_DESCRIPTOR_V2 {
+    pub Version: u32,
+    pub Size: u32,
+    pub NumKeysSupported: u32,
+    pub NumCryptoCapabilities: u32,
+    pub IceType: STORAGE_ICE_TYPE,
+    pub SecurityComplianceBitmask: STORAGE_CRYPTO_DESCRIPTOR_V2_0,
+    pub CryptoCapabilities: [STORAGE_CRYPTO_CAPABILITY_V2; 1],
+}
+impl Default for STORAGE_CRYPTO_DESCRIPTOR_V2 {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub union STORAGE_CRYPTO_DESCRIPTOR_V2_0 {
+    pub Anonymous: STORAGE_CRYPTO_DESCRIPTOR_V2_0_0,
+    pub AsUchar: u8,
+}
+impl Default for STORAGE_CRYPTO_DESCRIPTOR_V2_0 {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct STORAGE_CRYPTO_DESCRIPTOR_V2_0_0 {
+    pub _bitfield: u8,
+}
+impl Default for STORAGE_CRYPTO_DESCRIPTOR_V2_0_0 {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
 pub const STORAGE_CRYPTO_DESCRIPTOR_VERSION_1: u32 = 1u32;
+pub const STORAGE_CRYPTO_DESCRIPTOR_VERSION_2: u32 = 2u32;
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct STORAGE_CRYPTO_KEY_SIZE(pub i32);
@@ -7024,8 +7129,10 @@ pub const STORAGE_HW_FIRMWARE_INVALID_SLOT: u32 = 255u32;
 pub const STORAGE_HW_FIRMWARE_REQUEST_FLAG_CONTROLLER: u32 = 1u32;
 pub const STORAGE_HW_FIRMWARE_REQUEST_FLAG_FIRST_SEGMENT: u32 = 4u32;
 pub const STORAGE_HW_FIRMWARE_REQUEST_FLAG_LAST_SEGMENT: u32 = 2u32;
+pub const STORAGE_HW_FIRMWARE_REQUEST_FLAG_REPLACE_AND_SWITCH_UPON_RESET: u32 = 536870912u32;
 pub const STORAGE_HW_FIRMWARE_REQUEST_FLAG_REPLACE_EXISTING_IMAGE: u32 = 1073741824u32;
 pub const STORAGE_HW_FIRMWARE_REQUEST_FLAG_SWITCH_TO_EXISTING_FIRMWARE: u32 = 2147483648u32;
+pub const STORAGE_HW_FIRMWARE_REQUEST_FLAG_SWITCH_TO_FIRMWARE_WITHOUT_RESET: u32 = 268435456u32;
 pub const STORAGE_HW_FIRMWARE_REVISION_LENGTH: u32 = 16u32;
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -7042,6 +7149,9 @@ impl Default for STORAGE_HW_FIRMWARE_SLOT_INFO {
         unsafe { core::mem::zeroed() }
     }
 }
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct STORAGE_ICE_TYPE(pub i32);
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct STORAGE_IDENTIFIER {
@@ -7445,7 +7555,8 @@ pub struct STORAGE_PROTOCOL_COMMAND {
     pub CommandSpecific: u32,
     pub Reserved0: u32,
     pub FixedProtocolReturnData: u32,
-    pub Reserved1: [u32; 3],
+    pub FixedProtocolReturnData2: u32,
+    pub Reserved1: [u32; 2],
     pub Command: [u8; 1],
 }
 impl Default for STORAGE_PROTOCOL_COMMAND {
@@ -7479,6 +7590,7 @@ impl Default for STORAGE_PROTOCOL_DATA_DESCRIPTOR_EXT {
         unsafe { core::mem::zeroed() }
     }
 }
+pub const STORAGE_PROTOCOL_DATA_DESCRIPTOR_EXT_VERSION: u32 = 1u32;
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub union STORAGE_PROTOCOL_DATA_SUBVALUE_GET_LOG_PAGE {
@@ -7536,7 +7648,8 @@ pub struct STORAGE_PROTOCOL_SPECIFIC_DATA_EXT {
     pub ProtocolDataSubValue3: u32,
     pub ProtocolDataSubValue4: u32,
     pub ProtocolDataSubValue5: u32,
-    pub Reserved: [u32; 5],
+    pub ProtocolDataSubValue6: u32,
+    pub Reserved: [u32; 4],
 }
 impl Default for STORAGE_PROTOCOL_SPECIFIC_DATA_EXT {
     fn default() -> Self {
@@ -7772,6 +7885,21 @@ impl Default for STORAGE_SPEC_VERSION_0_0_0 {
         unsafe { core::mem::zeroed() }
     }
 }
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct STORAGE_STACK_DESCRIPTOR {
+    pub Version: u32,
+    pub Size: u32,
+    pub StorageStackType: STORAGE_STACK_TYPE,
+}
+impl Default for STORAGE_STACK_DESCRIPTOR {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct STORAGE_STACK_TYPE(pub i32);
 pub const STORAGE_SUPPORTED_FEATURES_BYPASS_IO: u32 = 1u32;
 pub const STORAGE_SUPPORTED_FEATURES_MASK: u32 = 1u32;
 #[repr(C)]
@@ -8257,6 +8385,7 @@ pub const StorageAdapterCryptoProperty: STORAGE_PROPERTY_ID = STORAGE_PROPERTY_I
 pub const StorageAdapterPhysicalTopologyProperty: STORAGE_PROPERTY_ID = STORAGE_PROPERTY_ID(53i32);
 pub const StorageAdapterProperty: STORAGE_PROPERTY_ID = STORAGE_PROPERTY_ID(1i32);
 pub const StorageAdapterProtocolSpecificProperty: STORAGE_PROPERTY_ID = STORAGE_PROPERTY_ID(49i32);
+pub const StorageAdapterProtocolSpecificPropertyEx: STORAGE_PROPERTY_ID = STORAGE_PROPERTY_ID(67i32);
 pub const StorageAdapterRpmbProperty: STORAGE_PROPERTY_ID = STORAGE_PROPERTY_ID(16i32);
 pub const StorageAdapterSerialNumberProperty: STORAGE_PROPERTY_ID = STORAGE_PROPERTY_ID(57i32);
 pub const StorageAdapterTemperatureProperty: STORAGE_PROPERTY_ID = STORAGE_PROPERTY_ID(51i32);
@@ -8311,6 +8440,7 @@ pub const StorageDevicePowerCapUnitsPercent: STORAGE_DEVICE_POWER_CAP_UNITS = ST
 pub const StorageDevicePowerProperty: STORAGE_PROPERTY_ID = STORAGE_PROPERTY_ID(12i32);
 pub const StorageDeviceProperty: STORAGE_PROPERTY_ID = STORAGE_PROPERTY_ID(0i32);
 pub const StorageDeviceProtocolSpecificProperty: STORAGE_PROPERTY_ID = STORAGE_PROPERTY_ID(50i32);
+pub const StorageDeviceProtocolSpecificPropertyEx: STORAGE_PROPERTY_ID = STORAGE_PROPERTY_ID(68i32);
 pub const StorageDeviceResiliencyProperty: STORAGE_PROPERTY_ID = STORAGE_PROPERTY_ID(14i32);
 pub const StorageDeviceSeekPenaltyProperty: STORAGE_PROPERTY_ID = STORAGE_PROPERTY_ID(7i32);
 pub const StorageDeviceSelfEncryptionProperty: STORAGE_PROPERTY_ID = STORAGE_PROPERTY_ID(64i32);
@@ -8332,6 +8462,9 @@ pub const StorageEncryptionTypeEDrive: STORAGE_ENCRYPTION_TYPE = STORAGE_ENCRYPT
 pub const StorageEncryptionTypeTcgOpal: STORAGE_ENCRYPTION_TYPE = STORAGE_ENCRYPTION_TYPE(2i32);
 pub const StorageEncryptionTypeUnknown: STORAGE_ENCRYPTION_TYPE = STORAGE_ENCRYPTION_TYPE(0i32);
 pub const StorageFruIdProperty: STORAGE_PROPERTY_ID = STORAGE_PROPERTY_ID(65i32);
+pub const StorageIceTypeNvme: STORAGE_ICE_TYPE = STORAGE_ICE_TYPE(2i32);
+pub const StorageIceTypeUfs: STORAGE_ICE_TYPE = STORAGE_ICE_TYPE(1i32);
+pub const StorageIceTypeUnknown: STORAGE_ICE_TYPE = STORAGE_ICE_TYPE(0i32);
 pub const StorageIdAssocDevice: STORAGE_ASSOCIATION_TYPE = STORAGE_ASSOCIATION_TYPE(0i32);
 pub const StorageIdAssocPort: STORAGE_ASSOCIATION_TYPE = STORAGE_ASSOCIATION_TYPE(1i32);
 pub const StorageIdAssocTarget: STORAGE_ASSOCIATION_TYPE = STORAGE_ASSOCIATION_TYPE(2i32);
@@ -8374,6 +8507,10 @@ pub const StorageRpmbFrameTypeUnknown: STORAGE_RPMB_FRAME_TYPE = STORAGE_RPMB_FR
 pub const StorageSanitizeMethodBlockErase: STORAGE_SANITIZE_METHOD = STORAGE_SANITIZE_METHOD(1i32);
 pub const StorageSanitizeMethodCryptoErase: STORAGE_SANITIZE_METHOD = STORAGE_SANITIZE_METHOD(2i32);
 pub const StorageSanitizeMethodDefault: STORAGE_SANITIZE_METHOD = STORAGE_SANITIZE_METHOD(0i32);
+pub const StorageStackProperty: STORAGE_PROPERTY_ID = STORAGE_PROPERTY_ID(66i32);
+pub const StorageStackTypeNVMe: STORAGE_STACK_TYPE = STORAGE_STACK_TYPE(2i32);
+pub const StorageStackTypeScsi: STORAGE_STACK_TYPE = STORAGE_STACK_TYPE(1i32);
+pub const StorageStackTypeUnknown: STORAGE_STACK_TYPE = STORAGE_STACK_TYPE(0i32);
 pub const StorageTierClassCapacity: STORAGE_TIER_CLASS = STORAGE_TIER_CLASS(1i32);
 pub const StorageTierClassMax: STORAGE_TIER_CLASS = STORAGE_TIER_CLASS(3i32);
 pub const StorageTierClassPerformance: STORAGE_TIER_CLASS = STORAGE_TIER_CLASS(2i32);

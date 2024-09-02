@@ -219,7 +219,17 @@ impl Type {
 
         if let Some(outer) = enclosing {
             if code_name.namespace().is_empty() {
-                return Type::CppStruct(outer.nested[code_name.name()].clone());
+                // Failed to find TypeRef(TypeRef(.Version)) in parent CppStruct { def: TypeDef(Windows.Win32.Graphics.GdiPlus.Version), name: "GdiplusStartupInputEx_0", nested: {} }
+                if outer.type_name().name() == code_name.name() {
+                    return Type::CppStruct(outer.clone());
+                }
+                return Type::CppStruct(
+                    outer
+                        .nested
+                        .get(code_name.name())
+                        .unwrap_or_else(|| panic!("Failed to find {code:?} in parent {outer:?}"))
+                        .clone(),
+                );
             }
         }
 
@@ -610,6 +620,12 @@ impl Type {
         let mut nested = false;
 
         if let Self::CppStruct(ty) = ty {
+            if ty.def.namespace().is_empty() {
+                nested = true;
+            }
+        }
+
+        if let Self::CppEnum(ty) = ty {
             if ty.def.namespace().is_empty() {
                 nested = true;
             }
