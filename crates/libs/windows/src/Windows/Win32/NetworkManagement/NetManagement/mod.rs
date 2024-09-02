@@ -414,6 +414,15 @@ where
     unsafe { NetIsServiceAccount(servername.param().abi(), accountname.param().abi(), isservice as _) }
 }
 #[inline]
+pub unsafe fn NetIsServiceAccount2<P0, P1>(servername: P0, accountname: P1, isservice: *mut windows_core::BOOL, accounttype: *mut MSA_INFO_ACCOUNT_TYPE) -> super::super::Foundation::NTSTATUS
+where
+    P0: windows_core::Param<windows_core::PCWSTR>,
+    P1: windows_core::Param<windows_core::PCWSTR>,
+{
+    windows_link::link!("netapi32.dll" "system" fn NetIsServiceAccount2(servername : windows_core::PCWSTR, accountname : windows_core::PCWSTR, isservice : *mut windows_core::BOOL, accounttype : *mut MSA_INFO_ACCOUNT_TYPE) -> super::super::Foundation:: NTSTATUS);
+    unsafe { NetIsServiceAccount2(servername.param().abi(), accountname.param().abi(), isservice as _, accounttype as _) }
+}
+#[inline]
 pub unsafe fn NetJoinDomain<P0, P1, P2, P3, P4>(lpserver: P0, lpdomain: P1, lpmachineaccountou: P2, lpaccount: P3, lppassword: P4, fjoinoptions: NET_JOIN_DOMAIN_JOIN_OPTIONS) -> u32
 where
     P0: windows_core::Param<windows_core::PCWSTR>,
@@ -1909,6 +1918,19 @@ pub const BACKUP_MSG_FILENAME: windows_core::PCWSTR = windows_core::w!("BAK.MSG"
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct BIND_FLAGS1(pub i32);
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct BLOCK_NTLM_INFO {
+    pub BlockNTLM: bool,
+    pub Reserved1: u8,
+    pub Reserved2: u16,
+    pub Reserved3: u32,
+}
+impl Default for BLOCK_NTLM_INFO {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
 pub const CLTYPE_LEN: u32 = 12u32;
 pub const CNLEN: u32 = 15u32;
 #[repr(transparent)]
@@ -1943,6 +1965,7 @@ pub const DEF_MAX_BADPW: u32 = 0u32;
 pub const DEF_MAX_PWHIST: u32 = 8u32;
 pub const DEF_MIN_PWLEN: u32 = 6u32;
 pub const DEF_PWUNIQUENESS: u32 = 5u32;
+pub const DELEGATED_MANAGED_SERVICE_ACCOUNT_PASSWORD: windows_core::PCWSTR = windows_core::w!("_SA_{F8262F4C-499B-4770-88B4-A75C91D0D8E9}");
 pub const DEVLEN: u32 = 80u32;
 pub const DFS_CONNECTION_FAILURE: i32 = 1073756226i32;
 pub const DFS_ERROR_ACTIVEDIRECTORY_OFFLINE: i32 = -1073727301i32;
@@ -2041,6 +2064,7 @@ impl Default for DSREG_USER_INFO {
     }
 }
 pub const DSREG_WORKPLACE_JOIN: DSREG_JOIN_TYPE = DSREG_JOIN_TYPE(2i32);
+pub const DelegatedManagedServiceAccount: MSA_INFO_ACCOUNT_TYPE = MSA_INFO_ACCOUNT_TYPE(3i32);
 pub const EBP_ABOVE: ENUM_BINDING_PATHS_FLAGS = ENUM_BINDING_PATHS_FLAGS(1i32);
 pub const EBP_BELOW: ENUM_BINDING_PATHS_FLAGS = ENUM_BINDING_PATHS_FLAGS(2i32);
 pub const ENCRYPTED_PWLEN: u32 = 16u32;
@@ -2127,6 +2151,10 @@ pub const EVENT_BROWSER_MASTER_PROMOTION_FAILED_NO_MASTER: i32 = -1073733804i32;
 pub const EVENT_BROWSER_MASTER_PROMOTION_FAILED_STOPPING: i32 = -1073733805i32;
 pub const EVENT_BROWSER_NOT_STARTED_IPX_CONFIG_MISMATCH: i32 = -1073733788i32;
 pub const EVENT_BROWSER_OTHERDOMAIN_ADD_FAILED: i32 = -1073733813i32;
+pub const EVENT_BROWSER_REMOTE_MAILSLOTS_DISABLED: i32 = 1073749862i32;
+pub const EVENT_BROWSER_REMOTE_MAILSLOTS_DISABLED_BY_POLICY: i32 = 1073749864i32;
+pub const EVENT_BROWSER_REMOTE_MAILSLOTS_ENABLED: i32 = -2147475611i32;
+pub const EVENT_BROWSER_REMOTE_MAILSLOTS_ENABLED_BY_POLICY: i32 = -2147475609i32;
 pub const EVENT_BROWSER_ROLE_CHANGE_FAILED: i32 = -1073733816i32;
 pub const EVENT_BROWSER_SERVER_LIST_FAILED: i32 = -2147475627i32;
 pub const EVENT_BROWSER_SERVER_LIST_RETRIEVED: i32 = 8025i32;
@@ -2305,7 +2333,7 @@ pub const EVENT_NBT_BAD_BACKUP_WINS_ADDR: i32 = -2147479344i32;
 pub const EVENT_NBT_BAD_PRIMARY_WINS_ADDR: i32 = -2147479343i32;
 pub const EVENT_NBT_CREATE_ADDRESS: i32 = -1073737517i32;
 pub const EVENT_NBT_CREATE_CONNECTION: i32 = -1073737516i32;
-pub const EVENT_NBT_CREATE_DEVICE: i32 = -1073737513i32;
+pub const EVENT_NBT_CREATE_DEVICE: i32 = 1073746135i32;
 pub const EVENT_NBT_CREATE_DRIVER: i32 = -1073737524i32;
 pub const EVENT_NBT_DUPLICATE_NAME: i32 = -1073737505i32;
 pub const EVENT_NBT_DUPLICATE_NAME_ERROR: i32 = -1073737503i32;
@@ -2691,6 +2719,7 @@ impl Default for GROUP_USERS_INFO_1 {
         unsafe { core::mem::zeroed() }
     }
 }
+pub const GroupManagedServiceAccount: MSA_INFO_ACCOUNT_TYPE = MSA_INFO_ACCOUNT_TYPE(2i32);
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct HARDWARE_ADDRESS {
@@ -4768,6 +4797,20 @@ impl Default for MSA_INFO_0 {
         unsafe { core::mem::zeroed() }
     }
 }
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct MSA_INFO_1 {
+    pub State: MSA_INFO_STATE,
+    pub AccountType: MSA_INFO_ACCOUNT_TYPE,
+}
+impl Default for MSA_INFO_1 {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct MSA_INFO_ACCOUNT_TYPE(pub i32);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct MSA_INFO_LEVEL(pub i32);
@@ -4800,11 +4843,13 @@ impl Default for MSG_INFO_1 {
     }
 }
 pub const MS_ROUTER_VERSION: u32 = 1536u32;
+pub const MsaAccountFalse: MSA_INFO_ACCOUNT_TYPE = MSA_INFO_ACCOUNT_TYPE(0i32);
 pub const MsaInfoCanInstall: MSA_INFO_STATE = MSA_INFO_STATE(4i32);
 pub const MsaInfoCannotInstall: MSA_INFO_STATE = MSA_INFO_STATE(3i32);
 pub const MsaInfoInstalled: MSA_INFO_STATE = MSA_INFO_STATE(5i32);
 pub const MsaInfoLevel0: MSA_INFO_LEVEL = MSA_INFO_LEVEL(0i32);
-pub const MsaInfoLevelMax: MSA_INFO_LEVEL = MSA_INFO_LEVEL(1i32);
+pub const MsaInfoLevel1: MSA_INFO_LEVEL = MSA_INFO_LEVEL(1i32);
+pub const MsaInfoLevelMax: MSA_INFO_LEVEL = MSA_INFO_LEVEL(2i32);
 pub const MsaInfoNotExist: MSA_INFO_STATE = MSA_INFO_STATE(1i32);
 pub const MsaInfoNotService: MSA_INFO_STATE = MSA_INFO_STATE(2i32);
 pub const NCF_DONTEXPOSELOWER: COMPONENT_CHARACTERISTICS = COMPONENT_CHARACTERISTICS(4096i32);
@@ -5525,12 +5570,8 @@ pub const NETLOGON_REPLICATION_IN_PROGRESS: u32 = 2u32;
 pub const NETLOGON_REPLICATION_NEEDED: u32 = 1u32;
 pub const NETLOGON_VERIFY_STATUS_RETURNED: u32 = 128u32;
 pub const NETLOG_NetlogonNonWindowsSupportsSecureRpc: u32 = 5826u32;
-pub const NETLOG_NetlogonRc4Allowed: u32 = 5840u32;
-pub const NETLOG_NetlogonRc4Denied: u32 = 5841u32;
 pub const NETLOG_NetlogonRpcBacklogLimitFailure: u32 = 5837u32;
 pub const NETLOG_NetlogonRpcBacklogLimitSet: u32 = 5836u32;
-pub const NETLOG_NetlogonRpcSigningClient: u32 = 5838u32;
-pub const NETLOG_NetlogonRpcSigningTrust: u32 = 5839u32;
 pub const NETLOG_NetlogonUnsecureRpcClient: u32 = 5827u32;
 pub const NETLOG_NetlogonUnsecureRpcMachineAllowedBySsdl: u32 = 5830u32;
 pub const NETLOG_NetlogonUnsecureRpcTrust: u32 = 5828u32;
@@ -6016,6 +6057,7 @@ pub const NetSetupWorkgroupName: NETSETUP_JOIN_STATUS = NETSETUP_JOIN_STATUS(2i3
 pub const NetValidateAuthentication: NET_VALIDATE_PASSWORD_TYPE = NET_VALIDATE_PASSWORD_TYPE(1i32);
 pub const NetValidatePasswordChange: NET_VALIDATE_PASSWORD_TYPE = NET_VALIDATE_PASSWORD_TYPE(2i32);
 pub const NetValidatePasswordReset: NET_VALIDATE_PASSWORD_TYPE = NET_VALIDATE_PASSWORD_TYPE(3i32);
+pub const NoneFlag: TRANSPORT_INFO_FLAG = TRANSPORT_INFO_FLAG(0i32);
 pub const OBO_COMPONENT: OBO_TOKEN_TYPE = OBO_TOKEN_TYPE(2i32);
 pub const OBO_SOFTWARE: OBO_TOKEN_TYPE = OBO_TOKEN_TYPE(3i32);
 #[repr(C)]
@@ -6103,6 +6145,7 @@ pub const PROTO_VENDOR_MS1: u32 = 311u32;
 pub const PROTO_VENDOR_MS2: u32 = 16383u32;
 pub const PWLEN: u32 = 256u32;
 pub const QNLEN: u32 = 80u32;
+pub const QuicPortSetFlag: TRANSPORT_INFO_FLAG = TRANSPORT_INFO_FLAG(2i32);
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct RASCON_IPUI {
@@ -6347,6 +6390,7 @@ impl Default for RTR_TOC_ENTRY {
 }
 pub const RTUTILS_MAX_PROTOCOL_DLL_LEN: u32 = 48u32;
 pub const RTUTILS_MAX_PROTOCOL_NAME_LEN: u32 = 40u32;
+pub const RdmaPortSetFlag: TRANSPORT_INFO_FLAG = TRANSPORT_INFO_FLAG(4i32);
 pub const SERVCE_LM20_W32TIME: windows_core::PCWSTR = windows_core::w!("w32time");
 pub const SERVER_DISPLAY_NAME: windows_core::PCWSTR = windows_core::w!("Server");
 #[repr(C)]
@@ -7791,6 +7835,7 @@ pub const SERVICE_LM20_DSROLE: windows_core::PCWSTR = windows_core::w!("DsRoleSv
 pub const SERVICE_LM20_ISMSERV: windows_core::PCWSTR = windows_core::w!("IsmServ");
 pub const SERVICE_LM20_KDC: windows_core::PCWSTR = windows_core::w!("kdc");
 pub const SERVICE_LM20_LMHOSTS: windows_core::PCWSTR = windows_core::w!("LMHOSTS");
+pub const SERVICE_LM20_LOCALKDC: windows_core::PCWSTR = windows_core::w!("localkdc");
 pub const SERVICE_LM20_MESSENGER: windows_core::PCWSTR = windows_core::w!("MESSENGER");
 pub const SERVICE_LM20_NBT: windows_core::PCWSTR = windows_core::w!("NBT");
 pub const SERVICE_LM20_NETLOGON: windows_core::PCWSTR = windows_core::w!("NETLOGON");
@@ -7815,6 +7860,7 @@ pub const SERVICE_LM20_UPS: windows_core::PCWSTR = windows_core::w!("UPS");
 pub const SERVICE_LM20_WORKSTATION: windows_core::PCWSTR = windows_core::w!("WORKSTATION");
 pub const SERVICE_LM20_XACTSRV: windows_core::PCWSTR = windows_core::w!("XACTSRV");
 pub const SERVICE_LMHOSTS: windows_core::PCWSTR = windows_core::w!("LMHOSTS");
+pub const SERVICE_LOCALKDC: windows_core::PCWSTR = windows_core::w!("localkdc");
 pub const SERVICE_MAXTIME: u32 = 255u32;
 pub const SERVICE_MESSENGER: windows_core::PCWSTR = windows_core::w!("MESSENGER");
 pub const SERVICE_NBT: windows_core::PCWSTR = windows_core::w!("NBT");
@@ -8175,6 +8221,7 @@ pub const SV_XACTMEMSIZE_PARMNUM: u32 = 531u32;
 pub const SW_AUTOPROF_LOAD_MASK: u32 = 1u32;
 pub const SW_AUTOPROF_SAVE_MASK: u32 = 2u32;
 pub const ServiceAccountPasswordGUID: windows_core::GUID = windows_core::GUID::from_u128(0x262e99c9_6160_4871_acec_4e61736b6f21);
+pub const StandAloneManagedServiceAccount: MSA_INFO_ACCOUNT_TYPE = MSA_INFO_ACCOUNT_TYPE(1i32);
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct TIME_OF_DAY_INFO {
@@ -8209,17 +8256,25 @@ pub const TRACE_USE_MSEC: u32 = 4u32;
 pub struct TRANSPORT_INFO {
     pub Type: TRANSPORT_TYPE,
     pub SkipCertificateCheck: bool,
+    pub TcpPort: u16,
+    pub QuicPort: u16,
+    pub RdmaPort: u16,
+    pub Flags: u32,
 }
 impl Default for TRANSPORT_INFO {
     fn default() -> Self {
         unsafe { core::mem::zeroed() }
     }
 }
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct TRANSPORT_INFO_FLAG(pub i32);
 pub const TRANSPORT_NAME_PARMNUM: u32 = 202u32;
 pub const TRANSPORT_QUALITYOFSERVICE_PARMNUM: u32 = 201u32;
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct TRANSPORT_TYPE(pub i32);
+pub const TcpPortSetFlag: TRANSPORT_INFO_FLAG = TRANSPORT_INFO_FLAG(1i32);
 pub const UAS_ROLE_BACKUP: USER_MODALS_ROLES = USER_MODALS_ROLES(2u32);
 pub const UAS_ROLE_MEMBER: USER_MODALS_ROLES = USER_MODALS_ROLES(1u32);
 pub const UAS_ROLE_PRIMARY: USER_MODALS_ROLES = USER_MODALS_ROLES(3u32);
@@ -9033,6 +9088,18 @@ pub const USE_NETERR: u32 = 3u32;
 pub const USE_NOFORCE: FORCE_LEVEL_FLAGS = FORCE_LEVEL_FLAGS(0u32);
 pub const USE_OK: u32 = 0u32;
 pub const USE_OPTIONS_PARMNUM: u32 = 10u32;
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct USE_OPTION_BLOCK_NTLM_PARAMETERS {
+    pub Tag: u32,
+    pub Length: u16,
+    pub Reserved: u16,
+}
+impl Default for USE_OPTION_BLOCK_NTLM_PARAMETERS {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct USE_OPTION_DEFERRED_CONNECTION_PARAMETERS {

@@ -6,7 +6,9 @@ use libloading::{Library, Symbol};
 use std::path::Path;
 use windows::{
     core::{w, Interface},
-    Win32::{Foundation::BOOL, Graphics::Direct3D::Dxc::*, Graphics::Direct3D12::ID3D12ShaderReflection },
+    Win32::{
+        Foundation::BOOL, Graphics::Direct3D::Dxc::*, Graphics::Direct3D12::ID3D12ShaderReflection,
+    },
 };
 
 #[cfg(not(windows))]
@@ -214,13 +216,13 @@ fn main() -> Result<()> {
         let buffer = DxcBuffer {
             Ptr: unsafe { blob.GetBufferPointer() },
             Size: unsafe { blob.GetBufferSize() },
-            Encoding: DXC_CP_ACP.0,
+            Encoding: DXC_CP_ACP,
         };
         unsafe {
             reflection.Load(&blob).unwrap();
             for i in 0..reflection.GetPartCount()? {
                 let k = dbg!(reflection.GetPartKind(i)?);
-                dbg!(std::str::from_utf8(&k.to_le_bytes()));
+                dbg!(std::str::from_utf8(&k.0.to_le_bytes()));
                 dbg!(reflection.FindFirstPartKind(k));
 
                 let mut data = std::ptr::null_mut();
@@ -233,16 +235,7 @@ fn main() -> Result<()> {
         }
 
         unsafe {
-            // let reflection: IDxcContainerReflection = utils.CreateReflection(&buffer)?;
-            let mut reflection = None::<ID3D12ShaderReflection>;
-            unsafe {
-                utils.CreateReflection(
-                    &buffer,
-                    &ID3D12ShaderReflection::IID,
-                    std::mem::transmute(&mut reflection),
-                )
-            }?;
-            let reflection = reflection.unwrap();
+            let reflection: ID3D12ShaderReflection = utils.CreateReflection(&buffer)?;
             let mut desc = Default::default();
             reflection.GetDesc(&mut desc)?;
             dbg!(desc.Creator.to_string());

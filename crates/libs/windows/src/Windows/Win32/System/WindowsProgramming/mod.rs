@@ -180,7 +180,6 @@ pub unsafe fn DosDateTimeToFileTime(wfatdate: u16, wfattime: u16, lpfiletime: *m
     windows_link::link!("kernel32.dll" "system" fn DosDateTimeToFileTime(wfatdate : u16, wfattime : u16, lpfiletime : *mut super::super::Foundation:: FILETIME) -> windows_core::BOOL);
     unsafe { DosDateTimeToFileTime(wfatdate, wfattime, lpfiletime as _).ok() }
 }
-#[cfg(any(target_arch = "arm64ec", target_arch = "x86", target_arch = "x86_64"))]
 #[inline]
 pub unsafe fn EnableProcessOptionalXStateFeatures(features: u64) -> windows_core::BOOL {
     windows_link::link!("kernel32.dll" "system" fn EnableProcessOptionalXStateFeatures(features : u64) -> windows_core::BOOL);
@@ -507,7 +506,6 @@ pub unsafe fn GetSystemRegistryQuota(pdwquotaallowed: Option<*mut u32>, pdwquota
     windows_link::link!("kernel32.dll" "system" fn GetSystemRegistryQuota(pdwquotaallowed : *mut u32, pdwquotaused : *mut u32) -> windows_core::BOOL);
     unsafe { GetSystemRegistryQuota(pdwquotaallowed.unwrap_or(core::mem::zeroed()) as _, pdwquotaused.unwrap_or(core::mem::zeroed()) as _).ok() }
 }
-#[cfg(any(target_arch = "arm64ec", target_arch = "x86", target_arch = "x86_64"))]
 #[inline]
 pub unsafe fn GetThreadEnabledXStateFeatures() -> u64 {
     windows_link::link!("kernel32.dll" "system" fn GetThreadEnabledXStateFeatures() -> u64);
@@ -1265,6 +1263,17 @@ where
         WldpCanExecuteFile(host, options, filehandle, auditinfo.param().abi(), &mut result__).map(|| result__)
     }
 }
+#[inline]
+pub unsafe fn WldpCanExecuteFileFromDetachedSignature<P4>(host: *const windows_core::GUID, options: WLDP_EXECUTION_EVALUATION_OPTIONS, contentfilehandle: super::super::Foundation::HANDLE, signaturefilehandle: super::super::Foundation::HANDLE, auditinfo: P4) -> windows_core::Result<WLDP_EXECUTION_POLICY>
+where
+    P4: windows_core::Param<windows_core::PCWSTR>,
+{
+    windows_link::link!("wldp.dll" "system" fn WldpCanExecuteFileFromDetachedSignature(host : *const windows_core::GUID, options : WLDP_EXECUTION_EVALUATION_OPTIONS, contentfilehandle : super::super::Foundation:: HANDLE, signaturefilehandle : super::super::Foundation:: HANDLE, auditinfo : windows_core::PCWSTR, result : *mut WLDP_EXECUTION_POLICY) -> windows_core::HRESULT);
+    unsafe {
+        let mut result__ = core::mem::zeroed();
+        WldpCanExecuteFileFromDetachedSignature(host, options, contentfilehandle, signaturefilehandle, auditinfo.param().abi(), &mut result__).map(|| result__)
+    }
+}
 #[cfg(feature = "Win32_System_Com")]
 #[inline]
 pub unsafe fn WldpCanExecuteStream<P2, P3>(host: *const windows_core::GUID, options: WLDP_EXECUTION_EVALUATION_OPTIONS, stream: P2, auditinfo: P3) -> windows_core::Result<WLDP_EXECUTION_POLICY>
@@ -1305,6 +1314,11 @@ pub unsafe fn WldpQueryDeviceSecurityInformation(information: Option<&mut [WLDP_
 pub unsafe fn WldpQueryDynamicCodeTrust(filehandle: Option<super::super::Foundation::HANDLE>, baseimage: Option<*const core::ffi::c_void>, imagesize: u32) -> windows_core::Result<()> {
     windows_link::link!("wldp.dll" "system" fn WldpQueryDynamicCodeTrust(filehandle : super::super::Foundation:: HANDLE, baseimage : *const core::ffi::c_void, imagesize : u32) -> windows_core::HRESULT);
     unsafe { WldpQueryDynamicCodeTrust(filehandle.unwrap_or(core::mem::zeroed()) as _, baseimage.unwrap_or(core::mem::zeroed()) as _, imagesize).ok() }
+}
+#[inline]
+pub unsafe fn WldpQuerySecurityPolicy(providername: *const super::super::Foundation::UNICODE_STRING, keyname: *const super::super::Foundation::UNICODE_STRING, valuename: *const super::super::Foundation::UNICODE_STRING, valuetype: *mut WLDP_SECURE_SETTING_VALUE_TYPE, valueaddress: Option<*mut core::ffi::c_void>, valuesize: *mut u32) -> windows_core::Result<()> {
+    windows_link::link!("wldp.dll" "system" fn WldpQuerySecurityPolicy(providername : *const super::super::Foundation:: UNICODE_STRING, keyname : *const super::super::Foundation:: UNICODE_STRING, valuename : *const super::super::Foundation:: UNICODE_STRING, valuetype : *mut WLDP_SECURE_SETTING_VALUE_TYPE, valueaddress : *mut core::ffi::c_void, valuesize : *mut u32) -> windows_core::HRESULT);
+    unsafe { WldpQuerySecurityPolicy(providername, keyname, valuename, valuetype as _, valueaddress.unwrap_or(core::mem::zeroed()) as _, valuesize as _).ok() }
 }
 #[inline]
 pub unsafe fn WldpSetDynamicCodeTrust(filehandle: super::super::Foundation::HANDLE) -> windows_core::Result<()> {
@@ -3217,20 +3231,27 @@ impl Default for PERUSERSECTIONW {
 pub type PFEATURE_STATE_CHANGE_CALLBACK = Option<unsafe extern "system" fn(context: *const core::ffi::c_void)>;
 pub type PFIBER_CALLOUT_ROUTINE = Option<unsafe extern "system" fn(lpparameter: *mut core::ffi::c_void) -> *mut core::ffi::c_void>;
 pub type PQUERYACTCTXW_FUNC = Option<unsafe extern "system" fn(dwflags: u32, hactctx: super::super::Foundation::HANDLE, pvsubinstance: *const core::ffi::c_void, ulinfoclass: u32, pvbuffer: *mut core::ffi::c_void, cbbuffer: usize, pcbwrittenorrequired: *mut usize) -> windows_core::BOOL>;
-pub const PROCESS_CREATION_ALL_APPLICATION_PACKAGES_OPT_OUT: u32 = 1u32;
-pub const PROCESS_CREATION_CHILD_PROCESS_OVERRIDE: u32 = 2u32;
-pub const PROCESS_CREATION_CHILD_PROCESS_RESTRICTED: u32 = 1u32;
-pub const PROCESS_CREATION_CHILD_PROCESS_RESTRICTED_UNLESS_SECURE: u32 = 4u32;
-pub const PROCESS_CREATION_DESKTOP_APP_BREAKAWAY_DISABLE_PROCESS_TREE: u32 = 2u32;
-pub const PROCESS_CREATION_DESKTOP_APP_BREAKAWAY_ENABLE_PROCESS_TREE: u32 = 1u32;
-pub const PROCESS_CREATION_DESKTOP_APP_BREAKAWAY_OVERRIDE: u32 = 4u32;
-pub const PROCESS_CREATION_MITIGATION_POLICY_DEP_ATL_THUNK_ENABLE: u32 = 2u32;
-pub const PROCESS_CREATION_MITIGATION_POLICY_DEP_ENABLE: u32 = 1u32;
-pub const PROCESS_CREATION_MITIGATION_POLICY_SEHOP_ENABLE: u32 = 4u32;
-pub const PROC_THREAD_ATTRIBUTE_ADDITIVE: u32 = 262144u32;
-pub const PROC_THREAD_ATTRIBUTE_INPUT: u32 = 131072u32;
-pub const PROC_THREAD_ATTRIBUTE_NUMBER: u32 = 65535u32;
-pub const PROC_THREAD_ATTRIBUTE_THREAD: u32 = 65536u32;
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub union PROCESS_CREATION_SVE_VECTOR_LENGTH {
+    pub Data: u32,
+    pub Anonymous: PROCESS_CREATION_SVE_VECTOR_LENGTH_0,
+}
+impl Default for PROCESS_CREATION_SVE_VECTOR_LENGTH {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct PROCESS_CREATION_SVE_VECTOR_LENGTH_0 {
+    pub _bitfield: u32,
+}
+impl Default for PROCESS_CREATION_SVE_VECTOR_LENGTH_0 {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
 pub const PROTECTION_LEVEL_SAME: u32 = 4294967295u32;
 pub const PST_FAX: u32 = 33u32;
 pub const PST_LAT: u32 = 257u32;
@@ -3272,9 +3293,13 @@ impl Default for PUBLIC_OBJECT_TYPE_INFORMATION {
 }
 pub type PWINSTATIONQUERYINFORMATIONW = Option<unsafe extern "system" fn(param0: super::super::Foundation::HANDLE, param1: u32, param2: WINSTATIONINFOCLASS, param3: *mut core::ffi::c_void, param4: u32, param5: *mut u32) -> bool>;
 pub type PWLDP_CANEXECUTEBUFFER_API = Option<unsafe extern "system" fn(host: *const windows_core::GUID, options: WLDP_EXECUTION_EVALUATION_OPTIONS, buffer: *const u8, buffersize: u32, auditinfo: windows_core::PCWSTR, result: *mut WLDP_EXECUTION_POLICY) -> windows_core::HRESULT>;
+pub type PWLDP_CANEXECUTEFILEFROMDETACHEDSIGNATURE_API = Option<unsafe extern "system" fn(host: *const windows_core::GUID, options: WLDP_EXECUTION_EVALUATION_OPTIONS, contentfilehandle: super::super::Foundation::HANDLE, signaturefilehandle: super::super::Foundation::HANDLE, auditinfo: windows_core::PCWSTR, result: *mut WLDP_EXECUTION_POLICY) -> windows_core::HRESULT>;
 pub type PWLDP_CANEXECUTEFILE_API = Option<unsafe extern "system" fn(host: *const windows_core::GUID, options: WLDP_EXECUTION_EVALUATION_OPTIONS, filehandle: super::super::Foundation::HANDLE, auditinfo: windows_core::PCWSTR, result: *mut WLDP_EXECUTION_POLICY) -> windows_core::HRESULT>;
 #[cfg(feature = "Win32_System_Com")]
 pub type PWLDP_CANEXECUTESTREAM_API = Option<unsafe extern "system" fn(host: *const windows_core::GUID, options: WLDP_EXECUTION_EVALUATION_OPTIONS, stream: windows_core::Ref<'_, super::Com::IStream>, auditinfo: windows_core::PCWSTR, result: *mut WLDP_EXECUTION_POLICY) -> windows_core::HRESULT>;
+pub type PWLDP_GETAPPLICATIONSETTINGBOOLEAN_API = Option<unsafe extern "system" fn(id: windows_core::PCWSTR, setting: windows_core::PCWSTR, result: *mut windows_core::BOOL) -> windows_core::HRESULT>;
+pub type PWLDP_GETAPPLICATIONSETTINGSTRINGLIST_API = Option<unsafe extern "system" fn(id: windows_core::PCWSTR, setting: windows_core::PCWSTR, datacount: usize, requiredcount: *mut usize, result: windows_core::PWSTR) -> windows_core::HRESULT>;
+pub type PWLDP_GETAPPLICATIONSETTINGSTRINGSET_API = Option<unsafe extern "system" fn(id: windows_core::PCWSTR, setting: windows_core::PCWSTR, datacount: usize, requiredcount: *mut usize, result: windows_core::PWSTR) -> windows_core::HRESULT>;
 pub type PWLDP_ISAPPAPPROVEDBYPOLICY_API = Option<unsafe extern "system" fn(packagefamilyname: windows_core::PCWSTR, packageversion: u64) -> windows_core::HRESULT>;
 pub type PWLDP_ISDYNAMICCODEPOLICYENABLED_API = Option<unsafe extern "system" fn(pbenabled: *mut windows_core::BOOL) -> windows_core::HRESULT>;
 pub type PWLDP_ISPRODUCTIONCONFIGURATION_API = Option<unsafe extern "system" fn(isproductionconfiguration: *mut windows_core::BOOL) -> windows_core::HRESULT>;
@@ -3283,6 +3308,7 @@ pub type PWLDP_QUERYDEVICESECURITYINFORMATION_API = Option<unsafe extern "system
 pub type PWLDP_QUERYDYNAMICODETRUST_API = Option<unsafe extern "system" fn(filehandle: super::super::Foundation::HANDLE, baseimage: *const core::ffi::c_void, imagesize: u32) -> windows_core::HRESULT>;
 pub type PWLDP_QUERYPOLICYSETTINGENABLED2_API = Option<unsafe extern "system" fn(setting: windows_core::PCWSTR, enabled: *mut windows_core::BOOL) -> windows_core::HRESULT>;
 pub type PWLDP_QUERYPOLICYSETTINGENABLED_API = Option<unsafe extern "system" fn(setting: WLDP_POLICY_SETTING, enabled: *mut windows_core::BOOL) -> windows_core::HRESULT>;
+pub type PWLDP_QUERYSECURITYPOLICY_API = Option<unsafe extern "system" fn(providername: *const super::super::Foundation::UNICODE_STRING, keyname: *const super::super::Foundation::UNICODE_STRING, valuename: *const super::super::Foundation::UNICODE_STRING, valuetype: *mut WLDP_SECURE_SETTING_VALUE_TYPE, valueaddress: *mut core::ffi::c_void, valuesize: *mut u32) -> windows_core::HRESULT>;
 pub type PWLDP_QUERYWINDOWSLOCKDOWNMODE_API = Option<unsafe extern "system" fn(lockdownmode: *mut WLDP_WINDOWS_LOCKDOWN_MODE) -> windows_core::HRESULT>;
 pub type PWLDP_QUERYWINDOWSLOCKDOWNRESTRICTION_API = Option<unsafe extern "system" fn(lockdownrestriction: *mut WLDP_WINDOWS_LOCKDOWN_RESTRICTION) -> windows_core::HRESULT>;
 pub type PWLDP_RESETPRODUCTIONCONFIGURATION_API = Option<unsafe extern "system" fn() -> windows_core::HRESULT>;
@@ -3778,6 +3804,7 @@ pub const WINWATCHNOTIFY_DESTROY: u32 = 2u32;
 pub const WINWATCHNOTIFY_START: u32 = 0u32;
 pub const WINWATCHNOTIFY_STOP: u32 = 1u32;
 pub const WLDP_CANEXECUTEBUFFER_FN: windows_core::PCSTR = windows_core::s!("WldpCanExecuteBuffer");
+pub const WLDP_CANEXECUTEFILEFROMDETACHEDSIGNATURE_FN: windows_core::PCSTR = windows_core::s!("WldpCanExecuteFileFromDetachedSignature");
 pub const WLDP_CANEXECUTEFILE_FN: windows_core::PCSTR = windows_core::s!("WldpCanExecuteFile");
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -3905,10 +3932,18 @@ pub const WLDP_QUERYDEVICESECURITYINFORMATION_FN: windows_core::PCSTR = windows_
 pub const WLDP_QUERYDYNAMICCODETRUST_FN: windows_core::PCSTR = windows_core::s!("WldpQueryDynamicCodeTrust");
 pub const WLDP_QUERYPOLICYSETTINGENABLED2_FN: windows_core::PCSTR = windows_core::s!("WldpQueryPolicySettingEnabled2");
 pub const WLDP_QUERYPOLICYSETTINGENABLED_FN: windows_core::PCSTR = windows_core::s!("WldpQueryPolicySettingEnabled");
+pub const WLDP_QUERYSECURITYPOLICY_FN: windows_core::PCSTR = windows_core::s!("WldpQuerySecurityPolicy");
 pub const WLDP_QUERYWINDOWSLOCKDOWNMODE_FN: windows_core::PCSTR = windows_core::s!("WldpQueryWindowsLockdownMode");
 pub const WLDP_QUERYWINDOWSLOCKDOWNRESTRICTION_FN: windows_core::PCSTR = windows_core::s!("WldpQueryWindowsLockdownRestriction");
 pub const WLDP_RESETPRODUCTIONCONFIGURATION_FN: windows_core::PCSTR = windows_core::s!("WldpResetProductionConfiguration");
 pub const WLDP_RESETWCOSPRODUCTIONCONFIGURATION_FN: windows_core::PCSTR = windows_core::s!("WldpResetWcosProductionConfiguration");
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct WLDP_SECURE_SETTING_VALUE_TYPE(pub i32);
+pub const WLDP_SECURE_SETTING_VALUE_TYPE_BINARY: WLDP_SECURE_SETTING_VALUE_TYPE = WLDP_SECURE_SETTING_VALUE_TYPE(2i32);
+pub const WLDP_SECURE_SETTING_VALUE_TYPE_BOOLEAN: WLDP_SECURE_SETTING_VALUE_TYPE = WLDP_SECURE_SETTING_VALUE_TYPE(0i32);
+pub const WLDP_SECURE_SETTING_VALUE_TYPE_STRING: WLDP_SECURE_SETTING_VALUE_TYPE = WLDP_SECURE_SETTING_VALUE_TYPE(3i32);
+pub const WLDP_SECURE_SETTING_VALUE_TYPE_ULONG: WLDP_SECURE_SETTING_VALUE_TYPE = WLDP_SECURE_SETTING_VALUE_TYPE(1i32);
 pub const WLDP_SETDYNAMICCODETRUST_FN: windows_core::PCSTR = windows_core::s!("WldpSetDynamicCodeTrust");
 pub const WLDP_SETWINDOWSLOCKDOWNRESTRICTION_FN: windows_core::PCSTR = windows_core::s!("WldpSetWindowsLockdownRestriction");
 #[repr(transparent)]

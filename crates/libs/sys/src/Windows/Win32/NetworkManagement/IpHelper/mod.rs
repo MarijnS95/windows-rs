@@ -32,6 +32,8 @@ windows_targets::link!("iphlpapi.dll" "system" fn ConvertIpv4MaskToLength(mask :
 windows_targets::link!("iphlpapi.dll" "system" fn ConvertLengthToIpv4Mask(masklength : u32, mask : *mut u32) -> super::super::Foundation:: WIN32_ERROR);
 #[cfg(all(feature = "Win32_NetworkManagement_Ndis", feature = "Win32_Networking_WinSock"))]
 windows_targets::link!("iphlpapi.dll" "system" fn CreateAnycastIpAddressEntry(row : *const MIB_ANYCASTIPADDRESS_ROW) -> super::super::Foundation:: WIN32_ERROR);
+#[cfg(all(feature = "Win32_NetworkManagement_Ndis", feature = "Win32_Networking_WinSock"))]
+windows_targets::link!("iphlpapi.dll" "system" fn CreateFlVirtualInterface(row : *const MIB_FL_VIRTUAL_INTERFACE_ROW) -> u32);
 #[cfg(feature = "Win32_Networking_WinSock")]
 windows_targets::link!("iphlpapi.dll" "system" fn CreateIpForwardEntry(proute : *const MIB_IPFORWARDROW) -> u32);
 #[cfg(all(feature = "Win32_NetworkManagement_Ndis", feature = "Win32_Networking_WinSock"))]
@@ -48,6 +50,8 @@ windows_targets::link!("iphlpapi.dll" "system" fn CreateSortedAddressPairs(sourc
 windows_targets::link!("iphlpapi.dll" "system" fn CreateUnicastIpAddressEntry(row : *const MIB_UNICASTIPADDRESS_ROW) -> super::super::Foundation:: WIN32_ERROR);
 #[cfg(all(feature = "Win32_NetworkManagement_Ndis", feature = "Win32_Networking_WinSock"))]
 windows_targets::link!("iphlpapi.dll" "system" fn DeleteAnycastIpAddressEntry(row : *const MIB_ANYCASTIPADDRESS_ROW) -> super::super::Foundation:: WIN32_ERROR);
+#[cfg(all(feature = "Win32_NetworkManagement_Ndis", feature = "Win32_Networking_WinSock"))]
+windows_targets::link!("iphlpapi.dll" "system" fn DeleteFlVirtualInterface(row : *const MIB_FL_VIRTUAL_INTERFACE_ROW) -> u32);
 windows_targets::link!("iphlpapi.dll" "system" fn DeleteIPAddress(ntecontext : u32) -> u32);
 #[cfg(feature = "Win32_Networking_WinSock")]
 windows_targets::link!("iphlpapi.dll" "system" fn DeleteIpForwardEntry(proute : *const MIB_IPFORWARDROW) -> u32);
@@ -97,6 +101,10 @@ windows_targets::link!("iphlpapi.dll" "system" fn GetDefaultCompartmentId() -> s
 windows_targets::link!("iphlpapi.dll" "system" fn GetDnsSettings(settings : *mut DNS_SETTINGS) -> super::super::Foundation:: WIN32_ERROR);
 windows_targets::link!("iphlpapi.dll" "system" fn GetExtendedTcpTable(ptcptable : *mut core::ffi::c_void, pdwsize : *mut u32, border : windows_sys::core::BOOL, ulaf : u32, tableclass : TCP_TABLE_CLASS, reserved : u32) -> u32);
 windows_targets::link!("iphlpapi.dll" "system" fn GetExtendedUdpTable(pudptable : *mut core::ffi::c_void, pdwsize : *mut u32, border : windows_sys::core::BOOL, ulaf : u32, tableclass : UDP_TABLE_CLASS, reserved : u32) -> u32);
+#[cfg(all(feature = "Win32_NetworkManagement_Ndis", feature = "Win32_Networking_WinSock"))]
+windows_targets::link!("iphlpapi.dll" "system" fn GetFlVirtualInterface(row : *mut MIB_FL_VIRTUAL_INTERFACE_ROW) -> u32);
+#[cfg(all(feature = "Win32_NetworkManagement_Ndis", feature = "Win32_Networking_WinSock"))]
+windows_targets::link!("iphlpapi.dll" "system" fn GetFlVirtualInterfaceTable(family : super::super::Networking::WinSock:: ADDRESS_FAMILY, table : *mut *mut MIB_FL_VIRTUAL_INTERFACE_TABLE) -> u32);
 windows_targets::link!("iphlpapi.dll" "system" fn GetFriendlyIfIndex(ifindex : u32) -> u32);
 windows_targets::link!("iphlpapi.dll" "system" fn GetIcmpStatistics(statistics : *mut MIB_ICMP) -> u32);
 windows_targets::link!("iphlpapi.dll" "system" fn GetIcmpStatisticsEx(statistics : *mut MIB_ICMP_EX_XPSP1, family : u32) -> u32);
@@ -206,6 +214,8 @@ windows_targets::link!("iphlpapi.dll" "system" fn IcmpSendEcho2(icmphandle : sup
 #[cfg(feature = "Win32_System_IO")]
 windows_targets::link!("iphlpapi.dll" "system" fn IcmpSendEcho2Ex(icmphandle : super::super::Foundation:: HANDLE, event : super::super::Foundation:: HANDLE, apcroutine : super::super::System::IO:: PIO_APC_ROUTINE, apccontext : *const core::ffi::c_void, sourceaddress : u32, destinationaddress : u32, requestdata : *const core::ffi::c_void, requestsize : u16, requestoptions : *const IP_OPTION_INFORMATION, replybuffer : *mut core::ffi::c_void, replysize : u32, timeout : u32) -> u32);
 #[cfg(all(feature = "Win32_NetworkManagement_Ndis", feature = "Win32_Networking_WinSock"))]
+windows_targets::link!("iphlpapi.dll" "system" fn InitializeFlVirtualInterfaceEntry(row : *mut MIB_FL_VIRTUAL_INTERFACE_ROW));
+#[cfg(all(feature = "Win32_NetworkManagement_Ndis", feature = "Win32_Networking_WinSock"))]
 windows_targets::link!("iphlpapi.dll" "system" fn InitializeIpForwardEntry(row : *mut MIB_IPFORWARD_ROW2));
 #[cfg(all(feature = "Win32_NetworkManagement_Ndis", feature = "Win32_Networking_WinSock"))]
 windows_targets::link!("iphlpapi.dll" "system" fn InitializeIpInterfaceEntry(row : *mut MIB_IPINTERFACE_ROW));
@@ -262,6 +272,8 @@ windows_targets::link!("iphlpapi.dll" "system" fn SendARP(destip : u32, srcip : 
 windows_targets::link!("iphlpapi.dll" "system" fn SetCurrentThreadCompartmentId(compartmentid : super::Ndis:: NET_IF_COMPARTMENT_ID) -> super::super::Foundation:: WIN32_ERROR);
 windows_targets::link!("iphlpapi.dll" "system" fn SetCurrentThreadCompartmentScope(compartmentscope : u32) -> super::super::Foundation:: WIN32_ERROR);
 windows_targets::link!("iphlpapi.dll" "system" fn SetDnsSettings(settings : *const DNS_SETTINGS) -> super::super::Foundation:: WIN32_ERROR);
+#[cfg(all(feature = "Win32_NetworkManagement_Ndis", feature = "Win32_Networking_WinSock"))]
+windows_targets::link!("iphlpapi.dll" "system" fn SetFlVirtualInterface(row : *const MIB_FL_VIRTUAL_INTERFACE_ROW) -> u32);
 windows_targets::link!("iphlpapi.dll" "system" fn SetIfEntry(pifrow : *const MIB_IFROW) -> u32);
 windows_targets::link!("iphlpapi.dll" "system" fn SetInterfaceDnsSettings(interface : windows_sys::core::GUID, settings : *const DNS_INTERFACE_SETTINGS) -> super::super::Foundation:: WIN32_ERROR);
 #[cfg(feature = "Win32_Networking_WinSock")]
@@ -307,10 +319,13 @@ pub const DEFAULT_MINIMUM_ENTITIES: u32 = 32u32;
 pub const DEST_LONGER: u32 = 29u32;
 pub const DEST_MATCHING: u32 = 28u32;
 pub const DEST_SHORTER: u32 = 30u32;
+pub const DNS_DDR_ADAPTER_ENABLE: u32 = 1u32;
 pub const DNS_DDR_ADAPTER_ENABLE_DOH: u32 = 1u32;
 pub const DNS_DDR_ADAPTER_ENABLE_UDP_FALLBACK: u32 = 2u32;
+pub const DNS_DDR_ADAPTER_MAKE_DDR_NON_BLOCKING: u32 = 4u32;
 pub const DNS_DOH_AUTO_UPGRADE_SERVER: u32 = 8u32;
 pub const DNS_DOH_POLICY_AUTO: u32 = 16u32;
+pub const DNS_DOH_POLICY_BLOCK: u32 = 512u32;
 pub const DNS_DOH_POLICY_DISABLE: u32 = 8u32;
 pub const DNS_DOH_POLICY_NOT_CONFIGURED: u32 = 4u32;
 pub const DNS_DOH_POLICY_REQUIRED: u32 = 32u32;
@@ -324,8 +339,29 @@ pub const DNS_DOH_SERVER_SETTINGS_ENABLE: u32 = 2u32;
 pub const DNS_DOH_SERVER_SETTINGS_ENABLE_AUTO: u32 = 1u32;
 pub const DNS_DOH_SERVER_SETTINGS_ENABLE_DDR: u32 = 16u32;
 pub const DNS_DOH_SERVER_SETTINGS_FALLBACK_TO_UDP: u32 = 4u32;
+pub const DNS_DOH_SERVER_SETTINGS_MAKE_DDR_NON_BLOCKING: u32 = 32u32;
+pub const DNS_DOT_AUTO_UPGRADE_SERVER: u32 = 4u32;
+pub const DNS_DOT_POLICY_BLOCK: u32 = 256u32;
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DNS_DOT_SERVER_SETTINGS {
+    pub Hostname: windows_sys::core::PWSTR,
+    pub Flags: u64,
+    pub Port: u16,
+}
+pub const DNS_DOT_SERVER_SETTINGS_ENABLE: u32 = 1u32;
+pub const DNS_DOT_SERVER_SETTINGS_ENABLE_AUTO: u32 = 8u32;
+pub const DNS_DOT_SERVER_SETTINGS_ENABLE_DDR: u32 = 16u32;
+pub const DNS_DOT_SERVER_SETTINGS_FALLBACK_TO_UDP: u32 = 2u32;
+pub const DNS_DOT_SERVER_SETTINGS_MAKE_DDR_NON_BLOCKING: u32 = 32u32;
 pub const DNS_ENABLE_DDR: u32 = 64u32;
+pub const DNS_ENABLE_DNR: u32 = 1024u32;
 pub const DNS_ENABLE_DOH: u32 = 1u32;
+pub const DNS_ENABLE_DOT: u32 = 128u32;
+pub const DNS_ENCRYPTION_POLICY_AUTO: u32 = 16u32;
+pub const DNS_ENCRYPTION_POLICY_DISABLE: u32 = 8u32;
+pub const DNS_ENCRYPTION_POLICY_NOT_CONFIGURED: u32 = 4u32;
+pub const DNS_ENCRYPTION_POLICY_REQUIRED: u32 = 32u32;
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct DNS_INTERFACE_SETTINGS {
@@ -405,6 +441,7 @@ pub type DNS_SERVER_PROPERTY_TYPE = i32;
 #[derive(Clone, Copy)]
 pub union DNS_SERVER_PROPERTY_TYPES {
     pub DohSettings: *mut DNS_DOH_SERVER_SETTINGS,
+    pub DotSettings: *mut DNS_DOT_SERVER_SETTINGS,
 }
 pub const DNS_SERVER_PROPERTY_VERSION1: u32 = 1u32;
 #[repr(C)]
@@ -435,6 +472,8 @@ pub const DNS_SETTING_DISABLE_UNCONSTRAINED_QUERIES: u32 = 1024u32;
 pub const DNS_SETTING_DOH: u32 = 4096u32;
 pub const DNS_SETTING_DOH_PROFILE: u32 = 8192u32;
 pub const DNS_SETTING_DOMAIN: u32 = 32u32;
+pub const DNS_SETTING_DOT: u32 = 65536u32;
+pub const DNS_SETTING_DOT_PROFILE: u32 = 131072u32;
 pub const DNS_SETTING_ENCRYPTED_DNS_ADAPTER_FLAGS: u32 = 16384u32;
 pub const DNS_SETTING_HOSTNAME: u32 = 64u32;
 pub const DNS_SETTING_IPV6: u32 = 1u32;
@@ -445,6 +484,7 @@ pub const DNS_SETTING_REGISTRATION_ENABLED: u32 = 8u32;
 pub const DNS_SETTING_SEARCHLIST: u32 = 4u32;
 pub const DNS_SETTING_SUPPLEMENTAL_SEARCH_LIST: u32 = 2048u32;
 pub const DnsServerDohProperty: DNS_SERVER_PROPERTY_TYPE = 1i32;
+pub const DnsServerDotProperty: DNS_SERVER_PROPERTY_TYPE = 2i32;
 pub const DnsServerInvalidProperty: DNS_SERVER_PROPERTY_TYPE = 0i32;
 pub const ERROR_BASE: u32 = 23000u32;
 pub const ERROR_IPV6_NOT_IMPLEMENTED: u32 = 23003u32;
@@ -1421,6 +1461,44 @@ pub struct MIB_BEST_IF {
 pub struct MIB_BOUNDARYROW {
     pub dwGroupAddress: u32,
     pub dwGroupMask: u32,
+}
+#[repr(C)]
+#[cfg(all(feature = "Win32_NetworkManagement_Ndis", feature = "Win32_Networking_WinSock"))]
+#[derive(Clone, Copy)]
+pub struct MIB_FL_VIRTUAL_INTERFACE_ROW {
+    pub Family: super::super::Networking::WinSock::ADDRESS_FAMILY,
+    pub IfLuid: super::Ndis::NET_LUID_LH,
+    pub VirtualIfId: u32,
+    pub CompartmentGuid: windows_sys::core::GUID,
+    pub IsolationMode: NET_FL_ISOLATION_MODE,
+    pub Origin: NET_FL_VIRTUAL_INTERFACE_ORIGIN,
+    pub VirtualIfLuid: super::Ndis::NET_LUID_LH,
+    pub VirtualIfIndex: u32,
+    pub AllowLocalNd: bool,
+    pub AttachedFlsnpiClients: u32,
+    pub FlsnpiClientConfigErrors: u32,
+    pub FlsnpiClientInjectErrors: u64,
+    pub FlsnpiClientCloneErrors: u64,
+    pub InFlsnpiIndicatedPackets: u64,
+    pub InFlsnpiClientReturnedPackets: u64,
+    pub InFlsnpiClientSilentlyDroppedPackets: u64,
+    pub InFlsnpiClientDroppedPackets: u64,
+    pub InFlsnpiClientInjectedPackets: u64,
+    pub InFlsnpiClientClonedPackets: u64,
+    pub OutFlsnpiIndicatedPackets: u64,
+    pub OutFlsnpiClientReturnedPackets: u64,
+    pub OutFlsnpiClientDroppedPackets: u64,
+    pub OutFlsnpiClientSilentlyDroppedPackets: u64,
+    pub OutFlsnpiClientInjectedPackets: u64,
+    pub OutFlsnpiClientClonedPackets: u64,
+    pub OutFlsnpiClientClonedPacketsForNbSplit: u64,
+}
+#[repr(C)]
+#[cfg(all(feature = "Win32_NetworkManagement_Ndis", feature = "Win32_Networking_WinSock"))]
+#[derive(Clone, Copy)]
+pub struct MIB_FL_VIRTUAL_INTERFACE_TABLE {
+    pub NumEntries: u32,
+    pub Table: [MIB_FL_VIRTUAL_INTERFACE_ROW; 1],
 }
 #[repr(C)]
 #[derive(Clone, Copy)]
@@ -2643,6 +2721,8 @@ pub struct NET_ADDRESS_INFO_0_0 {
 }
 pub const NET_ADDRESS_IPV4: NET_ADDRESS_FORMAT = 2i32;
 pub const NET_ADDRESS_IPV6: NET_ADDRESS_FORMAT = 3i32;
+pub type NET_FL_ISOLATION_MODE = i32;
+pub type NET_FL_VIRTUAL_INTERFACE_ORIGIN = i32;
 pub const NET_STRING_IPV4_ADDRESS: u32 = 1u32;
 pub const NET_STRING_IPV4_NETWORK: u32 = 4u32;
 pub const NET_STRING_IPV4_SERVICE: u32 = 2u32;
@@ -2654,6 +2734,12 @@ pub const NET_STRING_IPV6_SERVICE_NO_SCOPE: u32 = 64u32;
 pub const NET_STRING_NAMED_ADDRESS: u32 = 256u32;
 pub const NET_STRING_NAMED_SERVICE: u32 = 512u32;
 pub const NUMBER_OF_EXPORTED_VARIABLES: u32 = 39u32;
+pub const NetFlIsolationModeNone: NET_FL_ISOLATION_MODE = 0i32;
+pub const NetFlIsolationModeVlan: NET_FL_ISOLATION_MODE = 1i32;
+pub const NetFlIsolationModeVsid: NET_FL_ISOLATION_MODE = 2i32;
+pub const NetFlVirtualInterfaceOriginApi: NET_FL_VIRTUAL_INTERFACE_ORIGIN = 1i32;
+pub const NetFlVirtualInterfaceOriginDefault: NET_FL_VIRTUAL_INTERFACE_ORIGIN = 2i32;
+pub const NetFlVirtualInterfaceOriginOid: NET_FL_VIRTUAL_INTERFACE_ORIGIN = 0i32;
 pub const PEER_TO_PEER_NODETYPE: u32 = 2u32;
 pub type PFADDRESSTYPE = i32;
 pub const PFERROR_BUFFER_TOO_SMALL: u32 = 23002u32;
