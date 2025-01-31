@@ -51,12 +51,14 @@ pub unsafe fn D3D12SerializeVersionedRootSignature(prootsignature: *const D3D12_
     windows_link::link!("d3d12.dll" "system" fn D3D12SerializeVersionedRootSignature(prootsignature : *const D3D12_VERSIONED_ROOT_SIGNATURE_DESC, ppblob : *mut * mut core::ffi::c_void, pperrorblob : *mut * mut core::ffi::c_void) -> windows_core::HRESULT);
     unsafe { D3D12SerializeVersionedRootSignature(prootsignature, core::mem::transmute(ppblob), pperrorblob.unwrap_or(core::mem::zeroed()) as _).ok() }
 }
+pub const CLSID_D3D12DSRDeviceFactory: windows_core::GUID = windows_core::GUID::from_u128(0xbb6dd27e_94a9_41a6_9f1b_133772172428);
 pub const CLSID_D3D12Debug: windows_core::GUID = windows_core::GUID::from_u128(0xf2352aeb_dd84_49fe_b97b_a9dcfdcc1b4f);
 pub const CLSID_D3D12DeviceFactory: windows_core::GUID = windows_core::GUID::from_u128(0x114863bf_c386_4aee_b39d_8f0bbb062955);
 pub const CLSID_D3D12DeviceRemovedExtendedData: windows_core::GUID = windows_core::GUID::from_u128(0x4a75bbc4_9ff4_4ad8_9f18_abae84dc5ff2);
 pub const CLSID_D3D12SDKConfiguration: windows_core::GUID = windows_core::GUID::from_u128(0x7cda6aca_a03e_49c8_9458_0334d20e07ce);
 pub const CLSID_D3D12Tools: windows_core::GUID = windows_core::GUID::from_u128(0xe38216b1_3c8c_4833_aa09_0a06b65d96c8);
 pub const D3D12ExperimentalShaderModels: windows_core::GUID = windows_core::GUID::from_u128(0x76f5573e_f13a_40f5_b297_81ce9e18933f);
+pub const D3D12GPUUploadHeapsOnUnsupportedOS: windows_core::GUID = windows_core::GUID::from_u128(0x45dc51f3_767f_4588_b206_0baa2b16fbae);
 pub type D3D12MessageFunc = Option<unsafe extern "system" fn(category: D3D12_MESSAGE_CATEGORY, severity: D3D12_MESSAGE_SEVERITY, id: D3D12_MESSAGE_ID, pdescription: windows_core::PCSTR, pcontext: *mut core::ffi::c_void)>;
 pub const D3D12TiledResourceTier4: windows_core::GUID = windows_core::GUID::from_u128(0xc9c4725f_a81a_4f56_8c5b_c51039d694fb);
 pub const D3D12_16BIT_INDEX_STRIP_CUT_VALUE: u32 = 65535u32;
@@ -146,6 +148,7 @@ pub const D3D12_AUTO_BREADCRUMB_OP_INITIALIZEMETACOMMAND: D3D12_AUTO_BREADCRUMB_
 pub const D3D12_AUTO_BREADCRUMB_OP_PRESENT: D3D12_AUTO_BREADCRUMB_OP = D3D12_AUTO_BREADCRUMB_OP(17i32);
 pub const D3D12_AUTO_BREADCRUMB_OP_PROCESSFRAMES: D3D12_AUTO_BREADCRUMB_OP = D3D12_AUTO_BREADCRUMB_OP(22i32);
 pub const D3D12_AUTO_BREADCRUMB_OP_PROCESSFRAMES1: D3D12_AUTO_BREADCRUMB_OP = D3D12_AUTO_BREADCRUMB_OP(30i32);
+pub const D3D12_AUTO_BREADCRUMB_OP_PROCESSFRAMES2: D3D12_AUTO_BREADCRUMB_OP = D3D12_AUTO_BREADCRUMB_OP(52i32);
 pub const D3D12_AUTO_BREADCRUMB_OP_RESOLVEENCODEROUTPUTMETADATA: D3D12_AUTO_BREADCRUMB_OP = D3D12_AUTO_BREADCRUMB_OP(44i32);
 pub const D3D12_AUTO_BREADCRUMB_OP_RESOLVEMOTIONVECTORHEAP: D3D12_AUTO_BREADCRUMB_OP = D3D12_AUTO_BREADCRUMB_OP(38i32);
 pub const D3D12_AUTO_BREADCRUMB_OP_RESOLVEQUERYDATA: D3D12_AUTO_BREADCRUMB_OP = D3D12_AUTO_BREADCRUMB_OP(18i32);
@@ -1174,6 +1177,13 @@ pub const D3D12_DEBUG_COMMAND_LIST_PARAMETER_GPU_BASED_VALIDATION_SETTINGS: D3D1
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct D3D12_DEBUG_COMMAND_LIST_PARAMETER_TYPE(pub i32);
+pub const D3D12_DEBUG_DEVICE_BYTECODE_VALIDATION_ALL_BYTECODE: D3D12_DEBUG_DEVICE_BYTECODE_VALIDATION_MODE = D3D12_DEBUG_DEVICE_BYTECODE_VALIDATION_MODE(2i32);
+pub const D3D12_DEBUG_DEVICE_BYTECODE_VALIDATION_DISABLED: D3D12_DEBUG_DEVICE_BYTECODE_VALIDATION_MODE = D3D12_DEBUG_DEVICE_BYTECODE_VALIDATION_MODE(0i32);
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct D3D12_DEBUG_DEVICE_BYTECODE_VALIDATION_MODE(pub i32);
+pub const D3D12_DEBUG_DEVICE_BYTECODE_VALIDATION_MODE_DEFAULT: D3D12_DEBUG_DEVICE_BYTECODE_VALIDATION_MODE = D3D12_DEBUG_DEVICE_BYTECODE_VALIDATION_MODE(1i32);
+pub const D3D12_DEBUG_DEVICE_BYTECODE_VALIDATION_WHEN_HASH_BYPASSED: D3D12_DEBUG_DEVICE_BYTECODE_VALIDATION_MODE = D3D12_DEBUG_DEVICE_BYTECODE_VALIDATION_MODE(1i32);
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct D3D12_DEBUG_DEVICE_GPU_BASED_VALIDATION_SETTINGS {
@@ -1196,6 +1206,7 @@ impl Default for D3D12_DEBUG_DEVICE_GPU_SLOWDOWN_PERFORMANCE_FACTOR {
         unsafe { core::mem::zeroed() }
     }
 }
+pub const D3D12_DEBUG_DEVICE_PARAMETER_BYTECODE_VALIDATION_MODE: D3D12_DEBUG_DEVICE_PARAMETER_TYPE = D3D12_DEBUG_DEVICE_PARAMETER_TYPE(3i32);
 pub const D3D12_DEBUG_DEVICE_PARAMETER_FEATURE_FLAGS: D3D12_DEBUG_DEVICE_PARAMETER_TYPE = D3D12_DEBUG_DEVICE_PARAMETER_TYPE(0i32);
 pub const D3D12_DEBUG_DEVICE_PARAMETER_GPU_BASED_VALIDATION_SETTINGS: D3D12_DEBUG_DEVICE_PARAMETER_TYPE = D3D12_DEBUG_DEVICE_PARAMETER_TYPE(1i32);
 pub const D3D12_DEBUG_DEVICE_PARAMETER_GPU_SLOWDOWN_PERFORMANCE_FACTOR: D3D12_DEBUG_DEVICE_PARAMETER_TYPE = D3D12_DEBUG_DEVICE_PARAMETER_TYPE(2i32);
@@ -2215,6 +2226,7 @@ pub const D3D12_EXPORT_FLAG_NONE: D3D12_EXPORT_FLAGS = D3D12_EXPORT_FLAGS(0i32);
 pub struct D3D12_FEATURE(pub i32);
 pub const D3D12_FEATURE_ARCHITECTURE: D3D12_FEATURE = D3D12_FEATURE(1i32);
 pub const D3D12_FEATURE_ARCHITECTURE1: D3D12_FEATURE = D3D12_FEATURE(16i32);
+pub const D3D12_FEATURE_BYTECODE_BYPASS_HASH_SUPPORTED: D3D12_FEATURE = D3D12_FEATURE(57i32);
 pub const D3D12_FEATURE_COMMAND_QUEUE_PRIORITY: D3D12_FEATURE = D3D12_FEATURE(20i32);
 pub const D3D12_FEATURE_CROSS_NODE: D3D12_FEATURE = D3D12_FEATURE(25i32);
 pub const D3D12_FEATURE_D3D12_OPTIONS: D3D12_FEATURE = D3D12_FEATURE(0i32);
@@ -2262,6 +2274,16 @@ pub struct D3D12_FEATURE_DATA_ARCHITECTURE1 {
     pub IsolatedMMU: windows_core::BOOL,
 }
 impl Default for D3D12_FEATURE_DATA_ARCHITECTURE1 {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct D3D12_FEATURE_DATA_BYTECODE_BYPASS_HASH_SUPPORTED {
+    pub Supported: windows_core::BOOL,
+}
+impl Default for D3D12_FEATURE_DATA_BYTECODE_BYPASS_HASH_SUPPORTED {
     fn default() -> Self {
         unsafe { core::mem::zeroed() }
     }
@@ -3890,6 +3912,7 @@ pub const D3D12_MESSAGE_CATEGORY_STATE_SETTING: D3D12_MESSAGE_CATEGORY = D3D12_M
 pub struct D3D12_MESSAGE_ID(pub i32);
 pub const D3D12_MESSAGE_ID_ADD_TO_STATE_OBJECT_ERROR: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1246i32);
 pub const D3D12_MESSAGE_ID_ALPHA_BLEND_FACTOR_NOT_SUPPORTED: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1349i32);
+pub const D3D12_MESSAGE_ID_APPLICATION_SPECIFIC_DRIVER_STATE_NOT_SUPPORTED: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1421i32);
 pub const D3D12_MESSAGE_ID_ATOMICCOPYBUFFER_DEPENDENT_RANGE_OUT_OF_BOUNDS: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1039i32);
 pub const D3D12_MESSAGE_ID_ATOMICCOPYBUFFER_DEPENDENT_SUBRESOURCE_OUT_OF_BOUNDS: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1038i32);
 pub const D3D12_MESSAGE_ID_ATOMICCOPYBUFFER_DST_RANGE_OUT_OF_BOUNDS: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1029i32);
@@ -3915,6 +3938,7 @@ pub const D3D12_MESSAGE_ID_BEGIN_EVENT: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1014
 pub const D3D12_MESSAGE_ID_BUFFER_BARRIER_SUBREGION_OUT_OF_BOUNDS: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1340i32);
 pub const D3D12_MESSAGE_ID_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INVALID: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1158i32);
 pub const D3D12_MESSAGE_ID_BUNDLE_PIPELINE_STATE_MISMATCH: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(610i32);
+pub const D3D12_MESSAGE_ID_BYTECODE_VALIDATION_ERROR: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1423i32);
 pub const D3D12_MESSAGE_ID_CANNOT_ADD_TRACKED_WORKLOAD: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1192i32);
 pub const D3D12_MESSAGE_ID_CANNOT_CHANGE_COMMAND_RECORDER_TARGET_WHILE_RECORDING: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1134i32);
 pub const D3D12_MESSAGE_ID_CANNOT_CREATE_GRAPHICS_AND_VIDEO_COMMAND_RECORDER: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1153i32);
@@ -4391,7 +4415,7 @@ pub const D3D12_MESSAGE_ID_CREATE_VIDEO_ENCODER_HEAP_UNSUPPORTED_PARAMETERS: D3D
 pub const D3D12_MESSAGE_ID_CREATE_VIDEO_ENCODER_INVALID_PARAMETERS: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1309i32);
 pub const D3D12_MESSAGE_ID_CREATE_VIDEO_ENCODER_UNSUPPORTED_PARAMETERS: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1310i32);
 pub const D3D12_MESSAGE_ID_CREATE_VIDEO_PROCESSOR_CAPS_FAILURE: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1108i32);
-pub const D3D12_MESSAGE_ID_D3D12_MESSAGES_END: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1421i32);
+pub const D3D12_MESSAGE_ID_D3D12_MESSAGES_END: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1424i32);
 pub const D3D12_MESSAGE_ID_DATA_STATIC_DESCRIPTOR_INVALID_DATA_CHANGE: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1002i32);
 pub const D3D12_MESSAGE_ID_DATA_STATIC_WHILE_SET_AT_EXECUTE_DESCRIPTOR_INVALID_DATA_CHANGE: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1003i32);
 pub const D3D12_MESSAGE_ID_DECODE_FRAME_INVALID_PARAMETERS: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(988i32);
@@ -4713,6 +4737,7 @@ pub const D3D12_MESSAGE_ID_RENDER_PASS_NO_PRIOR_SUSPEND_WITHIN_EXECUTECOMMANDLIS
 pub const D3D12_MESSAGE_ID_RENDER_PASS_NO_SUBSEQUENT_RESUME_WITHIN_EXECUTECOMMANDLISTS: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1210i32);
 pub const D3D12_MESSAGE_ID_RENDER_PASS_UNSUPPORTED_RESOLVE: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1214i32);
 pub const D3D12_MESSAGE_ID_RENDER_TARGET_FORMAT_MISMATCH_PIPELINE_STATE: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(613i32);
+pub const D3D12_MESSAGE_ID_RENDER_TARGET_OR_DEPTH_STENCIL_RESOUCE_NOT_INITIALIZED: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1422i32);
 pub const D3D12_MESSAGE_ID_RENDER_TARGET_SAMPLE_DESC_MISMATCH_PIPELINE_STATE: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(614i32);
 pub const D3D12_MESSAGE_ID_RESOLVESUBRESOURCEREGION_INVALID_RECT: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(1050i32);
 pub const D3D12_MESSAGE_ID_RESOLVESUBRESOURCE_INVALIDDSTRESOURCE: D3D12_MESSAGE_ID = D3D12_MESSAGE_ID(948i32);
@@ -5319,7 +5344,7 @@ impl Default for D3D12_PLACED_SUBRESOURCE_FOOTPRINT {
 pub struct D3D12_PREDICATION_OP(pub i32);
 pub const D3D12_PREDICATION_OP_EQUAL_ZERO: D3D12_PREDICATION_OP = D3D12_PREDICATION_OP(0i32);
 pub const D3D12_PREDICATION_OP_NOT_EQUAL_ZERO: D3D12_PREDICATION_OP = D3D12_PREDICATION_OP(1i32);
-pub const D3D12_PREVIEW_SDK_VERSION: u32 = 714u32;
+pub const D3D12_PREVIEW_SDK_VERSION: u32 = 716u32;
 pub const D3D12_PRE_SCISSOR_PIXEL_ADDRESS_RANGE_BIT_COUNT: u32 = 16u32;
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -7214,7 +7239,7 @@ impl Default for D3D12_SAMPLE_POSITION {
         unsafe { core::mem::zeroed() }
     }
 }
-pub const D3D12_SDK_VERSION: u32 = 614u32;
+pub const D3D12_SDK_VERSION: u32 = 615u32;
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct D3D12_SERIALIZED_DATA_DRIVER_MATCHING_IDENTIFIER {
@@ -9459,6 +9484,43 @@ impl ID3D12CommandSignature_Vtbl {
     }
 }
 impl windows_core::RuntimeName for ID3D12CommandSignature {}
+windows_core::imp::define_interface!(ID3D12DSRDeviceFactory, ID3D12DSRDeviceFactory_Vtbl, 0xf343d1a0_afe3_439f_b13d_cd87a43b70ca);
+windows_core::imp::interface_hierarchy!(ID3D12DSRDeviceFactory, windows_core::IUnknown);
+impl ID3D12DSRDeviceFactory {
+    pub unsafe fn CreateDSRDevice<P0, T>(&self, pd3d12device: P0, nodemask: u32) -> windows_core::Result<T>
+    where
+        P0: windows_core::Param<ID3D12Device>,
+        T: windows_core::Interface,
+    {
+        let mut result__ = core::ptr::null_mut();
+        unsafe { (windows_core::Interface::vtable(self).CreateDSRDevice)(windows_core::Interface::as_raw(self), pd3d12device.param().abi(), nodemask, &T::IID, &mut result__).and_then(|| windows_core::Type::from_abi(result__)) }
+    }
+}
+#[repr(C)]
+pub struct ID3D12DSRDeviceFactory_Vtbl {
+    pub base__: windows_core::IUnknown_Vtbl,
+    pub CreateDSRDevice: unsafe extern "system" fn(*mut core::ffi::c_void, *mut core::ffi::c_void, u32, *const windows_core::GUID, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+}
+unsafe impl Send for ID3D12DSRDeviceFactory {}
+unsafe impl Sync for ID3D12DSRDeviceFactory {}
+pub trait ID3D12DSRDeviceFactory_Impl: windows_core::IUnknownImpl {
+    fn CreateDSRDevice(&self, pd3d12device: windows_core::Ref<'_, ID3D12Device>, nodemask: u32, riid: *const windows_core::GUID, ppvdsrdevice: *mut *mut core::ffi::c_void) -> windows_core::Result<()>;
+}
+impl ID3D12DSRDeviceFactory_Vtbl {
+    pub const fn new<Identity: ID3D12DSRDeviceFactory_Impl, const OFFSET: isize>() -> Self {
+        unsafe extern "system" fn CreateDSRDevice<Identity: ID3D12DSRDeviceFactory_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pd3d12device: *mut core::ffi::c_void, nodemask: u32, riid: *const windows_core::GUID, ppvdsrdevice: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                ID3D12DSRDeviceFactory_Impl::CreateDSRDevice(this, core::mem::transmute_copy(&pd3d12device), core::mem::transmute_copy(&nodemask), core::mem::transmute_copy(&riid), core::mem::transmute_copy(&ppvdsrdevice)).into()
+            }
+        }
+        Self { base__: windows_core::IUnknown_Vtbl::new::<Identity, OFFSET>(), CreateDSRDevice: CreateDSRDevice::<Identity, OFFSET> }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<ID3D12DSRDeviceFactory as windows_core::Interface>::IID
+    }
+}
+impl windows_core::RuntimeName for ID3D12DSRDeviceFactory {}
 windows_core::imp::define_interface!(ID3D12Debug, ID3D12Debug_Vtbl, 0x344488b7_6846_474b_b989_f027448245e0);
 windows_core::imp::interface_hierarchy!(ID3D12Debug, windows_core::IUnknown);
 impl ID3D12Debug {
@@ -12701,6 +12763,38 @@ impl ID3D12DeviceRemovedExtendedDataSettings2_Vtbl {
     }
 }
 impl windows_core::RuntimeName for ID3D12DeviceRemovedExtendedDataSettings2 {}
+windows_core::imp::define_interface!(ID3D12DeviceTools, ID3D12DeviceTools_Vtbl, 0x2ea68e9c_19c3_4e47_a109_6cdadff0aca9);
+windows_core::imp::interface_hierarchy!(ID3D12DeviceTools, windows_core::IUnknown);
+impl ID3D12DeviceTools {
+    pub unsafe fn SetNextAllocationAddress(&self, nextallocationvirtualaddress: u64) {
+        unsafe { (windows_core::Interface::vtable(self).SetNextAllocationAddress)(windows_core::Interface::as_raw(self), nextallocationvirtualaddress) }
+    }
+}
+#[repr(C)]
+pub struct ID3D12DeviceTools_Vtbl {
+    pub base__: windows_core::IUnknown_Vtbl,
+    pub SetNextAllocationAddress: unsafe extern "system" fn(*mut core::ffi::c_void, u64),
+}
+unsafe impl Send for ID3D12DeviceTools {}
+unsafe impl Sync for ID3D12DeviceTools {}
+pub trait ID3D12DeviceTools_Impl: windows_core::IUnknownImpl {
+    fn SetNextAllocationAddress(&self, nextallocationvirtualaddress: u64);
+}
+impl ID3D12DeviceTools_Vtbl {
+    pub const fn new<Identity: ID3D12DeviceTools_Impl, const OFFSET: isize>() -> Self {
+        unsafe extern "system" fn SetNextAllocationAddress<Identity: ID3D12DeviceTools_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, nextallocationvirtualaddress: u64) {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                ID3D12DeviceTools_Impl::SetNextAllocationAddress(this, core::mem::transmute_copy(&nextallocationvirtualaddress))
+            }
+        }
+        Self { base__: windows_core::IUnknown_Vtbl::new::<Identity, OFFSET>(), SetNextAllocationAddress: SetNextAllocationAddress::<Identity, OFFSET> }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<ID3D12DeviceTools as windows_core::Interface>::IID
+    }
+}
+impl windows_core::RuntimeName for ID3D12DeviceTools {}
 windows_core::imp::define_interface!(ID3D12Fence, ID3D12Fence_Vtbl, 0x0a753dcf_c4d8_4b91_adf6_be5a60d95a76);
 impl core::ops::Deref for ID3D12Fence {
     type Target = ID3D12Pageable;
@@ -15426,6 +15520,47 @@ impl ID3D12Pageable_Vtbl {
     }
 }
 impl windows_core::RuntimeName for ID3D12Pageable {}
+windows_core::imp::define_interface!(ID3D12PageableTools, ID3D12PageableTools_Vtbl, 0x8f1359db_d8d1_42f9_b5cf_79f4cbad0d3d);
+windows_core::imp::interface_hierarchy!(ID3D12PageableTools, windows_core::IUnknown);
+impl ID3D12PageableTools {
+    pub unsafe fn GetAllocation(&self) -> windows_core::Result<D3D12_GPU_VIRTUAL_ADDRESS_RANGE> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetAllocation)(windows_core::Interface::as_raw(self), &mut result__).map(|| result__)
+        }
+    }
+}
+#[repr(C)]
+pub struct ID3D12PageableTools_Vtbl {
+    pub base__: windows_core::IUnknown_Vtbl,
+    pub GetAllocation: unsafe extern "system" fn(*mut core::ffi::c_void, *mut D3D12_GPU_VIRTUAL_ADDRESS_RANGE) -> windows_core::HRESULT,
+}
+unsafe impl Send for ID3D12PageableTools {}
+unsafe impl Sync for ID3D12PageableTools {}
+pub trait ID3D12PageableTools_Impl: windows_core::IUnknownImpl {
+    fn GetAllocation(&self) -> windows_core::Result<D3D12_GPU_VIRTUAL_ADDRESS_RANGE>;
+}
+impl ID3D12PageableTools_Vtbl {
+    pub const fn new<Identity: ID3D12PageableTools_Impl, const OFFSET: isize>() -> Self {
+        unsafe extern "system" fn GetAllocation<Identity: ID3D12PageableTools_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pallocation: *mut D3D12_GPU_VIRTUAL_ADDRESS_RANGE) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match ID3D12PageableTools_Impl::GetAllocation(this) {
+                    Ok(ok__) => {
+                        pallocation.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        Self { base__: windows_core::IUnknown_Vtbl::new::<Identity, OFFSET>(), GetAllocation: GetAllocation::<Identity, OFFSET> }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<ID3D12PageableTools as windows_core::Interface>::IID
+    }
+}
+impl windows_core::RuntimeName for ID3D12PageableTools {}
 windows_core::imp::define_interface!(ID3D12PipelineLibrary, ID3D12PipelineLibrary_Vtbl, 0xc64226a8_9201_46af_b4cc_53fb9ff7414f);
 impl core::ops::Deref for ID3D12PipelineLibrary {
     type Target = ID3D12DeviceChild;
@@ -17243,6 +17378,59 @@ impl ID3D12Tools_Vtbl {
     }
 }
 impl windows_core::RuntimeName for ID3D12Tools {}
+windows_core::imp::define_interface!(ID3D12Tools1, ID3D12Tools1_Vtbl, 0xe4fbc019_dd3c_43e1_8f32_7f649575f0a0);
+impl core::ops::Deref for ID3D12Tools1 {
+    type Target = ID3D12Tools;
+    fn deref(&self) -> &Self::Target {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+windows_core::imp::interface_hierarchy!(ID3D12Tools1, windows_core::IUnknown, ID3D12Tools);
+impl ID3D12Tools1 {
+    pub unsafe fn ReserveGPUVARangesAtCreate(&self, pranges: &[D3D12_GPU_VIRTUAL_ADDRESS_RANGE]) -> windows_core::Result<()> {
+        unsafe { (windows_core::Interface::vtable(self).ReserveGPUVARangesAtCreate)(windows_core::Interface::as_raw(self), core::mem::transmute(pranges.as_ptr()), pranges.len().try_into().unwrap()).ok() }
+    }
+    pub unsafe fn ClearReservedGPUVARangesList(&self) {
+        unsafe { (windows_core::Interface::vtable(self).ClearReservedGPUVARangesList)(windows_core::Interface::as_raw(self)) }
+    }
+}
+#[repr(C)]
+pub struct ID3D12Tools1_Vtbl {
+    pub base__: ID3D12Tools_Vtbl,
+    pub ReserveGPUVARangesAtCreate: unsafe extern "system" fn(*mut core::ffi::c_void, *const D3D12_GPU_VIRTUAL_ADDRESS_RANGE, u32) -> windows_core::HRESULT,
+    pub ClearReservedGPUVARangesList: unsafe extern "system" fn(*mut core::ffi::c_void),
+}
+unsafe impl Send for ID3D12Tools1 {}
+unsafe impl Sync for ID3D12Tools1 {}
+pub trait ID3D12Tools1_Impl: ID3D12Tools_Impl {
+    fn ReserveGPUVARangesAtCreate(&self, pranges: *const D3D12_GPU_VIRTUAL_ADDRESS_RANGE, uinumranges: u32) -> windows_core::Result<()>;
+    fn ClearReservedGPUVARangesList(&self);
+}
+impl ID3D12Tools1_Vtbl {
+    pub const fn new<Identity: ID3D12Tools1_Impl, const OFFSET: isize>() -> Self {
+        unsafe extern "system" fn ReserveGPUVARangesAtCreate<Identity: ID3D12Tools1_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pranges: *const D3D12_GPU_VIRTUAL_ADDRESS_RANGE, uinumranges: u32) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                ID3D12Tools1_Impl::ReserveGPUVARangesAtCreate(this, core::mem::transmute_copy(&pranges), core::mem::transmute_copy(&uinumranges)).into()
+            }
+        }
+        unsafe extern "system" fn ClearReservedGPUVARangesList<Identity: ID3D12Tools1_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void) {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                ID3D12Tools1_Impl::ClearReservedGPUVARangesList(this)
+            }
+        }
+        Self {
+            base__: ID3D12Tools_Vtbl::new::<Identity, OFFSET>(),
+            ReserveGPUVARangesAtCreate: ReserveGPUVARangesAtCreate::<Identity, OFFSET>,
+            ClearReservedGPUVARangesList: ClearReservedGPUVARangesList::<Identity, OFFSET>,
+        }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<ID3D12Tools1 as windows_core::Interface>::IID || iid == &<ID3D12Tools as windows_core::Interface>::IID
+    }
+}
+impl windows_core::RuntimeName for ID3D12Tools1 {}
 windows_core::imp::define_interface!(ID3D12VersionedRootSignatureDeserializer, ID3D12VersionedRootSignatureDeserializer_Vtbl, 0x7f91ce67_090c_4bb7_b78e_ed8ff2e31da0);
 windows_core::imp::interface_hierarchy!(ID3D12VersionedRootSignatureDeserializer, windows_core::IUnknown);
 impl ID3D12VersionedRootSignatureDeserializer {
@@ -17566,6 +17754,7 @@ pub const NUM_D3D12_GPU_BASED_VALIDATION_SHADER_PATCH_MODES: D3D12_GPU_BASED_VAL
 pub type PFN_D3D12_CREATE_DEVICE = Option<unsafe extern "system" fn(param0: windows_core::Ref<'_, windows_core::IUnknown>, param1: super::Direct3D::D3D_FEATURE_LEVEL, param2: *const windows_core::GUID, param3: *mut *mut core::ffi::c_void) -> windows_core::HRESULT>;
 pub type PFN_D3D12_CREATE_ROOT_SIGNATURE_DESERIALIZER = Option<unsafe extern "system" fn(psrcdata: *const core::ffi::c_void, srcdatasizeinbytes: usize, prootsignaturedeserializerinterface: *const windows_core::GUID, pprootsignaturedeserializer: *mut *mut core::ffi::c_void) -> windows_core::HRESULT>;
 pub type PFN_D3D12_CREATE_VERSIONED_ROOT_SIGNATURE_DESERIALIZER = Option<unsafe extern "system" fn(psrcdata: *const core::ffi::c_void, srcdatasizeinbytes: usize, prootsignaturedeserializerinterface: *const windows_core::GUID, pprootsignaturedeserializer: *mut *mut core::ffi::c_void) -> windows_core::HRESULT>;
+pub type PFN_D3D12_CREATE_VERSIONED_ROOT_SIGNATURE_DESERIALIZER_FROM_SUBOBJECT_IN_LIBRARY = Option<unsafe extern "system" fn(psrcdata: *const core::ffi::c_void, srcdatasizeinbytes: usize, rootsignaturesubobjectname: windows_core::PCWSTR, prootsignaturedeserializerinterface: *const windows_core::GUID, pprootsignaturedeserializer: *mut *mut core::ffi::c_void) -> windows_core::HRESULT>;
 pub type PFN_D3D12_GET_DEBUG_INTERFACE = Option<unsafe extern "system" fn(param0: *const windows_core::GUID, param1: *mut *mut core::ffi::c_void) -> windows_core::HRESULT>;
 pub type PFN_D3D12_GET_INTERFACE = Option<unsafe extern "system" fn(param0: *const windows_core::GUID, param1: *const windows_core::GUID, param2: *mut *mut core::ffi::c_void) -> windows_core::HRESULT>;
 #[cfg(feature = "Win32_Graphics_Direct3D")]

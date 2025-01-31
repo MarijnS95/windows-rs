@@ -221,6 +221,216 @@ pub struct CTAPCBOR_HYBRID_STORAGE_LINKED_DATA {
 }
 pub const CTAPCBOR_HYBRID_STORAGE_LINKED_DATA_CURRENT_VERSION: u32 = 1u32;
 pub const CTAPCBOR_HYBRID_STORAGE_LINKED_DATA_VERSION_1: u32 = 1u32;
+pub type EXPERIMENTAL_PLUGIN_AUTHENTICATOR_STATE = i32;
+pub const EXPERIMENTAL_WEBAUTHN_API_VERSION_8: u32 = 1008u32;
+pub const EXPERIMENTAL_WEBAUTHN_AUTHENTICATOR_MAKE_CREDENTIAL_OPTIONS_VERSION_8: u32 = 1008u32;
+pub const EXPERIMENTAL_WEBAUTHN_CREDENTIAL_ATTESTATION_VERSION_7: u32 = 1007u32;
+pub const EXPERIMENTAL_WEBAUTHN_CREDENTIAL_DETAILS_VERSION_3: u32 = 1003u32;
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct EXPERIMENTAL_WEBAUTHN_CTAPCBOR_AUTHENTICATOR_OPTIONS {
+    pub dwVersion: u32,
+    pub lUp: i32,
+    pub lUv: i32,
+    pub lRequireResidentKey: i32,
+}
+pub const EXPERIMENTAL_WEBAUTHN_CTAPCBOR_AUTHENTICATOR_OPTIONS_CURRENT_VERSION: u32 = 1u32;
+pub const EXPERIMENTAL_WEBAUTHN_CTAPCBOR_AUTHENTICATOR_OPTIONS_VERSION_1: u32 = 1u32;
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct EXPERIMENTAL_WEBAUTHN_CTAPCBOR_ECC_PUBLIC_KEY {
+    pub dwVersion: u32,
+    pub lKty: i32,
+    pub lAlg: i32,
+    pub lCrv: i32,
+    pub cbX: u32,
+    pub pbX: *mut u8,
+    pub cbY: u32,
+    pub pbY: *mut u8,
+}
+pub const EXPERIMENTAL_WEBAUTHN_CTAPCBOR_ECC_PUBLIC_KEY_CURRENT_VERSION: u32 = 1u32;
+pub const EXPERIMENTAL_WEBAUTHN_CTAPCBOR_ECC_PUBLIC_KEY_VERSION_1: u32 = 1u32;
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct EXPERIMENTAL_WEBAUTHN_CTAPCBOR_GET_ASSERTION_REQUEST {
+    pub dwVersion: u32,
+    pub pwszRpId: windows_sys::core::PCWSTR,
+    pub cbRpId: u32,
+    pub pbRpId: *mut u8,
+    pub cbClientDataHash: u32,
+    pub pbClientDataHash: *mut u8,
+    pub CredentialList: WEBAUTHN_CREDENTIAL_LIST,
+    pub cbCborExtensionsMap: u32,
+    pub pbCborExtensionsMap: *mut u8,
+    pub pAuthenticatorOptions: *mut EXPERIMENTAL_WEBAUTHN_CTAPCBOR_AUTHENTICATOR_OPTIONS,
+    pub fEmptyPinAuth: windows_sys::core::BOOL,
+    pub cbPinAuth: u32,
+    pub pbPinAuth: *mut u8,
+    pub pHmacSaltExtension: *mut EXPERIMENTAL_WEBAUTHN_CTAPCBOR_HMAC_SALT_EXTENSION,
+    pub cbHmacSecretSaltValues: u32,
+    pub pbHmacSecretSaltValues: *mut u8,
+    pub dwPinProtocol: u32,
+    pub lCredBlobExt: i32,
+    pub lLargeBlobKeyExt: i32,
+    pub dwCredLargeBlobOperation: u32,
+    pub cbCredLargeBlobCompressed: u32,
+    pub pbCredLargeBlobCompressed: *mut u8,
+    pub dwCredLargeBlobOriginalSize: u32,
+    pub cbJsonExt: u32,
+    pub pbJsonExt: *mut u8,
+}
+pub const EXPERIMENTAL_WEBAUTHN_CTAPCBOR_GET_ASSERTION_REQUEST_CURRENT_VERSION: u32 = 1u32;
+pub const EXPERIMENTAL_WEBAUTHN_CTAPCBOR_GET_ASSERTION_REQUEST_VERSION_1: u32 = 1u32;
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct EXPERIMENTAL_WEBAUTHN_CTAPCBOR_GET_ASSERTION_RESPONSE {
+    pub WebAuthNAssertion: WEBAUTHN_ASSERTION,
+    pub pUserInformation: *mut WEBAUTHN_USER_ENTITY_INFORMATION,
+    pub dwNumberOfCredentials: u32,
+    pub lUserSelected: i32,
+    pub cbLargeBlobKey: u32,
+    pub pbLargeBlobKey: *mut u8,
+    pub cbUnsignedExtensionOutputs: u32,
+    pub pbUnsignedExtensionOutputs: *mut u8,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct EXPERIMENTAL_WEBAUTHN_CTAPCBOR_HMAC_SALT_EXTENSION {
+    pub dwVersion: u32,
+    pub pKeyAgreement: *mut EXPERIMENTAL_WEBAUTHN_CTAPCBOR_ECC_PUBLIC_KEY,
+    pub cbEncryptedSalt: u32,
+    pub pbEncryptedSalt: *mut u8,
+    pub cbSaltAuth: u32,
+    pub pbSaltAuth: *mut u8,
+}
+pub const EXPERIMENTAL_WEBAUTHN_CTAPCBOR_HMAC_SALT_EXTENSION_CURRENT_VERSION: u32 = 1u32;
+pub const EXPERIMENTAL_WEBAUTHN_CTAPCBOR_HMAC_SALT_EXTENSION_VERSION_1: u32 = 1u32;
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct EXPERIMENTAL_WEBAUTHN_CTAPCBOR_MAKE_CREDENTIAL_REQUEST {
+    pub dwVersion: u32,
+    pub cbRpId: u32,
+    pub pbRpId: *mut u8,
+    pub cbClientDataHash: u32,
+    pub pbClientDataHash: *mut u8,
+    pub pRpInformation: *mut WEBAUTHN_RP_ENTITY_INFORMATION,
+    pub pUserInformation: *mut WEBAUTHN_USER_ENTITY_INFORMATION,
+    pub WebAuthNCredentialParameters: WEBAUTHN_COSE_CREDENTIAL_PARAMETERS,
+    pub CredentialList: WEBAUTHN_CREDENTIAL_LIST,
+    pub cbCborExtensionsMap: u32,
+    pub pbCborExtensionsMap: *mut u8,
+    pub pAuthenticatorOptions: *mut EXPERIMENTAL_WEBAUTHN_CTAPCBOR_AUTHENTICATOR_OPTIONS,
+    pub fEmptyPinAuth: windows_sys::core::BOOL,
+    pub cbPinAuth: u32,
+    pub pbPinAuth: *mut u8,
+    pub lHmacSecretExt: i32,
+    pub pHmacSecretMcExtension: *mut EXPERIMENTAL_WEBAUTHN_CTAPCBOR_HMAC_SALT_EXTENSION,
+    pub lPrfExt: i32,
+    pub cbHmacSecretSaltValues: u32,
+    pub pbHmacSecretSaltValues: *mut u8,
+    pub dwCredProtect: u32,
+    pub dwPinProtocol: u32,
+    pub dwEnterpriseAttestation: u32,
+    pub cbCredBlobExt: u32,
+    pub pbCredBlobExt: *mut u8,
+    pub lLargeBlobKeyExt: i32,
+    pub dwLargeBlobSupport: u32,
+    pub lMinPinLengthExt: i32,
+    pub cbJsonExt: u32,
+    pub pbJsonExt: *mut u8,
+}
+pub const EXPERIMENTAL_WEBAUTHN_CTAPCBOR_MAKE_CREDENTIAL_REQUEST_CURRENT_VERSION: u32 = 1u32;
+pub const EXPERIMENTAL_WEBAUTHN_CTAPCBOR_MAKE_CREDENTIAL_REQUEST_VERSION_1: u32 = 1u32;
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct EXPERIMENTAL_WEBAUTHN_PLUGIN_ADD_AUTHENTICATOR_OPTIONS {
+    pub pwszAuthenticatorName: windows_sys::core::PCWSTR,
+    pub pwszPluginClsId: windows_sys::core::PCWSTR,
+    pub pwszPluginRpId: windows_sys::core::PCWSTR,
+    pub pwszLightThemeLogo: windows_sys::core::PCWSTR,
+    pub pwszDarkThemeLogo: windows_sys::core::PCWSTR,
+    pub cbAuthenticatorInfo: u32,
+    pub pbAuthenticatorInfo: *mut u8,
+    pub cbPluginIdKey: u32,
+    pub pbPluginIdKey: *mut u8,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct EXPERIMENTAL_WEBAUTHN_PLUGIN_ADD_AUTHENTICATOR_RESPONSE {
+    pub cbOpSignPubKey: u32,
+    pub pbOpSignPubKey: *mut u8,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct EXPERIMENTAL_WEBAUTHN_PLUGIN_CREDENTIAL_DETAILS {
+    pub cbCredentialId: u32,
+    pub pbCredentialId: *mut u8,
+    pub pwszRpId: windows_sys::core::PWSTR,
+    pub pwszRpName: windows_sys::core::PWSTR,
+    pub cbUserId: u32,
+    pub pbUserId: *mut u8,
+    pub pwszUserName: windows_sys::core::PWSTR,
+    pub pwszUserDisplayName: windows_sys::core::PWSTR,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct EXPERIMENTAL_WEBAUTHN_PLUGIN_CREDENTIAL_DETAILS_LIST {
+    pub pwszPluginClsId: windows_sys::core::PWSTR,
+    pub cCredentialDetails: u32,
+    pub pCredentialDetails: *mut *mut EXPERIMENTAL_WEBAUTHN_PLUGIN_CREDENTIAL_DETAILS,
+    pub cbNonce: u32,
+    pub pbNonce: *mut u8,
+    pub cbSignature: u32,
+    pub pbSignature: *mut u8,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct EXPERIMENTAL_WEBAUTHN_PLUGIN_PERFORM_UV {
+    pub hwnd: super::super::Foundation::HWND,
+    pub transactionId: *mut windows_sys::core::GUID,
+    pub r#type: EXPERIMENTAL_WEBAUTHN_PLUGIN_PERFORM_UV_OPERATION_TYPE,
+    pub pwszUsername: windows_sys::core::PCWSTR,
+    pub pwszContext: windows_sys::core::PCWSTR,
+}
+pub type EXPERIMENTAL_WEBAUTHN_PLUGIN_PERFORM_UV_OPERATION_TYPE = i32;
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct EXPERIMENTAL_WEBAUTHN_PLUGIN_PERFORM_UV_RESPONSE {
+    pub cbResponse: u32,
+    pub pbResponse: *mut u8,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct EXPERIMENTAL_WEBAUTHN_PLUGIN_REMOVE_AUTHENTICATOR_OPTIONS {
+    pub pwszPluginClsId: windows_sys::core::PCWSTR,
+    pub cbNonce: u32,
+    pub pbNonce: *mut u8,
+    pub cbSignature: u32,
+    pub pbSignature: *mut u8,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct EXPERIMENTAL_WEBAUTHN_PLUGIN_UPDATE_AUTHENTICATOR_DETAILS {
+    pub pwszAuthenticatorName: windows_sys::core::PCWSTR,
+    pub pwszPluginClsId: windows_sys::core::PCWSTR,
+    pub pwszNewPluginClsId: windows_sys::core::PCWSTR,
+    pub pwszLightThemeLogo: windows_sys::core::PCWSTR,
+    pub pwszDarkThemeLogo: windows_sys::core::PCWSTR,
+    pub cbPluginIdKey: u32,
+    pub pbPluginIdKey: *mut u8,
+    pub cbAuthenticatorInfo: u32,
+    pub pbAuthenticatorInfo: *mut u8,
+    pub cbNonce: u32,
+    pub pbNonce: *mut u8,
+    pub cbSignature: u32,
+    pub pbSignature: *mut u8,
+}
+pub const GetPubKey: EXPERIMENTAL_WEBAUTHN_PLUGIN_PERFORM_UV_OPERATION_TYPE = 3i32;
+pub const GetUvCount: EXPERIMENTAL_WEBAUTHN_PLUGIN_PERFORM_UV_OPERATION_TYPE = 2i32;
+pub const PerformUv: EXPERIMENTAL_WEBAUTHN_PLUGIN_PERFORM_UV_OPERATION_TYPE = 1i32;
+pub const PluginAuthenticatorState_Disabled: EXPERIMENTAL_PLUGIN_AUTHENTICATOR_STATE = 1i32;
+pub const PluginAuthenticatorState_Enabled: EXPERIMENTAL_PLUGIN_AUTHENTICATOR_STATE = 2i32;
+pub const PluginAuthenticatorState_Unknown: EXPERIMENTAL_PLUGIN_AUTHENTICATOR_STATE = 0i32;
 pub const WEBAUTHN_API_CURRENT_VERSION: u32 = 7u32;
 pub const WEBAUTHN_API_VERSION_1: u32 = 1u32;
 pub const WEBAUTHN_API_VERSION_2: u32 = 2u32;
@@ -325,6 +535,7 @@ pub struct WEBAUTHN_AUTHENTICATOR_MAKE_CREDENTIAL_OPTIONS {
     pub pLinkedDevice: *mut CTAPCBOR_HYBRID_STORAGE_LINKED_DATA,
     pub cbJsonExt: u32,
     pub pbJsonExt: *mut u8,
+    pub EXPERIMENTAL_pPRFGlobalEval: *mut WEBAUTHN_HMAC_SECRET_SALT,
 }
 pub const WEBAUTHN_AUTHENTICATOR_MAKE_CREDENTIAL_OPTIONS_CURRENT_VERSION: u32 = 7u32;
 pub const WEBAUTHN_AUTHENTICATOR_MAKE_CREDENTIAL_OPTIONS_VERSION_1: u32 = 1u32;
@@ -420,6 +631,7 @@ pub struct WEBAUTHN_CREDENTIAL_ATTESTATION {
     pub bPrfEnabled: windows_sys::core::BOOL,
     pub cbUnsignedExtensionOutputs: u32,
     pub pbUnsignedExtensionOutputs: *mut u8,
+    pub EXPERIMENTAL_pHmacSecret: *mut WEBAUTHN_HMAC_SECRET_SALT,
 }
 pub const WEBAUTHN_CREDENTIAL_ATTESTATION_CURRENT_VERSION: u32 = 6u32;
 pub const WEBAUTHN_CREDENTIAL_ATTESTATION_VERSION_1: u32 = 1u32;
@@ -439,6 +651,9 @@ pub struct WEBAUTHN_CREDENTIAL_DETAILS {
     pub pUserInformation: *mut WEBAUTHN_USER_ENTITY_INFORMATION,
     pub bRemovable: windows_sys::core::BOOL,
     pub bBackedUp: windows_sys::core::BOOL,
+    pub EXPERIMENTAL_pwszAuthenticatorName: windows_sys::core::PCWSTR,
+    pub EXPERIMENTAL_cbAuthenticatorLogo: u32,
+    pub EXPERIMENTAL_pbAuthenticatorLogo: *mut u8,
 }
 pub const WEBAUTHN_CREDENTIAL_DETAILS_CURRENT_VERSION: u32 = 2u32;
 #[repr(C)]

@@ -21,6 +21,9 @@ windows_targets::link!("fwpuclnt.dll" "system" fn FwpmConnectionGetById0(engineh
 #[cfg(feature = "Win32_Security")]
 windows_targets::link!("fwpuclnt.dll" "system" fn FwpmConnectionGetSecurityInfo0(enginehandle : super::super::Foundation:: HANDLE, securityinfo : u32, sidowner : *mut super::super::Security:: PSID, sidgroup : *mut super::super::Security:: PSID, dacl : *mut *mut super::super::Security:: ACL, sacl : *mut *mut super::super::Security:: ACL, securitydescriptor : *mut super::super::Security:: PSECURITY_DESCRIPTOR) -> u32);
 #[cfg(feature = "Win32_Security")]
+windows_targets::link!("fwpuclnt.dll" "system" fn FwpmConnectionPolicyAdd0(enginehandle : super::super::Foundation:: HANDLE, connectionpolicy : *const FWPM_PROVIDER_CONTEXT3, ipversion : FWP_IP_VERSION, weight : u64, numfilterconditions : u32, filterconditions : *const FWPM_FILTER_CONDITION0, sd : super::super::Security:: PSECURITY_DESCRIPTOR) -> u32);
+windows_targets::link!("fwpuclnt.dll" "system" fn FwpmConnectionPolicyDeleteByKey0(enginehandle : super::super::Foundation:: HANDLE, key : *const windows_sys::core::GUID) -> u32);
+#[cfg(feature = "Win32_Security")]
 windows_targets::link!("fwpuclnt.dll" "system" fn FwpmConnectionSetSecurityInfo0(enginehandle : super::super::Foundation:: HANDLE, securityinfo : u32, sidowner : *const super::super::Security:: SID, sidgroup : *const super::super::Security:: SID, dacl : *const super::super::Security:: ACL, sacl : *const super::super::Security:: ACL) -> u32);
 windows_targets::link!("fwpuclnt.dll" "system" fn FwpmConnectionSubscribe0(enginehandle : super::super::Foundation:: HANDLE, subscription : *const FWPM_CONNECTION_SUBSCRIPTION0, callback : FWPM_CONNECTION_CALLBACK0, context : *const core::ffi::c_void, eventshandle : *mut super::super::Foundation:: HANDLE) -> u32);
 windows_targets::link!("fwpuclnt.dll" "system" fn FwpmConnectionUnsubscribe0(enginehandle : super::super::Foundation:: HANDLE, eventshandle : super::super::Foundation:: HANDLE) -> u32);
@@ -412,6 +415,7 @@ pub const FWPM_CONDITION_ALE_APP_ID: windows_sys::core::GUID = windows_sys::core
 pub const FWPM_CONDITION_ALE_EFFECTIVE_NAME: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0xb1277b9a_b781_40fc_9671_e5f1b989f34e);
 pub const FWPM_CONDITION_ALE_NAP_CONTEXT: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0x46275a9d_c03f_4d77_b784_1c57f4d02753);
 pub const FWPM_CONDITION_ALE_ORIGINAL_APP_ID: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0x0e6cd086_e1fb_4212_842f_8a9f993fb3f6);
+pub const FWPM_CONDITION_ALE_PACKAGE_FAMILY_NAME: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0x81bc78fb_f28d_4886_a604_6acc261f261b);
 pub const FWPM_CONDITION_ALE_PACKAGE_ID: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0x71bc78fa_f17c_4997_a602_6abb261f351c);
 pub const FWPM_CONDITION_ALE_PROMISCUOUS_MODE: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0x1c974776_7182_46e9_afd3_b02910e30334);
 pub const FWPM_CONDITION_ALE_REAUTH_REASON: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0xb482d227_1979_4a98_8044_18bbe6237542);
@@ -524,6 +528,7 @@ pub const FWPM_CONDITION_RPC_EP_VALUE: windows_sys::core::GUID = windows_sys::co
 pub const FWPM_CONDITION_RPC_IF_FLAG: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0x238a8a32_3199_467d_871c_272621ab3896);
 pub const FWPM_CONDITION_RPC_IF_UUID: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0x7c9c7d9f_0075_4d35_a0d1_8311c4cf6af1);
 pub const FWPM_CONDITION_RPC_IF_VERSION: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0xeabfd9b7_1262_4a2e_adaa_5f96f6fe326d);
+pub const FWPM_CONDITION_RPC_OPNUM: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0xd58efb76_aab7_4148_a87e_9581134129b9);
 pub const FWPM_CONDITION_RPC_PROTOCOL: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0x2717bc74_3a35_4ce7_b7ef_c838fabdec45);
 pub const FWPM_CONDITION_RPC_PROXY_AUTH_TYPE: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0x40953fe2_8565_4759_8488_1771b4b4b5db);
 pub const FWPM_CONDITION_RPC_SERVER_NAME: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0xb605a225_c3b3_48c7_9833_7aefa9527546);
@@ -695,6 +700,7 @@ pub const FWPM_FILTER_FLAG_PERMIT_IF_CALLOUT_UNREGISTERED: FWPM_FILTER_FLAGS = 1
 pub const FWPM_FILTER_FLAG_PERSISTENT: FWPM_FILTER_FLAGS = 1u32;
 pub const FWPM_FILTER_FLAG_RESERVED0: u32 = 4096u32;
 pub const FWPM_FILTER_FLAG_RESERVED1: u32 = 8192u32;
+pub const FWPM_FILTER_FLAG_RESERVED2: u32 = 16384u32;
 pub const FWPM_FILTER_FLAG_SILENT_MODE: u32 = 1024u32;
 pub const FWPM_FILTER_FLAG_SYSTEMOS_ONLY: u32 = 256u32;
 #[repr(C)]
@@ -839,6 +845,17 @@ pub struct FWPM_LAYER_STATISTICS0 {
     pub classifyBlockCount: u32,
     pub classifyVetoCount: u32,
     pub numCacheEntries: u32,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct FWPM_LAYER_STATISTICS1 {
+    pub layerId: windows_sys::core::GUID,
+    pub classifyPermitCount: u32,
+    pub classifyBlockCount: u32,
+    pub classifyVetoCount: u32,
+    pub numCacheEntries: u32,
+    pub filterCount: u32,
+    pub totalFilterSize: u32,
 }
 pub const FWPM_LAYER_STREAM_PACKET_V4: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0xaf52d8ec_cb2d_44e5_ad92_f8dc38d2eb29);
 pub const FWPM_LAYER_STREAM_PACKET_V6: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0x779a8ca3_f099_468f_b5d4_83535c461c02);
@@ -1727,6 +1744,46 @@ pub struct FWPM_STATISTICS0 {
 }
 #[repr(C)]
 #[derive(Clone, Copy)]
+pub struct FWPM_STATISTICS1 {
+    pub numLayerStatistics: u32,
+    pub layerStatistics: *mut FWPM_LAYER_STATISTICS1,
+    pub inboundAllowedConnectionsV4: u32,
+    pub inboundBlockedConnectionsV4: u32,
+    pub outboundAllowedConnectionsV4: u32,
+    pub outboundBlockedConnectionsV4: u32,
+    pub inboundAllowedConnectionsV6: u32,
+    pub inboundBlockedConnectionsV6: u32,
+    pub outboundAllowedConnectionsV6: u32,
+    pub outboundBlockedConnectionsV6: u32,
+    pub inboundActiveConnectionsV4: u32,
+    pub outboundActiveConnectionsV4: u32,
+    pub inboundActiveConnectionsV6: u32,
+    pub outboundActiveConnectionsV6: u32,
+    pub reauthDirInbound: u64,
+    pub reauthDirOutbound: u64,
+    pub reauthFamilyV4: u64,
+    pub reauthFamilyV6: u64,
+    pub reauthProtoOther: u64,
+    pub reauthProtoIPv4: u64,
+    pub reauthProtoIPv6: u64,
+    pub reauthProtoICMP: u64,
+    pub reauthProtoICMP6: u64,
+    pub reauthProtoUDP: u64,
+    pub reauthProtoTCP: u64,
+    pub reauthReasonPolicyChange: u64,
+    pub reauthReasonNewArrivalInterface: u64,
+    pub reauthReasonNewNextHopInterface: u64,
+    pub reauthReasonProfileCrossing: u64,
+    pub reauthReasonClassifyCompletion: u64,
+    pub reauthReasonIPSecPropertiesChanged: u64,
+    pub reauthReasonMidStreamInspection: u64,
+    pub reauthReasonSocketPropertyChanged: u64,
+    pub reauthReasonNewInboundMCastBCastPacket: u64,
+    pub reauthReasonEDPPolicyChanged: u64,
+    pub reauthReasonProxyHandleChanged: u64,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
 pub struct FWPM_SUBLAYER0 {
     pub subLayerKey: windows_sys::core::GUID,
     pub displayData: FWPM_DISPLAY_DATA0,
@@ -1855,6 +1912,7 @@ pub const FWPS_FILTER_FLAG_OR_CONDITIONS: u32 = 4u32;
 pub const FWPS_FILTER_FLAG_PERMIT_IF_CALLOUT_UNREGISTERED: u32 = 2u32;
 pub const FWPS_FILTER_FLAG_RESERVED0: u32 = 64u32;
 pub const FWPS_FILTER_FLAG_RESERVED1: u32 = 128u32;
+pub const FWPS_FILTER_FLAG_RESERVED2: u32 = 256u32;
 pub const FWPS_FILTER_FLAG_SILENT_MODE: u32 = 16u32;
 pub const FWPS_INCOMING_FLAG_ABSORB: u32 = 4u32;
 pub const FWPS_INCOMING_FLAG_CACHE_SAFE: u32 = 1u32;

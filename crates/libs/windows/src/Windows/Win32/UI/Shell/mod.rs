@@ -7028,6 +7028,7 @@ pub const COPYENGINE_S_KEEP_BOTH: windows_core::HRESULT = windows_core::HRESULT(
 pub const COPYENGINE_S_MERGE: windows_core::HRESULT = windows_core::HRESULT(0x270006_u32 as _);
 pub const COPYENGINE_S_NOT_HANDLED: windows_core::HRESULT = windows_core::HRESULT(0x270003_u32 as _);
 pub const COPYENGINE_S_PENDING: windows_core::HRESULT = windows_core::HRESULT(0x27000B_u32 as _);
+pub const COPYENGINE_S_PENDING_BATCH_COPY: windows_core::HRESULT = windows_core::HRESULT(0x270011_u32 as _);
 pub const COPYENGINE_S_PENDING_DELETE: windows_core::HRESULT = windows_core::HRESULT(0x270010_u32 as _);
 pub const COPYENGINE_S_PROGRESS_PAUSE: windows_core::HRESULT = windows_core::HRESULT(0x27000F_u32 as _);
 pub const COPYENGINE_S_USER_IGNORED: windows_core::HRESULT = windows_core::HRESULT(0x270005_u32 as _);
@@ -8990,6 +8991,7 @@ pub const FOLDERTYPEID_StorageProviderPictures: windows_core::GUID = windows_cor
 pub const FOLDERTYPEID_StorageProviderVideos: windows_core::GUID = windows_core::GUID::from_u128(0x51294da1_d7b1_485b_9e9a_17cffe33e187);
 pub const FOLDERTYPEID_UserFiles: windows_core::GUID = windows_core::GUID::from_u128(0xcd0fc69b_71e2_46e5_9690_5bcd9f57aab3);
 pub const FOLDERTYPEID_UsersLibraries: windows_core::GUID = windows_core::GUID::from_u128(0xc4d98f09_6124_4fe0_9942_826416082da9);
+pub const FOLDERTYPEID_VersionControl: windows_core::GUID = windows_core::GUID::from_u128(0x69f1e26b_ec64_4280_bc83_f1eb887ec35a);
 pub const FOLDERTYPEID_Videos: windows_core::GUID = windows_core::GUID::from_u128(0x5fa96407_7e77_483c_ac93_691d05850de8);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
@@ -30506,6 +30508,45 @@ impl IObjectWithFolderEnumMode_Vtbl {
     }
 }
 impl windows_core::RuntimeName for IObjectWithFolderEnumMode {}
+windows_core::imp::define_interface!(IObjectWithPackageFullName, IObjectWithPackageFullName_Vtbl, 0xed2aa515_602f_469c_a130_ce69fd0fa878);
+windows_core::imp::interface_hierarchy!(IObjectWithPackageFullName, windows_core::IUnknown);
+impl IObjectWithPackageFullName {
+    pub unsafe fn GetPackageFullName(&self) -> windows_core::Result<windows_core::PWSTR> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetPackageFullName)(windows_core::Interface::as_raw(self), &mut result__).map(|| result__)
+        }
+    }
+}
+#[repr(C)]
+pub struct IObjectWithPackageFullName_Vtbl {
+    pub base__: windows_core::IUnknown_Vtbl,
+    pub GetPackageFullName: unsafe extern "system" fn(*mut core::ffi::c_void, *mut windows_core::PWSTR) -> windows_core::HRESULT,
+}
+pub trait IObjectWithPackageFullName_Impl: windows_core::IUnknownImpl {
+    fn GetPackageFullName(&self) -> windows_core::Result<windows_core::PWSTR>;
+}
+impl IObjectWithPackageFullName_Vtbl {
+    pub const fn new<Identity: IObjectWithPackageFullName_Impl, const OFFSET: isize>() -> Self {
+        unsafe extern "system" fn GetPackageFullName<Identity: IObjectWithPackageFullName_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, packagefullname: *mut windows_core::PWSTR) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IObjectWithPackageFullName_Impl::GetPackageFullName(this) {
+                    Ok(ok__) => {
+                        packagefullname.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        Self { base__: windows_core::IUnknown_Vtbl::new::<Identity, OFFSET>(), GetPackageFullName: GetPackageFullName::<Identity, OFFSET> }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<IObjectWithPackageFullName as windows_core::Interface>::IID
+    }
+}
+impl windows_core::RuntimeName for IObjectWithPackageFullName {}
 windows_core::imp::define_interface!(IObjectWithProgID, IObjectWithProgID_Vtbl, 0x71e806fb_8dee_46fc_bf8c_7748a8a1ae13);
 windows_core::imp::interface_hierarchy!(IObjectWithProgID, windows_core::IUnknown);
 impl IObjectWithProgID {

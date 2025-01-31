@@ -812,6 +812,11 @@ pub unsafe fn GetClipCursor(lprect: *mut super::super::Foundation::RECT) -> wind
     unsafe { GetClipCursor(lprect as _).ok() }
 }
 #[inline]
+pub unsafe fn GetCurrentMonitorTopologyId() -> u32 {
+    windows_link::link!("user32.dll" "system" fn GetCurrentMonitorTopologyId() -> u32);
+    unsafe { GetCurrentMonitorTopologyId() }
+}
+#[inline]
 pub unsafe fn GetCursor() -> HCURSOR {
     windows_link::link!("user32.dll" "system" fn GetCursor() -> HCURSOR);
     unsafe { GetCursor() }
@@ -1280,6 +1285,11 @@ pub unsafe fn IsCharAlphaW(ch: u16) -> windows_core::Result<()> {
 pub unsafe fn IsCharLowerA(ch: i8) -> windows_core::Result<()> {
     windows_link::link!("user32.dll" "system" fn IsCharLowerA(ch : i8) -> windows_core::BOOL);
     unsafe { IsCharLowerA(ch).ok() }
+}
+#[inline]
+pub unsafe fn IsCharLowerW(ch: u16) -> windows_core::Result<()> {
+    windows_link::link!("user32.dll" "system" fn IsCharLowerW(ch : u16) -> windows_core::BOOL);
+    unsafe { IsCharLowerW(ch).ok() }
 }
 #[inline]
 pub unsafe fn IsCharUpperA(ch: i8) -> windows_core::Result<()> {
@@ -3836,6 +3846,7 @@ pub const GUID_IO_VOLUME_MOUNT: windows_core::GUID = windows_core::GUID::from_u1
 pub const GUID_IO_VOLUME_NAME_CHANGE: windows_core::GUID = windows_core::GUID::from_u128(0x2de97f83_4c06_11d2_a532_00609713055a);
 pub const GUID_IO_VOLUME_NEED_CHKDSK: windows_core::GUID = windows_core::GUID::from_u128(0x799a0960_0a0b_4e03_ad88_2fa7c6ce748a);
 pub const GUID_IO_VOLUME_PHYSICAL_CONFIGURATION_CHANGE: windows_core::GUID = windows_core::GUID::from_u128(0x2de97f84_4c06_11d2_a532_00609713055a);
+pub const GUID_IO_VOLUME_PREPARE_DELETE: windows_core::GUID = windows_core::GUID::from_u128(0xac0707fb_4a9a_4c81_9e2e_385b79a8fd28);
 pub const GUID_IO_VOLUME_PREPARING_EJECT: windows_core::GUID = windows_core::GUID::from_u128(0xc79eb16e_0dac_4e7a_a86c_b25ceeaa88f6);
 pub const GUID_IO_VOLUME_UNIQUE_ID_CHANGE: windows_core::GUID = windows_core::GUID::from_u128(0xaf39da42_6622_41f5_970b_139d092fa3d9);
 pub const GUID_IO_VOLUME_UNLOCK: windows_core::GUID = windows_core::GUID::from_u128(0x9a8c3d68_d0cb_11d1_8fef_00a0c9a06d32);
@@ -4409,6 +4420,7 @@ pub const INDEXID_OBJECT: u32 = 0u32;
 pub const INPUTLANGCHANGE_BACKWARD: u32 = 4u32;
 pub const INPUTLANGCHANGE_FORWARD: u32 = 2u32;
 pub const INPUTLANGCHANGE_SYSCHARSET: u32 = 1u32;
+pub const INVALID_MONITOR_TOPOLOGY_ID: u32 = 0u32;
 pub const ISMEX_CALLBACK: u32 = 4u32;
 pub const ISMEX_NOSEND: u32 = 0u32;
 pub const ISMEX_NOTIFY: u32 = 2u32;
@@ -4592,6 +4604,45 @@ pub const LB_SETLOCALE: u32 = 421u32;
 pub const LB_SETSEL: u32 = 389u32;
 pub const LB_SETTABSTOPS: u32 = 402u32;
 pub const LB_SETTOPINDEX: u32 = 407u32;
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct LEGACY_TOUCHPAD_FEATURES(pub i32);
+impl LEGACY_TOUCHPAD_FEATURES {
+    pub const fn contains(&self, other: Self) -> bool {
+        self.0 & other.0 == other.0
+    }
+}
+impl core::ops::BitOr for LEGACY_TOUCHPAD_FEATURES {
+    type Output = Self;
+    fn bitor(self, other: Self) -> Self {
+        Self(self.0 | other.0)
+    }
+}
+impl core::ops::BitAnd for LEGACY_TOUCHPAD_FEATURES {
+    type Output = Self;
+    fn bitand(self, other: Self) -> Self {
+        Self(self.0 & other.0)
+    }
+}
+impl core::ops::BitOrAssign for LEGACY_TOUCHPAD_FEATURES {
+    fn bitor_assign(&mut self, other: Self) {
+        self.0.bitor_assign(other.0)
+    }
+}
+impl core::ops::BitAndAssign for LEGACY_TOUCHPAD_FEATURES {
+    fn bitand_assign(&mut self, other: Self) {
+        self.0.bitand_assign(other.0)
+    }
+}
+impl core::ops::Not for LEGACY_TOUCHPAD_FEATURES {
+    type Output = Self;
+    fn not(self) -> Self {
+        Self(self.0.not())
+    }
+}
+pub const LEGACY_TOUCHPAD_FEATURE_ENABLE_DISABLE: LEGACY_TOUCHPAD_FEATURES = LEGACY_TOUCHPAD_FEATURES(1i32);
+pub const LEGACY_TOUCHPAD_FEATURE_NONE: LEGACY_TOUCHPAD_FEATURES = LEGACY_TOUCHPAD_FEATURES(0i32);
+pub const LEGACY_TOUCHPAD_FEATURE_REVERSE_SCROLL_DIRECTION: LEGACY_TOUCHPAD_FEATURES = LEGACY_TOUCHPAD_FEATURES(4i32);
 pub const LLKHF_ALTDOWN: KBDLLHOOKSTRUCT_FLAGS = KBDLLHOOKSTRUCT_FLAGS(32u32);
 pub const LLKHF_EXTENDED: KBDLLHOOKSTRUCT_FLAGS = KBDLLHOOKSTRUCT_FLAGS(1u32);
 pub const LLKHF_INJECTED: KBDLLHOOKSTRUCT_FLAGS = KBDLLHOOKSTRUCT_FLAGS(16u32);
@@ -4982,6 +5033,14 @@ impl Default for MENUTEMPLATEEX_0_0 {
         unsafe { core::mem::zeroed() }
     }
 }
+pub const MENU_CHECK_ITEM: u32 = 256u32;
+pub const MENU_DELETE_MENU: u32 = 32u32;
+pub const MENU_ENABLE_ITEM: u32 = 128u32;
+pub const MENU_GET_ITEM_DATA: u32 = 2u32;
+pub const MENU_GET_ITEM_INFO: u32 = 1u32;
+pub const MENU_GET_SUBMENU: u32 = 4u32;
+pub const MENU_INSERT_ITEM: u32 = 16u32;
+pub const MENU_INSERT_MENU: u32 = 8u32;
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct MENU_ITEM_FLAGS(pub u32);
@@ -5126,6 +5185,10 @@ impl core::ops::Not for MENU_ITEM_TYPE {
         Self(self.0.not())
     }
 }
+pub const MENU_SET_DEFAULT_ITEM: u32 = 512u32;
+pub const MENU_SET_ITEM_DATA: u32 = 1024u32;
+pub const MENU_SET_ITEM_INFO: u32 = 64u32;
+pub const MENU_SET_SUBMENU: u32 = 2048u32;
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct MESSAGEBOX_RESULT(pub i32);
@@ -5996,6 +6059,7 @@ pub const SB_LINEDOWN: SCROLLBAR_COMMAND = SCROLLBAR_COMMAND(1i32);
 pub const SB_LINELEFT: SCROLLBAR_COMMAND = SCROLLBAR_COMMAND(0i32);
 pub const SB_LINERIGHT: SCROLLBAR_COMMAND = SCROLLBAR_COMMAND(1i32);
 pub const SB_LINEUP: SCROLLBAR_COMMAND = SCROLLBAR_COMMAND(0i32);
+pub const SB_MIN: u32 = 0u32;
 pub const SB_PAGEDOWN: SCROLLBAR_COMMAND = SCROLLBAR_COMMAND(3i32);
 pub const SB_PAGELEFT: SCROLLBAR_COMMAND = SCROLLBAR_COMMAND(2i32);
 pub const SB_PAGERIGHT: SCROLLBAR_COMMAND = SCROLLBAR_COMMAND(3i32);
@@ -6509,6 +6573,7 @@ pub const SPI_GETTHREADLOCALINPUTSETTINGS: SYSTEM_PARAMETERS_INFO_ACTION = SYSTE
 pub const SPI_GETTOGGLEKEYS: SYSTEM_PARAMETERS_INFO_ACTION = SYSTEM_PARAMETERS_INFO_ACTION(52u32);
 pub const SPI_GETTOOLTIPANIMATION: SYSTEM_PARAMETERS_INFO_ACTION = SYSTEM_PARAMETERS_INFO_ACTION(4118u32);
 pub const SPI_GETTOOLTIPFADE: SYSTEM_PARAMETERS_INFO_ACTION = SYSTEM_PARAMETERS_INFO_ACTION(4120u32);
+pub const SPI_GETTOUCHPADPARAMETERS: SYSTEM_PARAMETERS_INFO_ACTION = SYSTEM_PARAMETERS_INFO_ACTION(174u32);
 pub const SPI_GETTOUCHPREDICTIONPARAMETERS: SYSTEM_PARAMETERS_INFO_ACTION = SYSTEM_PARAMETERS_INFO_ACTION(156u32);
 pub const SPI_GETUIEFFECTS: SYSTEM_PARAMETERS_INFO_ACTION = SYSTEM_PARAMETERS_INFO_ACTION(4158u32);
 pub const SPI_GETWAITTOKILLSERVICETIMEOUT: SYSTEM_PARAMETERS_INFO_ACTION = SYSTEM_PARAMETERS_INFO_ACTION(124u32);
@@ -6638,6 +6703,7 @@ pub const SPI_SETTHREADLOCALINPUTSETTINGS: SYSTEM_PARAMETERS_INFO_ACTION = SYSTE
 pub const SPI_SETTOGGLEKEYS: SYSTEM_PARAMETERS_INFO_ACTION = SYSTEM_PARAMETERS_INFO_ACTION(53u32);
 pub const SPI_SETTOOLTIPANIMATION: SYSTEM_PARAMETERS_INFO_ACTION = SYSTEM_PARAMETERS_INFO_ACTION(4119u32);
 pub const SPI_SETTOOLTIPFADE: SYSTEM_PARAMETERS_INFO_ACTION = SYSTEM_PARAMETERS_INFO_ACTION(4121u32);
+pub const SPI_SETTOUCHPADPARAMETERS: SYSTEM_PARAMETERS_INFO_ACTION = SYSTEM_PARAMETERS_INFO_ACTION(175u32);
 pub const SPI_SETTOUCHPREDICTIONPARAMETERS: SYSTEM_PARAMETERS_INFO_ACTION = SYSTEM_PARAMETERS_INFO_ACTION(157u32);
 pub const SPI_SETUIEFFECTS: SYSTEM_PARAMETERS_INFO_ACTION = SYSTEM_PARAMETERS_INFO_ACTION(4159u32);
 pub const SPI_SETWAITTOKILLSERVICETIMEOUT: SYSTEM_PARAMETERS_INFO_ACTION = SYSTEM_PARAMETERS_INFO_ACTION(125u32);
@@ -6712,6 +6778,7 @@ pub const SWP_HIDEWINDOW: SET_WINDOW_POS_FLAGS = SET_WINDOW_POS_FLAGS(128u32);
 pub const SWP_NOACTIVATE: SET_WINDOW_POS_FLAGS = SET_WINDOW_POS_FLAGS(16u32);
 pub const SWP_NOCOPYBITS: SET_WINDOW_POS_FLAGS = SET_WINDOW_POS_FLAGS(256u32);
 pub const SWP_NOMOVE: SET_WINDOW_POS_FLAGS = SET_WINDOW_POS_FLAGS(2u32);
+pub const SWP_NONE: u32 = 0u32;
 pub const SWP_NOOWNERZORDER: SET_WINDOW_POS_FLAGS = SET_WINDOW_POS_FLAGS(512u32);
 pub const SWP_NOREDRAW: SET_WINDOW_POS_FLAGS = SET_WINDOW_POS_FLAGS(8u32);
 pub const SWP_NOREPOSITION: SET_WINDOW_POS_FLAGS = SET_WINDOW_POS_FLAGS(512u32);
@@ -6864,6 +6931,36 @@ pub const TKF_TOGGLEKEYSON: u32 = 1u32;
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct TOOLTIP_DISMISS_FLAGS(pub i32);
+pub const TOUCHPAD_PARAMETERS_LATEST_VERSION: u32 = 1u32;
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct TOUCHPAD_PARAMETERS_V1 {
+    pub versionNumber: u32,
+    pub maxSupportedContacts: u32,
+    pub legacyTouchpadFeatures: LEGACY_TOUCHPAD_FEATURES,
+    pub _bitfield1: i32,
+    pub _bitfield2: i32,
+    pub sensitivityLevel: TOUCHPAD_SENSITIVITY_LEVEL,
+    pub cursorSpeed: u32,
+    pub feedbackIntensity: u32,
+    pub clickForceSensitivity: u32,
+    pub rightClickZoneWidth: u32,
+    pub rightClickZoneHeight: u32,
+}
+impl Default for TOUCHPAD_PARAMETERS_V1 {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+pub const TOUCHPAD_PARAMETERS_VERSION_1: u32 = 1u32;
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct TOUCHPAD_SENSITIVITY_LEVEL(pub i32);
+pub const TOUCHPAD_SENSITIVITY_LEVEL_HIGH_SENSITIVITY: TOUCHPAD_SENSITIVITY_LEVEL = TOUCHPAD_SENSITIVITY_LEVEL(1i32);
+pub const TOUCHPAD_SENSITIVITY_LEVEL_LEAST_SENSITIVE: TOUCHPAD_SENSITIVITY_LEVEL = TOUCHPAD_SENSITIVITY_LEVEL(4i32);
+pub const TOUCHPAD_SENSITIVITY_LEVEL_LOW_SENSITIVITY: TOUCHPAD_SENSITIVITY_LEVEL = TOUCHPAD_SENSITIVITY_LEVEL(3i32);
+pub const TOUCHPAD_SENSITIVITY_LEVEL_MEDIUM_SENSITIVITY: TOUCHPAD_SENSITIVITY_LEVEL = TOUCHPAD_SENSITIVITY_LEVEL(2i32);
+pub const TOUCHPAD_SENSITIVITY_LEVEL_MOST_SENSITIVE: TOUCHPAD_SENSITIVITY_LEVEL = TOUCHPAD_SENSITIVITY_LEVEL(0i32);
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct TOUCHPREDICTIONPARAMETERS {
@@ -7735,4 +7832,5 @@ pub const __WARNING_PRECONDITION_NULLTERMINATION_VIOLATION: u32 = 26035u32;
 pub const __WARNING_RANGE_POSTCONDITION_VIOLATION: u32 = 26061u32;
 pub const __WARNING_RETURNING_BAD_RESULT: u32 = 28196u32;
 pub const __WARNING_RETURN_UNINIT_VAR: u32 = 6101u32;
+pub const __WARNING_UNSAFE_STRING_FUNCTION: u32 = 25025u32;
 pub const __WARNING_USING_UNINIT_VAR: u32 = 6001u32;

@@ -1,5 +1,3 @@
-#[cfg(feature = "Win32_System_WinRT_AllJoyn")]
-pub mod AllJoyn;
 #[cfg(feature = "Win32_System_WinRT_Composition")]
 pub mod Composition;
 #[cfg(feature = "Win32_System_WinRT_CoreInputView")]

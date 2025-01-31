@@ -77,6 +77,11 @@ pub unsafe fn BuildIoRingReadFile(ioring: HIORING, fileref: IORING_HANDLE_REF, d
     unsafe { BuildIoRingReadFile(ioring, core::mem::transmute(fileref), core::mem::transmute(dataref), numberofbytestoread, fileoffset, userdata, sqeflags).ok() }
 }
 #[inline]
+pub unsafe fn BuildIoRingReadFileScatter(ioring: HIORING, fileref: IORING_HANDLE_REF, segmentarray: &[FILE_SEGMENT_ELEMENT], numberofbytestoread: u32, fileoffset: u64, userdata: usize, sqeflags: IORING_SQE_FLAGS) -> windows_core::Result<()> {
+    windows_link::link!("kernel32.dll" "system" fn BuildIoRingReadFileScatter(ioring : HIORING, fileref : IORING_HANDLE_REF, segmentcount : u32, segmentarray : *const FILE_SEGMENT_ELEMENT, numberofbytestoread : u32, fileoffset : u64, userdata : usize, sqeflags : IORING_SQE_FLAGS) -> windows_core::HRESULT);
+    unsafe { BuildIoRingReadFileScatter(ioring, core::mem::transmute(fileref), segmentarray.len().try_into().unwrap(), core::mem::transmute(segmentarray.as_ptr()), numberofbytestoread, fileoffset, userdata, sqeflags).ok() }
+}
+#[inline]
 pub unsafe fn BuildIoRingRegisterBuffers(ioring: HIORING, buffers: &[IORING_BUFFER_INFO], userdata: usize) -> windows_core::Result<()> {
     windows_link::link!("api-ms-win-core-ioring-l1-1-0.dll" "system" fn BuildIoRingRegisterBuffers(ioring : HIORING, count : u32, buffers : *const IORING_BUFFER_INFO, userdata : usize) -> windows_core::HRESULT);
     unsafe { BuildIoRingRegisterBuffers(ioring, buffers.len().try_into().unwrap(), core::mem::transmute(buffers.as_ptr()), userdata).ok() }
@@ -90,6 +95,11 @@ pub unsafe fn BuildIoRingRegisterFileHandles(ioring: HIORING, handles: &[super::
 pub unsafe fn BuildIoRingWriteFile(ioring: HIORING, fileref: IORING_HANDLE_REF, bufferref: IORING_BUFFER_REF, numberofbytestowrite: u32, fileoffset: u64, writeflags: FILE_WRITE_FLAGS, userdata: usize, sqeflags: IORING_SQE_FLAGS) -> windows_core::Result<()> {
     windows_link::link!("kernel32.dll" "system" fn BuildIoRingWriteFile(ioring : HIORING, fileref : IORING_HANDLE_REF, bufferref : IORING_BUFFER_REF, numberofbytestowrite : u32, fileoffset : u64, writeflags : FILE_WRITE_FLAGS, userdata : usize, sqeflags : IORING_SQE_FLAGS) -> windows_core::HRESULT);
     unsafe { BuildIoRingWriteFile(ioring, core::mem::transmute(fileref), core::mem::transmute(bufferref), numberofbytestowrite, fileoffset, writeflags, userdata, sqeflags).ok() }
+}
+#[inline]
+pub unsafe fn BuildIoRingWriteFileGather(ioring: HIORING, fileref: IORING_HANDLE_REF, segmentarray: &[FILE_SEGMENT_ELEMENT], numberofbytestowrite: u32, fileoffset: u64, writeflags: FILE_WRITE_FLAGS, userdata: usize, sqeflags: IORING_SQE_FLAGS) -> windows_core::Result<()> {
+    windows_link::link!("kernel32.dll" "system" fn BuildIoRingWriteFileGather(ioring : HIORING, fileref : IORING_HANDLE_REF, segmentcount : u32, segmentarray : *const FILE_SEGMENT_ELEMENT, numberofbytestowrite : u32, fileoffset : u64, writeflags : FILE_WRITE_FLAGS, userdata : usize, sqeflags : IORING_SQE_FLAGS) -> windows_core::HRESULT);
+    unsafe { BuildIoRingWriteFileGather(ioring, core::mem::transmute(fileref), segmentarray.len().try_into().unwrap(), core::mem::transmute(segmentarray.as_ptr()), numberofbytestowrite, fileoffset, writeflags, userdata, sqeflags).ok() }
 }
 #[inline]
 pub unsafe fn CheckNameLegalDOS8Dot3A<P0>(lpname: P0, lpoemname: Option<&mut [u8]>, pbnamecontainsspaces: Option<*mut windows_core::BOOL>, pbnamelegal: *mut windows_core::BOOL) -> windows_core::Result<()>
@@ -223,6 +233,15 @@ where
 pub unsafe fn CopyLZFile(hfsource: i32, hfdest: i32) -> i32 {
     windows_link::link!("kernel32.dll" "system" fn CopyLZFile(hfsource : i32, hfdest : i32) -> i32);
     unsafe { CopyLZFile(hfsource, hfdest) }
+}
+#[inline]
+pub unsafe fn CreateBindLink<P0, P1>(virtualpath: P0, backingpath: P1, createbindlinkflags: CREATE_BIND_LINK_FLAGS, exceptionpaths: Option<&[windows_core::PCWSTR]>) -> windows_core::Result<()>
+where
+    P0: windows_core::Param<windows_core::PCWSTR>,
+    P1: windows_core::Param<windows_core::PCWSTR>,
+{
+    windows_link::link!("bindfltapi.dll" "system" fn CreateBindLink(virtualpath : windows_core::PCWSTR, backingpath : windows_core::PCWSTR, createbindlinkflags : CREATE_BIND_LINK_FLAGS, exceptioncount : u32, exceptionpaths : *const windows_core::PCWSTR) -> windows_core::HRESULT);
+    unsafe { CreateBindLink(virtualpath.param().abi(), backingpath.param().abi(), createbindlinkflags, exceptionpaths.as_deref().map_or(0, |slice| slice.len().try_into().unwrap()), core::mem::transmute(exceptionpaths.as_deref().map_or(core::ptr::null(), |slice| slice.as_ptr()))).ok() }
 }
 #[cfg(feature = "Win32_Security")]
 #[inline]
@@ -1144,6 +1163,14 @@ pub unsafe fn GetFileInformationByHandle(hfile: super::super::Foundation::HANDLE
 pub unsafe fn GetFileInformationByHandleEx(hfile: super::super::Foundation::HANDLE, fileinformationclass: FILE_INFO_BY_HANDLE_CLASS, lpfileinformation: *mut core::ffi::c_void, dwbuffersize: u32) -> windows_core::Result<()> {
     windows_link::link!("kernel32.dll" "system" fn GetFileInformationByHandleEx(hfile : super::super::Foundation:: HANDLE, fileinformationclass : FILE_INFO_BY_HANDLE_CLASS, lpfileinformation : *mut core::ffi::c_void, dwbuffersize : u32) -> windows_core::BOOL);
     unsafe { GetFileInformationByHandleEx(hfile, fileinformationclass, lpfileinformation as _, dwbuffersize).ok() }
+}
+#[inline]
+pub unsafe fn GetFileInformationByName<P0>(filename: P0, fileinformationclass: FILE_INFO_BY_NAME_CLASS, fileinfobuffer: *mut core::ffi::c_void, fileinfobuffersize: u32) -> windows_core::BOOL
+where
+    P0: windows_core::Param<windows_core::PCWSTR>,
+{
+    windows_link::link!("kernel32.dll" "system" fn GetFileInformationByName(filename : windows_core::PCWSTR, fileinformationclass : FILE_INFO_BY_NAME_CLASS, fileinfobuffer : *mut core::ffi::c_void, fileinfobuffersize : u32) -> windows_core::BOOL);
+    unsafe { GetFileInformationByName(filename.param().abi(), fileinformationclass, fileinfobuffer as _, fileinfobuffersize) }
 }
 #[inline]
 pub unsafe fn GetFileSize(hfile: super::super::Foundation::HANDLE, lpfilesizehigh: Option<*mut u32>) -> u32 {
@@ -2193,6 +2220,14 @@ pub unsafe fn RegisterManageableLogClient(hlog: super::super::Foundation::HANDLE
     unsafe { RegisterManageableLogClient(hlog, pcallbacks as _).ok() }
 }
 #[inline]
+pub unsafe fn RemoveBindLink<P0>(virtualpath: P0) -> windows_core::Result<()>
+where
+    P0: windows_core::Param<windows_core::PCWSTR>,
+{
+    windows_link::link!("bindfltapi.dll" "system" fn RemoveBindLink(virtualpath : windows_core::PCWSTR) -> windows_core::HRESULT);
+    unsafe { RemoveBindLink(virtualpath.param().abi()).ok() }
+}
+#[inline]
 pub unsafe fn RemoveDirectoryA<P0>(lppathname: P0) -> windows_core::Result<()>
 where
     P0: windows_core::Param<windows_core::PCSTR>,
@@ -2938,10 +2973,11 @@ pub const BusTypeAta: STORAGE_BUS_TYPE = STORAGE_BUS_TYPE(3i32);
 pub const BusTypeAtapi: STORAGE_BUS_TYPE = STORAGE_BUS_TYPE(2i32);
 pub const BusTypeFibre: STORAGE_BUS_TYPE = STORAGE_BUS_TYPE(6i32);
 pub const BusTypeFileBackedVirtual: STORAGE_BUS_TYPE = STORAGE_BUS_TYPE(15i32);
-pub const BusTypeMax: STORAGE_BUS_TYPE = STORAGE_BUS_TYPE(20i32);
+pub const BusTypeMax: STORAGE_BUS_TYPE = STORAGE_BUS_TYPE(21i32);
 pub const BusTypeMaxReserved: STORAGE_BUS_TYPE = STORAGE_BUS_TYPE(127i32);
 pub const BusTypeMmc: STORAGE_BUS_TYPE = STORAGE_BUS_TYPE(13i32);
 pub const BusTypeNvme: STORAGE_BUS_TYPE = STORAGE_BUS_TYPE(17i32);
+pub const BusTypeNvmeof: STORAGE_BUS_TYPE = STORAGE_BUS_TYPE(20i32);
 pub const BusTypeRAID: STORAGE_BUS_TYPE = STORAGE_BUS_TYPE(8i32);
 pub const BusTypeSCM: STORAGE_BUS_TYPE = STORAGE_BUS_TYPE(18i32);
 pub const BusTypeSas: STORAGE_BUS_TYPE = STORAGE_BUS_TYPE(10i32);
@@ -3375,11 +3411,14 @@ impl Default for CLS_WRITE_ENTRY {
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct COMPRESSION_FORMAT(pub u16);
 pub const COMPRESSION_FORMAT_DEFAULT: COMPRESSION_FORMAT = COMPRESSION_FORMAT(1u16);
+pub const COMPRESSION_FORMAT_DEFLATE: COMPRESSION_FORMAT = COMPRESSION_FORMAT(7u16);
+pub const COMPRESSION_FORMAT_LZ4: COMPRESSION_FORMAT = COMPRESSION_FORMAT(6u16);
 pub const COMPRESSION_FORMAT_LZNT1: COMPRESSION_FORMAT = COMPRESSION_FORMAT(2u16);
 pub const COMPRESSION_FORMAT_NONE: COMPRESSION_FORMAT = COMPRESSION_FORMAT(0u16);
 pub const COMPRESSION_FORMAT_XP10: COMPRESSION_FORMAT = COMPRESSION_FORMAT(5u16);
 pub const COMPRESSION_FORMAT_XPRESS: COMPRESSION_FORMAT = COMPRESSION_FORMAT(3u16);
 pub const COMPRESSION_FORMAT_XPRESS_HUFF: COMPRESSION_FORMAT = COMPRESSION_FORMAT(4u16);
+pub const COMPRESSION_FORMAT_ZLIB: COMPRESSION_FORMAT = COMPRESSION_FORMAT(8u16);
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct CONNECTION_INFO_0 {
@@ -3419,6 +3458,17 @@ pub const COPYFILE2_CALLBACK_STREAM_STARTED: COPYFILE2_MESSAGE_TYPE = COPYFILE2_
 pub struct COPYFILE2_COPY_PHASE(pub i32);
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
+pub struct COPYFILE2_CREATE_OPLOCK_KEYS {
+    pub ParentOplockKey: windows_core::GUID,
+    pub TargetOplockKey: windows_core::GUID,
+}
+impl Default for COPYFILE2_CREATE_OPLOCK_KEYS {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct COPYFILE2_EXTENDED_PARAMETERS {
     pub dwSize: u32,
     pub dwCopyFlags: COPYFILE_FLAGS,
@@ -3442,7 +3492,9 @@ pub struct COPYFILE2_EXTENDED_PARAMETERS_V2 {
     pub dwCopyFlagsV2: COPYFILE2_V2_FLAGS,
     pub ioDesiredSize: u32,
     pub ioDesiredRate: u32,
-    pub reserved: [*mut core::ffi::c_void; 8],
+    pub pProgressRoutineOld: LPPROGRESS_ROUTINE,
+    pub SourceOplockKeys: *mut COPYFILE2_CREATE_OPLOCK_KEYS,
+    pub reserved: [*mut core::ffi::c_void; 6],
 }
 impl Default for COPYFILE2_EXTENDED_PARAMETERS_V2 {
     fn default() -> Self {
@@ -3703,12 +3755,14 @@ impl core::ops::Not for COPYPROGRESSROUTINE_PROGRESS {
         Self(self.0.not())
     }
 }
+pub const COPY_FILE2_V2_DISABLE_BLOCK_CLONING: COPYFILE2_V2_FLAGS = COPYFILE2_V2_FLAGS(2u32);
 pub const COPY_FILE2_V2_DONT_COPY_JUNCTIONS: COPYFILE2_V2_FLAGS = COPYFILE2_V2_FLAGS(1u32);
-pub const COPY_FILE2_V2_VALID_FLAGS: COPYFILE2_V2_FLAGS = COPYFILE2_V2_FLAGS(1u32);
+pub const COPY_FILE2_V2_VALID_FLAGS: COPYFILE2_V2_FLAGS = COPYFILE2_V2_FLAGS(3u32);
 pub const COPY_FILE_ALLOW_DECRYPTED_DESTINATION: COPYFILE_FLAGS = COPYFILE_FLAGS(8u32);
 pub const COPY_FILE_COPY_SYMLINK: COPYFILE_FLAGS = COPYFILE_FLAGS(2048u32);
 pub const COPY_FILE_DIRECTORY: COPYFILE_FLAGS = COPYFILE_FLAGS(128u32);
 pub const COPY_FILE_DISABLE_PRE_ALLOCATION: COPYFILE_FLAGS = COPYFILE_FLAGS(67108864u32);
+pub const COPY_FILE_DISABLE_SPARSE_COPY: COPYFILE_FLAGS = COPYFILE_FLAGS(2147483648u32);
 pub const COPY_FILE_DONT_REQUEST_DEST_WRITE_DAC: COPYFILE_FLAGS = COPYFILE_FLAGS(33554432u32);
 pub const COPY_FILE_ENABLE_LOW_FREE_SPACE_MODE: COPYFILE_FLAGS = COPYFILE_FLAGS(134217728u32);
 pub const COPY_FILE_ENABLE_SPARSE_COPY: COPYFILE_FLAGS = COPYFILE_FLAGS(536870912u32);
@@ -3742,6 +3796,45 @@ impl Default for CREATEFILE2_EXTENDED_PARAMETERS {
     }
 }
 pub const CREATE_ALWAYS: FILE_CREATION_DISPOSITION = FILE_CREATION_DISPOSITION(2u32);
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct CREATE_BIND_LINK_FLAGS(pub i32);
+impl CREATE_BIND_LINK_FLAGS {
+    pub const fn contains(&self, other: Self) -> bool {
+        self.0 & other.0 == other.0
+    }
+}
+impl core::ops::BitOr for CREATE_BIND_LINK_FLAGS {
+    type Output = Self;
+    fn bitor(self, other: Self) -> Self {
+        Self(self.0 | other.0)
+    }
+}
+impl core::ops::BitAnd for CREATE_BIND_LINK_FLAGS {
+    type Output = Self;
+    fn bitand(self, other: Self) -> Self {
+        Self(self.0 & other.0)
+    }
+}
+impl core::ops::BitOrAssign for CREATE_BIND_LINK_FLAGS {
+    fn bitor_assign(&mut self, other: Self) {
+        self.0.bitor_assign(other.0)
+    }
+}
+impl core::ops::BitAndAssign for CREATE_BIND_LINK_FLAGS {
+    fn bitand_assign(&mut self, other: Self) {
+        self.0.bitand_assign(other.0)
+    }
+}
+impl core::ops::Not for CREATE_BIND_LINK_FLAGS {
+    type Output = Self;
+    fn not(self) -> Self {
+        Self(self.0.not())
+    }
+}
+pub const CREATE_BIND_LINK_FLAG_MERGED: CREATE_BIND_LINK_FLAGS = CREATE_BIND_LINK_FLAGS(2i32);
+pub const CREATE_BIND_LINK_FLAG_NONE: CREATE_BIND_LINK_FLAGS = CREATE_BIND_LINK_FLAGS(0i32);
+pub const CREATE_BIND_LINK_FLAG_READ_ONLY: CREATE_BIND_LINK_FLAGS = CREATE_BIND_LINK_FLAGS(1i32);
 pub const CREATE_NEW: FILE_CREATION_DISPOSITION = FILE_CREATION_DISPOSITION(1u32);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
@@ -4556,6 +4649,9 @@ impl Default for FILE_INFO_3 {
 pub struct FILE_INFO_BY_HANDLE_CLASS(pub i32);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct FILE_INFO_BY_NAME_CLASS(pub i32);
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct FILE_INFO_FLAGS_PERMISSIONS(pub u32);
 impl FILE_INFO_FLAGS_PERMISSIONS {
     pub const fn contains(&self, other: Self) -> bool {
@@ -5019,6 +5115,7 @@ pub const FileAlignmentInfo: FILE_INFO_BY_HANDLE_CLASS = FILE_INFO_BY_HANDLE_CLA
 pub const FileAllocationInfo: FILE_INFO_BY_HANDLE_CLASS = FILE_INFO_BY_HANDLE_CLASS(5i32);
 pub const FileAttributeTagInfo: FILE_INFO_BY_HANDLE_CLASS = FILE_INFO_BY_HANDLE_CLASS(9i32);
 pub const FileBasicInfo: FILE_INFO_BY_HANDLE_CLASS = FILE_INFO_BY_HANDLE_CLASS(0i32);
+pub const FileCaseSensitiveByNameInfo: FILE_INFO_BY_NAME_CLASS = FILE_INFO_BY_NAME_CLASS(2i32);
 pub const FileCaseSensitiveInfo: FILE_INFO_BY_HANDLE_CLASS = FILE_INFO_BY_HANDLE_CLASS(23i32);
 pub const FileCompressionInfo: FILE_INFO_BY_HANDLE_CLASS = FILE_INFO_BY_HANDLE_CLASS(8i32);
 pub const FileDispositionInfo: FILE_INFO_BY_HANDLE_CLASS = FILE_INFO_BY_HANDLE_CLASS(4i32);
@@ -5039,6 +5136,9 @@ pub const FileRemoteProtocolInfo: FILE_INFO_BY_HANDLE_CLASS = FILE_INFO_BY_HANDL
 pub const FileRenameInfo: FILE_INFO_BY_HANDLE_CLASS = FILE_INFO_BY_HANDLE_CLASS(3i32);
 pub const FileRenameInfoEx: FILE_INFO_BY_HANDLE_CLASS = FILE_INFO_BY_HANDLE_CLASS(22i32);
 pub const FileStandardInfo: FILE_INFO_BY_HANDLE_CLASS = FILE_INFO_BY_HANDLE_CLASS(1i32);
+pub const FileStatBasicByNameInfo: FILE_INFO_BY_NAME_CLASS = FILE_INFO_BY_NAME_CLASS(3i32);
+pub const FileStatByNameInfo: FILE_INFO_BY_NAME_CLASS = FILE_INFO_BY_NAME_CLASS(0i32);
+pub const FileStatLxByNameInfo: FILE_INFO_BY_NAME_CLASS = FILE_INFO_BY_NAME_CLASS(1i32);
 pub const FileStorageInfo: FILE_INFO_BY_HANDLE_CLASS = FILE_INFO_BY_HANDLE_CLASS(16i32);
 pub const FileStreamInfo: FILE_INFO_BY_HANDLE_CLASS = FILE_INFO_BY_HANDLE_CLASS(7i32);
 pub const FindExInfoBasic: FINDEX_INFO_LEVELS = FINDEX_INFO_LEVELS(1i32);
@@ -6064,6 +6164,7 @@ impl core::ops::Not for IORING_CREATE_REQUIRED_FLAGS {
     }
 }
 pub const IORING_CREATE_REQUIRED_FLAGS_NONE: IORING_CREATE_REQUIRED_FLAGS = IORING_CREATE_REQUIRED_FLAGS(0i32);
+pub const IORING_CREATE_SKIP_BUILDER_PARAM_CHECKS: IORING_CREATE_ADVISORY_FLAGS = IORING_CREATE_ADVISORY_FLAGS(1i32);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct IORING_FEATURE_FLAGS(pub i32);
@@ -6145,9 +6246,11 @@ pub struct IORING_OP_CODE(pub i32);
 pub const IORING_OP_FLUSH: IORING_OP_CODE = IORING_OP_CODE(6i32);
 pub const IORING_OP_NOP: IORING_OP_CODE = IORING_OP_CODE(0i32);
 pub const IORING_OP_READ: IORING_OP_CODE = IORING_OP_CODE(1i32);
+pub const IORING_OP_READ_SCATTER: IORING_OP_CODE = IORING_OP_CODE(7i32);
 pub const IORING_OP_REGISTER_BUFFERS: IORING_OP_CODE = IORING_OP_CODE(3i32);
 pub const IORING_OP_REGISTER_FILES: IORING_OP_CODE = IORING_OP_CODE(2i32);
 pub const IORING_OP_WRITE: IORING_OP_CODE = IORING_OP_CODE(5i32);
+pub const IORING_OP_WRITE_GATHER: IORING_OP_CODE = IORING_OP_CODE(8i32);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct IORING_REF_KIND(pub i32);
@@ -6206,6 +6309,7 @@ pub struct IORING_VERSION(pub i32);
 pub const IORING_VERSION_1: IORING_VERSION = IORING_VERSION(1i32);
 pub const IORING_VERSION_2: IORING_VERSION = IORING_VERSION(2i32);
 pub const IORING_VERSION_3: IORING_VERSION = IORING_VERSION(300i32);
+pub const IORING_VERSION_4: IORING_VERSION = IORING_VERSION(400i32);
 pub const IORING_VERSION_INVALID: IORING_VERSION = IORING_VERSION(0i32);
 pub const IOSQE_FLAGS_DRAIN_PRECEDING_OPS: IORING_SQE_FLAGS = IORING_SQE_FLAGS(1i32);
 pub const IOSQE_FLAGS_NONE: IORING_SQE_FLAGS = IORING_SQE_FLAGS(0i32);
@@ -6406,6 +6510,7 @@ impl core::ops::Not for MOVE_FILE_FLAGS {
 }
 pub const MaximumFileIdType: FILE_ID_TYPE = FILE_ID_TYPE(3i32);
 pub const MaximumFileInfoByHandleClass: FILE_INFO_BY_HANDLE_CLASS = FILE_INFO_BY_HANDLE_CLASS(25i32);
+pub const MaximumFileInfoByNameClass: FILE_INFO_BY_NAME_CLASS = FILE_INFO_BY_NAME_CLASS(4i32);
 pub const MaximumIoPriorityHintType: PRIORITY_HINT = PRIORITY_HINT(3i32);
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -7696,8 +7801,6 @@ pub const PARTITION_DPP_GUID: windows_core::GUID = windows_core::GUID::from_u128
 pub const PARTITION_ENTRY_UNUSED_GUID: windows_core::GUID = windows_core::GUID::from_u128(0x00000000_0000_0000_0000_000000000000);
 pub const PARTITION_LDM_DATA_GUID: windows_core::GUID = windows_core::GUID::from_u128(0xaf9b60a0_1431_4f62_bc68_3311714a69ad);
 pub const PARTITION_LDM_METADATA_GUID: windows_core::GUID = windows_core::GUID::from_u128(0x5808c8aa_7e8f_42e0_85d2_e1e90434cfb3);
-pub const PARTITION_LEGACY_BL_GUID: windows_core::GUID = windows_core::GUID::from_u128(0x424ca0e2_7cb2_4fb9_8143_c52a99398bc6);
-pub const PARTITION_LEGACY_BL_GUID_BACKUP: windows_core::GUID = windows_core::GUID::from_u128(0x424c3e6c_d79f_49cb_935d_36d71467a288);
 pub const PARTITION_MAIN_OS_GUID: windows_core::GUID = windows_core::GUID::from_u128(0x57434f53_8f45_405e_8a23_186d8a4330d3);
 pub const PARTITION_MSFT_RECOVERY_GUID: windows_core::GUID = windows_core::GUID::from_u128(0xde94bba4_06d1_4d40_a16a_bfd50179d6ac);
 pub const PARTITION_MSFT_RESERVED_GUID: windows_core::GUID = windows_core::GUID::from_u128(0xe3c9e316_0b5c_4db8_817d_f92df00215ae);
@@ -7740,7 +7843,6 @@ pub const PROGRESS_CANCEL: COPYPROGRESSROUTINE_PROGRESS = COPYPROGRESSROUTINE_PR
 pub const PROGRESS_CONTINUE: COPYPROGRESSROUTINE_PROGRESS = COPYPROGRESSROUTINE_PROGRESS(0u32);
 pub const PROGRESS_QUIET: COPYPROGRESSROUTINE_PROGRESS = COPYPROGRESSROUTINE_PROGRESS(3u32);
 pub const PROGRESS_STOP: COPYPROGRESSROUTINE_PROGRESS = COPYPROGRESSROUTINE_PROGRESS(2u32);
-pub const QUIC: SERVER_CERTIFICATE_TYPE = SERVER_CERTIFICATE_TYPE(0i32);
 pub const READ_CONTROL: FILE_ACCESS_RIGHTS = FILE_ACCESS_RIGHTS(131072u32);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
@@ -7837,31 +7939,6 @@ impl Default for SERVER_ALIAS_INFO_0 {
         unsafe { core::mem::zeroed() }
     }
 }
-#[repr(C)]
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct SERVER_CERTIFICATE_INFO_0 {
-    pub srvci0_name: windows_core::PWSTR,
-    pub srvci0_subject: windows_core::PWSTR,
-    pub srvci0_issuer: windows_core::PWSTR,
-    pub srvci0_thumbprint: windows_core::PWSTR,
-    pub srvci0_friendlyname: windows_core::PWSTR,
-    pub srvci0_notbefore: windows_core::PWSTR,
-    pub srvci0_notafter: windows_core::PWSTR,
-    pub srvci0_storelocation: windows_core::PWSTR,
-    pub srvci0_storename: windows_core::PWSTR,
-    pub srvci0_renewalchain: windows_core::PWSTR,
-    pub srvci0_type: u32,
-    pub srvci0_flags: u32,
-    pub srvci0_mapping_status: u32,
-}
-impl Default for SERVER_CERTIFICATE_INFO_0 {
-    fn default() -> Self {
-        unsafe { core::mem::zeroed() }
-    }
-}
-#[repr(transparent)]
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
-pub struct SERVER_CERTIFICATE_TYPE(pub i32);
 pub const SESI1_NUM_ELEMENTS: u32 = 8u32;
 pub const SESI2_NUM_ELEMENTS: u32 = 9u32;
 #[repr(C)]
