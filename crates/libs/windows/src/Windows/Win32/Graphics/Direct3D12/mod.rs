@@ -60,12 +60,20 @@ pub const CLSID_D3D12Tools: windows_core::GUID = windows_core::GUID::from_u128(0
 pub const D3D12ExperimentalShaderModels: windows_core::GUID = windows_core::GUID::from_u128(0x76f5573e_f13a_40f5_b297_81ce9e18933f);
 pub const D3D12GPUUploadHeapsOnUnsupportedOS: windows_core::GUID = windows_core::GUID::from_u128(0x45dc51f3_767f_4588_b206_0baa2b16fbae);
 pub type D3D12MessageFunc = Option<unsafe extern "system" fn(category: D3D12_MESSAGE_CATEGORY, severity: D3D12_MESSAGE_SEVERITY, id: D3D12_MESSAGE_ID, pdescription: windows_core::PCSTR, pcontext: *mut core::ffi::c_void)>;
+pub const D3D12StateObjectsExperiment: windows_core::GUID = windows_core::GUID::from_u128(0x398a7fd6_a15a_42c1_9605_4bd9999a61af);
 pub const D3D12TiledResourceTier4: windows_core::GUID = windows_core::GUID::from_u128(0xc9c4725f_a81a_4f56_8c5b_c51039d694fb);
 pub const D3D12_16BIT_INDEX_STRIP_CUT_VALUE: u32 = 65535u32;
 pub const D3D12_32BIT_INDEX_STRIP_CUT_VALUE: u32 = 4294967295u32;
 pub const D3D12_8BIT_INDEX_STRIP_CUT_VALUE: u32 = 255u32;
 pub const D3D12_ANISOTROPIC_FILTERING_BIT: u32 = 64u32;
 pub const D3D12_APPEND_ALIGNED_ELEMENT: u32 = 4294967295u32;
+pub const D3D12_APPLICATION_SPECIFIC_DRIVER_BLOB_IGNORED: D3D12_APPLICATION_SPECIFIC_DRIVER_BLOB_STATUS = D3D12_APPLICATION_SPECIFIC_DRIVER_BLOB_STATUS(3i32);
+pub const D3D12_APPLICATION_SPECIFIC_DRIVER_BLOB_NOT_SPECIFIED: D3D12_APPLICATION_SPECIFIC_DRIVER_BLOB_STATUS = D3D12_APPLICATION_SPECIFIC_DRIVER_BLOB_STATUS(4i32);
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct D3D12_APPLICATION_SPECIFIC_DRIVER_BLOB_STATUS(pub i32);
+pub const D3D12_APPLICATION_SPECIFIC_DRIVER_BLOB_UNKNOWN: D3D12_APPLICATION_SPECIFIC_DRIVER_BLOB_STATUS = D3D12_APPLICATION_SPECIFIC_DRIVER_BLOB_STATUS(1i32);
+pub const D3D12_APPLICATION_SPECIFIC_DRIVER_BLOB_USED: D3D12_APPLICATION_SPECIFIC_DRIVER_BLOB_STATUS = D3D12_APPLICATION_SPECIFIC_DRIVER_BLOB_STATUS(2i32);
 pub const D3D12_ARRAY_AXIS_ADDRESS_RANGE_BIT_COUNT: u32 = 9u32;
 #[repr(C)]
 #[derive(Clone, Debug, PartialEq)]
@@ -1019,6 +1027,19 @@ pub struct D3D12_COMMON_COMPUTE_NODE_OVERRIDES {
     pub pOutputOverrides: *const D3D12_NODE_OUTPUT_OVERRIDES,
 }
 impl Default for D3D12_COMMON_COMPUTE_NODE_OVERRIDES {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct D3D12_COMMON_PROGRAM_NODE_OVERRIDES {
+    pub pLocalRootArgumentsTableIndex: *const u32,
+    pub pProgramEntry: *const windows_core::BOOL,
+    pub pNewName: *const D3D12_NODE_ID,
+    pub pShareInputOf: *const D3D12_NODE_ID,
+}
+impl Default for D3D12_COMMON_PROGRAM_NODE_OVERRIDES {
     fn default() -> Self {
         unsafe { core::mem::zeroed() }
     }
@@ -2224,6 +2245,7 @@ pub const D3D12_EXPORT_FLAG_NONE: D3D12_EXPORT_FLAGS = D3D12_EXPORT_FLAGS(0i32);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct D3D12_FEATURE(pub i32);
+pub const D3D12_FEATURE_APPLICATION_SPECIFIC_DRIVER_STATE: D3D12_FEATURE = D3D12_FEATURE(56i32);
 pub const D3D12_FEATURE_ARCHITECTURE: D3D12_FEATURE = D3D12_FEATURE(1i32);
 pub const D3D12_FEATURE_ARCHITECTURE1: D3D12_FEATURE = D3D12_FEATURE(16i32);
 pub const D3D12_FEATURE_BYTECODE_BYPASS_HASH_SUPPORTED: D3D12_FEATURE = D3D12_FEATURE(57i32);
@@ -2251,6 +2273,18 @@ pub const D3D12_FEATURE_D3D12_OPTIONS6: D3D12_FEATURE = D3D12_FEATURE(30i32);
 pub const D3D12_FEATURE_D3D12_OPTIONS7: D3D12_FEATURE = D3D12_FEATURE(32i32);
 pub const D3D12_FEATURE_D3D12_OPTIONS8: D3D12_FEATURE = D3D12_FEATURE(36i32);
 pub const D3D12_FEATURE_D3D12_OPTIONS9: D3D12_FEATURE = D3D12_FEATURE(37i32);
+pub const D3D12_FEATURE_D3D12_OPTIONS_EXPERIMENTAL1: D3D12_FEATURE = D3D12_FEATURE(13i32);
+pub const D3D12_FEATURE_D3D12_TIGHT_ALIGNMENT: D3D12_FEATURE = D3D12_FEATURE(54i32);
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct D3D12_FEATURE_DATA_APPLICATION_SPECIFIC_DRIVER_STATE {
+    pub Supported: windows_core::BOOL,
+}
+impl Default for D3D12_FEATURE_DATA_APPLICATION_SPECIFIC_DRIVER_STATE {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct D3D12_FEATURE_DATA_ARCHITECTURE {
@@ -2804,6 +2838,16 @@ pub struct D3D12_FEATURE_DATA_SHADER_MODEL {
     pub HighestShaderModel: D3D_SHADER_MODEL,
 }
 impl Default for D3D12_FEATURE_DATA_SHADER_MODEL {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct D3D12_FEATURE_DATA_TIGHT_ALIGNMENT {
+    pub SupportTier: D3D12_TIGHT_ALIGNMENT_TIER,
+}
+impl Default for D3D12_FEATURE_DATA_TIGHT_ALIGNMENT {
     fn default() -> Self {
         unsafe { core::mem::zeroed() }
     }
@@ -3804,6 +3848,17 @@ pub const D3D12_MAX_DEPTH: f32 = 1f32;
 pub const D3D12_MAX_LIVE_STATIC_SAMPLERS: u32 = 2032u32;
 pub const D3D12_MAX_MAXANISOTROPY: u32 = 16u32;
 pub const D3D12_MAX_MULTISAMPLE_SAMPLE_COUNT: u32 = 32u32;
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct D3D12_MAX_NODE_INPUT_RECORDS_PER_GRAPH_ENTRY_RECORD {
+    pub RecordCount: u32,
+    pub bCountSharedAcrossNodeArray: windows_core::BOOL,
+}
+impl Default for D3D12_MAX_NODE_INPUT_RECORDS_PER_GRAPH_ENTRY_RECORD {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
 pub const D3D12_MAX_POSITION_VALUE: f32 = 34028236000000000000000000000000000f32;
 pub const D3D12_MAX_ROOT_COST: u32 = 64u32;
 pub const D3D12_MAX_SHADER_VISIBLE_DESCRIPTOR_HEAP_SIZE_TIER_1: u32 = 1000000u32;
@@ -3836,6 +3891,22 @@ pub struct D3D12_MEMORY_POOL(pub i32);
 pub const D3D12_MEMORY_POOL_L0: D3D12_MEMORY_POOL = D3D12_MEMORY_POOL(1i32);
 pub const D3D12_MEMORY_POOL_L1: D3D12_MEMORY_POOL = D3D12_MEMORY_POOL(2i32);
 pub const D3D12_MEMORY_POOL_UNKNOWN: D3D12_MEMORY_POOL = D3D12_MEMORY_POOL(0i32);
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct D3D12_MESH_LAUNCH_OVERRIDES {
+    pub pLocalRootArgumentsTableIndex: *const u32,
+    pub pProgramEntry: *const windows_core::BOOL,
+    pub pNewName: *const D3D12_NODE_ID,
+    pub pShareInputOf: *const D3D12_NODE_ID,
+    pub pDispatchGrid: *const u32,
+    pub pMaxDispatchGrid: *const u32,
+    pub pMaxInputRecordsPerGraphEntryRecord: *const D3D12_MAX_NODE_INPUT_RECORDS_PER_GRAPH_ENTRY_RECORD,
+}
+impl Default for D3D12_MESH_LAUNCH_OVERRIDES {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct D3D12_MESH_SHADER_TIER(pub i32);
@@ -5124,6 +5195,7 @@ impl Default for D3D12_NODE {
 #[derive(Clone, Copy)]
 pub union D3D12_NODE_0 {
     pub Shader: D3D12_SHADER_NODE,
+    pub Program: D3D12_PROGRAM_NODE,
 }
 impl Default for D3D12_NODE_0 {
     fn default() -> Self {
@@ -5201,6 +5273,7 @@ pub const D3D12_NODE_OVERRIDES_TYPE_THREAD_LAUNCH: D3D12_NODE_OVERRIDES_TYPE = D
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct D3D12_NODE_TYPE(pub i32);
+pub const D3D12_NODE_TYPE_PROGRAM: D3D12_NODE_TYPE = D3D12_NODE_TYPE(1i32);
 pub const D3D12_NODE_TYPE_SHADER: D3D12_NODE_TYPE = D3D12_NODE_TYPE(0i32);
 pub const D3D12_NONSAMPLE_FETCH_OUT_OF_RANGE_ACCESS_RESULT: u32 = 0u32;
 pub const D3D12_OS_RESERVED_REGISTER_SPACE_VALUES_END: u32 = 4294967295u32;
@@ -5380,6 +5453,35 @@ impl Default for D3D12_PROGRAM_IDENTIFIER {
         unsafe { core::mem::zeroed() }
     }
 }
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct D3D12_PROGRAM_NODE {
+    pub Program: windows_core::PCWSTR,
+    pub OverridesType: D3D12_PROGRAM_NODE_OVERRIDES_TYPE,
+    pub Anonymous: D3D12_PROGRAM_NODE_0,
+}
+impl Default for D3D12_PROGRAM_NODE {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub union D3D12_PROGRAM_NODE_0 {
+    pub pMeshLaunchOverrides: *const D3D12_MESH_LAUNCH_OVERRIDES,
+    pub pCommonProgramNodeOverrides: *const D3D12_COMMON_PROGRAM_NODE_OVERRIDES,
+}
+impl Default for D3D12_PROGRAM_NODE_0 {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct D3D12_PROGRAM_NODE_OVERRIDES_TYPE(pub i32);
+pub const D3D12_PROGRAM_NODE_OVERRIDES_TYPE_COMMON_PROGRAM: D3D12_PROGRAM_NODE_OVERRIDES_TYPE = D3D12_PROGRAM_NODE_OVERRIDES_TYPE(4i32);
+pub const D3D12_PROGRAM_NODE_OVERRIDES_TYPE_MESH_LAUNCH: D3D12_PROGRAM_NODE_OVERRIDES_TYPE = D3D12_PROGRAM_NODE_OVERRIDES_TYPE(3i32);
+pub const D3D12_PROGRAM_NODE_OVERRIDES_TYPE_NONE: D3D12_PROGRAM_NODE_OVERRIDES_TYPE = D3D12_PROGRAM_NODE_OVERRIDES_TYPE(0i32);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct D3D12_PROGRAM_TYPE(pub i32);
@@ -6715,6 +6817,7 @@ pub const D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS: D3D12_RESOURCE_FLAGS = D3D
 pub const D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE: D3D12_RESOURCE_FLAGS = D3D12_RESOURCE_FLAGS(8i32);
 pub const D3D12_RESOURCE_FLAG_NONE: D3D12_RESOURCE_FLAGS = D3D12_RESOURCE_FLAGS(0i32);
 pub const D3D12_RESOURCE_FLAG_RAYTRACING_ACCELERATION_STRUCTURE: D3D12_RESOURCE_FLAGS = D3D12_RESOURCE_FLAGS(256i32);
+pub const D3D12_RESOURCE_FLAG_USE_TIGHT_ALIGNMENT: D3D12_RESOURCE_FLAGS = D3D12_RESOURCE_FLAGS(1024i32);
 pub const D3D12_RESOURCE_FLAG_VIDEO_DECODE_REFERENCE_ONLY: D3D12_RESOURCE_FLAGS = D3D12_RESOURCE_FLAGS(64i32);
 pub const D3D12_RESOURCE_FLAG_VIDEO_ENCODE_REFERENCE_ONLY: D3D12_RESOURCE_FLAGS = D3D12_RESOURCE_FLAGS(128i32);
 #[repr(transparent)]
@@ -7239,7 +7342,8 @@ impl Default for D3D12_SAMPLE_POSITION {
         unsafe { core::mem::zeroed() }
     }
 }
-pub const D3D12_SDK_VERSION: u32 = 615u32;
+pub const D3D12_SDK_VERSION: u32 = 614u32;
+pub const D3D12_SERIALIZED_DATA_APPLICATION_SPECIFIC_DRIVER_STATE: D3D12_SERIALIZED_DATA_TYPE = D3D12_SERIALIZED_DATA_TYPE(1i32);
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct D3D12_SERIALIZED_DATA_DRIVER_MATCHING_IDENTIFIER {
@@ -8003,6 +8107,7 @@ pub const D3D12_STATE_OBJECT_FLAG_ALLOW_EXTERNAL_DEPENDENCIES_ON_LOCAL_DEFINITIO
 pub const D3D12_STATE_OBJECT_FLAG_ALLOW_LOCAL_DEPENDENCIES_ON_EXTERNAL_DEFINITIONS: D3D12_STATE_OBJECT_FLAGS = D3D12_STATE_OBJECT_FLAGS(1i32);
 pub const D3D12_STATE_OBJECT_FLAG_ALLOW_STATE_OBJECT_ADDITIONS: D3D12_STATE_OBJECT_FLAGS = D3D12_STATE_OBJECT_FLAGS(4i32);
 pub const D3D12_STATE_OBJECT_FLAG_NONE: D3D12_STATE_OBJECT_FLAGS = D3D12_STATE_OBJECT_FLAGS(0i32);
+pub const D3D12_STATE_OBJECT_FLAG_WORK_GRAPHS_USE_GRAPHICS_STATE_FOR_GLOBAL_ROOT_SIGNATURE: D3D12_STATE_OBJECT_FLAGS = D3D12_STATE_OBJECT_FLAGS(64i32);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct D3D12_STATE_OBJECT_TYPE(pub i32);
@@ -8694,6 +8799,11 @@ impl Default for D3D12_THREAD_LAUNCH_OVERRIDES {
 }
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct D3D12_TIGHT_ALIGNMENT_TIER(pub i32);
+pub const D3D12_TIGHT_ALIGNMENT_TIER_1: D3D12_TIGHT_ALIGNMENT_TIER = D3D12_TIGHT_ALIGNMENT_TIER(1i32);
+pub const D3D12_TIGHT_ALIGNMENT_TIER_NOT_SUPPORTED: D3D12_TIGHT_ALIGNMENT_TIER = D3D12_TIGHT_ALIGNMENT_TIER(0i32);
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct D3D12_TILED_RESOURCES_TIER(pub i32);
 pub const D3D12_TILED_RESOURCES_TIER_1: D3D12_TILED_RESOURCES_TIER = D3D12_TILED_RESOURCES_TIER(1i32);
 pub const D3D12_TILED_RESOURCES_TIER_2: D3D12_TILED_RESOURCES_TIER = D3D12_TILED_RESOURCES_TIER(2i32);
@@ -9066,6 +9176,7 @@ pub const D3D12_WORK_GRAPHS_MAX_NODE_DEPTH: u32 = 32u32;
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct D3D12_WORK_GRAPHS_TIER(pub i32);
 pub const D3D12_WORK_GRAPHS_TIER_1_0: D3D12_WORK_GRAPHS_TIER = D3D12_WORK_GRAPHS_TIER(10i32);
+pub const D3D12_WORK_GRAPHS_TIER_1_1: D3D12_WORK_GRAPHS_TIER = D3D12_WORK_GRAPHS_TIER(11i32);
 pub const D3D12_WORK_GRAPHS_TIER_NOT_SUPPORTED: D3D12_WORK_GRAPHS_TIER = D3D12_WORK_GRAPHS_TIER(0i32);
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -9118,6 +9229,7 @@ impl core::ops::Not for D3D12_WORK_GRAPH_FLAGS {
         Self(self.0.not())
     }
 }
+pub const D3D12_WORK_GRAPH_FLAG_ENTRYPOINT_GRAPHICS_NODES_RASTERIZE_IN_ORDER: D3D12_WORK_GRAPH_FLAGS = D3D12_WORK_GRAPH_FLAGS(2i32);
 pub const D3D12_WORK_GRAPH_FLAG_INCLUDE_ALL_AVAILABLE_NODES: D3D12_WORK_GRAPH_FLAGS = D3D12_WORK_GRAPH_FLAGS(1i32);
 pub const D3D12_WORK_GRAPH_FLAG_NONE: D3D12_WORK_GRAPH_FLAGS = D3D12_WORK_GRAPH_FLAGS(0i32);
 #[repr(C)]
@@ -9195,7 +9307,289 @@ pub const D3D_SHADER_REQUIRES_VIEW_ID: u32 = 65536u32;
 pub const D3D_SHADER_REQUIRES_WAVE_MMA: u32 = 134217728u32;
 pub const D3D_SHADER_REQUIRES_WAVE_OPS: u32 = 16384u32;
 pub const D3D_SHADER_REQUIRES_WRITEABLE_MSAA_TEXTURES: u32 = 1073741824u32;
+#[repr(C)]
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct DSR_EX_FUNCTION_TABLE_1_0 {
+    pub pfnDSRExSuperResGetNumVariants: FNDSRExSuperResGetNumVariants,
+    pub pfnDSRExSuperResEnumVariant: FNDSRExSuperResEnumVariant,
+    pub pfnDSRExSuperResQuerySourceSettings: FNDSRExSuperResQuerySourceSettings,
+    pub pfnDSRExSuperResCreateEngine: FNDSRExSuperResCreateEngine,
+    pub pfnDSRExSuperResDestroyEngine: FNDSRExSuperResDestroyEngine,
+    pub pfnDSRExSuperResCreateUpscaler: FNDSRExSuperResCreateUpscaler,
+    pub pfnDSRExSuperResDestroyUpscaler: FNDSRExSuperResDestroyUpscaler,
+    pub pfnDSRExSuperResGetOptimalJitterPattern: FNDSRExSuperResGetOptimalJitterPattern,
+    pub pfnDSRExSuperResExecuteUpscaler: FNDSRExSuperResExecuteUpscaler,
+    pub pfnDSRExSuperResUpscalerEvict: FNDSRExSuperResUpscalerEvict,
+    pub pfnDSRExSuperResUpscalerMakeResident: FNDSRExSuperResUpscalerMakeResident,
+}
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+impl Default for DSR_EX_FUNCTION_TABLE_1_0 {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct DSR_EX_VERSION(pub i32);
+pub const DSR_EX_VERSION_1_0: DSR_EX_VERSION = DSR_EX_VERSION(1i32);
+pub const DSR_EX_VERSION_NONE: DSR_EX_VERSION = DSR_EX_VERSION(0i32);
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct DSR_FLOAT2 {
+    pub X: f32,
+    pub Y: f32,
+}
+impl Default for DSR_FLOAT2 {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+pub const DSR_NUM_OPTIMIZATION_TYPES: DSR_OPTIMIZATION_TYPE = DSR_OPTIMIZATION_TYPE(7i32);
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct DSR_OPTIMIZATION_TYPE(pub i32);
+pub const DSR_OPTIMIZATION_TYPE_BALANCED: DSR_OPTIMIZATION_TYPE = DSR_OPTIMIZATION_TYPE(0i32);
+pub const DSR_OPTIMIZATION_TYPE_HIGH_PERFORMANCE: DSR_OPTIMIZATION_TYPE = DSR_OPTIMIZATION_TYPE(3i32);
+pub const DSR_OPTIMIZATION_TYPE_HIGH_QUALITY: DSR_OPTIMIZATION_TYPE = DSR_OPTIMIZATION_TYPE(1i32);
+pub const DSR_OPTIMIZATION_TYPE_MAX_PERFORMANCE: DSR_OPTIMIZATION_TYPE = DSR_OPTIMIZATION_TYPE(4i32);
+pub const DSR_OPTIMIZATION_TYPE_MAX_POWER_SAVING: DSR_OPTIMIZATION_TYPE = DSR_OPTIMIZATION_TYPE(6i32);
+pub const DSR_OPTIMIZATION_TYPE_MAX_QUALITY: DSR_OPTIMIZATION_TYPE = DSR_OPTIMIZATION_TYPE(2i32);
+pub const DSR_OPTIMIZATION_TYPE_POWER_SAVING: DSR_OPTIMIZATION_TYPE = DSR_OPTIMIZATION_TYPE(5i32);
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct DSR_SIZE {
+    pub Width: u32,
+    pub Height: u32,
+}
+impl Default for DSR_SIZE {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct DSR_SUPERRES_CREATE_ENGINE_FLAGS(pub i32);
+impl DSR_SUPERRES_CREATE_ENGINE_FLAGS {
+    pub const fn contains(&self, other: Self) -> bool {
+        self.0 & other.0 == other.0
+    }
+}
+impl core::ops::BitOr for DSR_SUPERRES_CREATE_ENGINE_FLAGS {
+    type Output = Self;
+    fn bitor(self, other: Self) -> Self {
+        Self(self.0 | other.0)
+    }
+}
+impl core::ops::BitAnd for DSR_SUPERRES_CREATE_ENGINE_FLAGS {
+    type Output = Self;
+    fn bitand(self, other: Self) -> Self {
+        Self(self.0 & other.0)
+    }
+}
+impl core::ops::BitOrAssign for DSR_SUPERRES_CREATE_ENGINE_FLAGS {
+    fn bitor_assign(&mut self, other: Self) {
+        self.0.bitor_assign(other.0)
+    }
+}
+impl core::ops::BitAndAssign for DSR_SUPERRES_CREATE_ENGINE_FLAGS {
+    fn bitand_assign(&mut self, other: Self) {
+        self.0.bitand_assign(other.0)
+    }
+}
+impl core::ops::Not for DSR_SUPERRES_CREATE_ENGINE_FLAGS {
+    type Output = Self;
+    fn not(self) -> Self {
+        Self(self.0.not())
+    }
+}
+pub const DSR_SUPERRES_CREATE_ENGINE_FLAG_ALLOW_DRS: DSR_SUPERRES_CREATE_ENGINE_FLAGS = DSR_SUPERRES_CREATE_ENGINE_FLAGS(4i32);
+pub const DSR_SUPERRES_CREATE_ENGINE_FLAG_ALLOW_SUBRECT_OUTPUT: DSR_SUPERRES_CREATE_ENGINE_FLAGS = DSR_SUPERRES_CREATE_ENGINE_FLAGS(16i32);
+pub const DSR_SUPERRES_CREATE_ENGINE_FLAG_AUTO_EXPOSURE: DSR_SUPERRES_CREATE_ENGINE_FLAGS = DSR_SUPERRES_CREATE_ENGINE_FLAGS(2i32);
+pub const DSR_SUPERRES_CREATE_ENGINE_FLAG_ENABLE_SHARPENING: DSR_SUPERRES_CREATE_ENGINE_FLAGS = DSR_SUPERRES_CREATE_ENGINE_FLAGS(64i32);
+pub const DSR_SUPERRES_CREATE_ENGINE_FLAG_FORCE_LDR_COLORS: DSR_SUPERRES_CREATE_ENGINE_FLAGS = DSR_SUPERRES_CREATE_ENGINE_FLAGS(128i32);
+pub const DSR_SUPERRES_CREATE_ENGINE_FLAG_LINEAR_DEPTH: DSR_SUPERRES_CREATE_ENGINE_FLAGS = DSR_SUPERRES_CREATE_ENGINE_FLAGS(32i32);
+pub const DSR_SUPERRES_CREATE_ENGINE_FLAG_MOTION_VECTORS_USE_JITTER_OFFSETS: DSR_SUPERRES_CREATE_ENGINE_FLAGS = DSR_SUPERRES_CREATE_ENGINE_FLAGS(8i32);
+pub const DSR_SUPERRES_CREATE_ENGINE_FLAG_MOTION_VECTORS_USE_TARGET_DIMENSIONS: DSR_SUPERRES_CREATE_ENGINE_FLAGS = DSR_SUPERRES_CREATE_ENGINE_FLAGS(1i32);
+pub const DSR_SUPERRES_CREATE_ENGINE_FLAG_NONE: DSR_SUPERRES_CREATE_ENGINE_FLAGS = DSR_SUPERRES_CREATE_ENGINE_FLAGS(0i32);
+#[repr(C)]
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct DSR_SUPERRES_CREATE_ENGINE_PARAMETERS {
+    pub VariantId: windows_core::GUID,
+    pub TargetFormat: super::Dxgi::Common::DXGI_FORMAT,
+    pub SourceColorFormat: super::Dxgi::Common::DXGI_FORMAT,
+    pub SourceDepthFormat: super::Dxgi::Common::DXGI_FORMAT,
+    pub ExposureScaleFormat: super::Dxgi::Common::DXGI_FORMAT,
+    pub Flags: DSR_SUPERRES_CREATE_ENGINE_FLAGS,
+    pub MaxSourceSize: DSR_SIZE,
+    pub TargetSize: DSR_SIZE,
+}
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+impl Default for DSR_SUPERRES_CREATE_ENGINE_PARAMETERS {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct DSR_SUPERRES_SOURCE_SETTINGS {
+    pub OptimalSize: DSR_SIZE,
+    pub MinDynamicSize: DSR_SIZE,
+    pub MaxDynamicSize: DSR_SIZE,
+    pub OptimalColorFormat: super::Dxgi::Common::DXGI_FORMAT,
+    pub OptimalDepthFormat: super::Dxgi::Common::DXGI_FORMAT,
+}
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+impl Default for DSR_SUPERRES_SOURCE_SETTINGS {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS(pub i32);
+impl DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS {
+    pub const fn contains(&self, other: Self) -> bool {
+        self.0 & other.0 == other.0
+    }
+}
+impl core::ops::BitOr for DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS {
+    type Output = Self;
+    fn bitor(self, other: Self) -> Self {
+        Self(self.0 | other.0)
+    }
+}
+impl core::ops::BitAnd for DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS {
+    type Output = Self;
+    fn bitand(self, other: Self) -> Self {
+        Self(self.0 & other.0)
+    }
+}
+impl core::ops::BitOrAssign for DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS {
+    fn bitor_assign(&mut self, other: Self) {
+        self.0.bitor_assign(other.0)
+    }
+}
+impl core::ops::BitAndAssign for DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS {
+    fn bitand_assign(&mut self, other: Self) {
+        self.0.bitand_assign(other.0)
+    }
+}
+impl core::ops::Not for DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS {
+    type Output = Self;
+    fn not(self) -> Self {
+        Self(self.0.not())
+    }
+}
+pub const DSR_SUPERRES_UPSCALER_EXECUTE_FLAG_NONE: DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS = DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS(0i32);
+pub const DSR_SUPERRES_UPSCALER_EXECUTE_FLAG_RESET_HISTORY: DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS = DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS(1i32);
+#[repr(C)]
+#[derive(Clone, Debug, PartialEq)]
+pub struct DSR_SUPERRES_UPSCALER_EXECUTE_PARAMETERS {
+    pub pTargetTexture: core::mem::ManuallyDrop<Option<ID3D12Resource>>,
+    pub TargetRegion: super::super::Foundation::RECT,
+    pub pSourceColorTexture: core::mem::ManuallyDrop<Option<ID3D12Resource>>,
+    pub SourceColorRegion: super::super::Foundation::RECT,
+    pub pSourceDepthTexture: core::mem::ManuallyDrop<Option<ID3D12Resource>>,
+    pub SourceDepthRegion: super::super::Foundation::RECT,
+    pub pMotionVectorsTexture: core::mem::ManuallyDrop<Option<ID3D12Resource>>,
+    pub MotionVectorsRegion: super::super::Foundation::RECT,
+    pub MotionVectorScale: DSR_FLOAT2,
+    pub CameraJitter: DSR_FLOAT2,
+    pub ExposureScale: f32,
+    pub PreExposure: f32,
+    pub Sharpness: f32,
+    pub CameraNear: f32,
+    pub CameraFar: f32,
+    pub CameraFovAngleVert: f32,
+    pub pExposureScaleTexture: core::mem::ManuallyDrop<Option<ID3D12Resource>>,
+    pub pIgnoreHistoryMaskTexture: core::mem::ManuallyDrop<Option<ID3D12Resource>>,
+    pub IgnoreHistoryMaskRegion: super::super::Foundation::RECT,
+    pub pReactiveMaskTexture: core::mem::ManuallyDrop<Option<ID3D12Resource>>,
+    pub ReactiveMaskRegion: super::super::Foundation::RECT,
+}
+impl Default for DSR_SUPERRES_UPSCALER_EXECUTE_PARAMETERS {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct DSR_SUPERRES_VARIANT_DESC {
+    pub VariantId: windows_core::GUID,
+    pub VariantName: [i8; 128],
+    pub Flags: DSR_SUPERRES_VARIANT_FLAGS,
+    pub OptimizationRankings: [DSR_OPTIMIZATION_TYPE; 7],
+    pub OptimalTargetFormat: super::Dxgi::Common::DXGI_FORMAT,
+}
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+impl Default for DSR_SUPERRES_VARIANT_DESC {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct DSR_SUPERRES_VARIANT_FLAGS(pub i32);
+impl DSR_SUPERRES_VARIANT_FLAGS {
+    pub const fn contains(&self, other: Self) -> bool {
+        self.0 & other.0 == other.0
+    }
+}
+impl core::ops::BitOr for DSR_SUPERRES_VARIANT_FLAGS {
+    type Output = Self;
+    fn bitor(self, other: Self) -> Self {
+        Self(self.0 | other.0)
+    }
+}
+impl core::ops::BitAnd for DSR_SUPERRES_VARIANT_FLAGS {
+    type Output = Self;
+    fn bitand(self, other: Self) -> Self {
+        Self(self.0 & other.0)
+    }
+}
+impl core::ops::BitOrAssign for DSR_SUPERRES_VARIANT_FLAGS {
+    fn bitor_assign(&mut self, other: Self) {
+        self.0.bitor_assign(other.0)
+    }
+}
+impl core::ops::BitAndAssign for DSR_SUPERRES_VARIANT_FLAGS {
+    fn bitand_assign(&mut self, other: Self) {
+        self.0.bitand_assign(other.0)
+    }
+}
+impl core::ops::Not for DSR_SUPERRES_VARIANT_FLAGS {
+    type Output = Self;
+    fn not(self) -> Self {
+        Self(self.0.not())
+    }
+}
+pub const DSR_SUPERRES_VARIANT_FLAG_DISALLOWS_REGION_OFFSETS: DSR_SUPERRES_VARIANT_FLAGS = DSR_SUPERRES_VARIANT_FLAGS(32i32);
+pub const DSR_SUPERRES_VARIANT_FLAG_NATIVE: DSR_SUPERRES_VARIANT_FLAGS = DSR_SUPERRES_VARIANT_FLAGS(4i32);
+pub const DSR_SUPERRES_VARIANT_FLAG_NONE: DSR_SUPERRES_VARIANT_FLAGS = DSR_SUPERRES_VARIANT_FLAGS(0i32);
+pub const DSR_SUPERRES_VARIANT_FLAG_SUPPORTS_EXPOSURE_SCALE_TEXTURE: DSR_SUPERRES_VARIANT_FLAGS = DSR_SUPERRES_VARIANT_FLAGS(1i32);
+pub const DSR_SUPERRES_VARIANT_FLAG_SUPPORTS_IGNORE_HISTORY_MASK: DSR_SUPERRES_VARIANT_FLAGS = DSR_SUPERRES_VARIANT_FLAGS(2i32);
+pub const DSR_SUPERRES_VARIANT_FLAG_SUPPORTS_REACTIVE_MASK: DSR_SUPERRES_VARIANT_FLAGS = DSR_SUPERRES_VARIANT_FLAGS(8i32);
+pub const DSR_SUPERRES_VARIANT_FLAG_SUPPORTS_SHARPNESS: DSR_SUPERRES_VARIANT_FLAGS = DSR_SUPERRES_VARIANT_FLAGS(16i32);
 pub const DXGI_DEBUG_D3D12: windows_core::GUID = windows_core::GUID::from_u128(0xcf59a98c_a950_4326_91ef_9bbaa17bfd95);
+pub type FNDSRExGetVersionedFunctionTable = Option<unsafe extern "system" fn(version: DSR_EX_VERSION, pfunctiontable: *mut core::ffi::c_void, tablesizeinbytes: u32) -> windows_core::HRESULT>;
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+pub type FNDSRExSuperResCreateEngine = Option<unsafe extern "system" fn(variantindex: u32, pdevice: windows_core::Ref<'_, ID3D12Device>, pcreateparams: *const DSR_SUPERRES_CREATE_ENGINE_PARAMETERS, psrenginehandle: *mut *mut core::ffi::c_void) -> windows_core::HRESULT>;
+pub type FNDSRExSuperResCreateUpscaler = Option<unsafe extern "system" fn(enginehandle: *mut core::ffi::c_void, pcommandqueue: windows_core::Ref<'_, ID3D12CommandQueue>, psrupscalerhandle: *mut *mut core::ffi::c_void) -> windows_core::HRESULT>;
+pub type FNDSRExSuperResDestroyEngine = Option<unsafe extern "system" fn(srengine: *mut core::ffi::c_void) -> windows_core::HRESULT>;
+pub type FNDSRExSuperResDestroyUpscaler = Option<unsafe extern "system" fn(srupscaler: *mut core::ffi::c_void) -> windows_core::HRESULT>;
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+pub type FNDSRExSuperResEnumVariant = Option<unsafe extern "system" fn(variantindex: u32, pdevice: windows_core::Ref<'_, ID3D12Device>, pvariantdesc: *mut DSR_SUPERRES_VARIANT_DESC) -> windows_core::HRESULT>;
+pub type FNDSRExSuperResExecuteUpscaler = Option<unsafe extern "system" fn(srupscalerhandle: *mut core::ffi::c_void, pparams: *const DSR_SUPERRES_UPSCALER_EXECUTE_PARAMETERS, timedeltainseconds: f32, flags: DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS) -> windows_core::HRESULT>;
+pub type FNDSRExSuperResGetNumVariants = Option<unsafe extern "system" fn(pdevice: windows_core::Ref<'_, ID3D12Device>) -> u32>;
+pub type FNDSRExSuperResGetOptimalJitterPattern = Option<unsafe extern "system" fn(srenginehandle: *mut core::ffi::c_void, sourcesize: *const DSR_SIZE, targetsize: *const DSR_SIZE, psize: *mut u32, ppattern: *mut DSR_FLOAT2) -> windows_core::HRESULT>;
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+pub type FNDSRExSuperResQuerySourceSettings = Option<unsafe extern "system" fn(variantindex: u32, pdevice: windows_core::Ref<'_, ID3D12Device>, targetsize: *const DSR_SIZE, targetformat: super::Dxgi::Common::DXGI_FORMAT, optimizationtype: DSR_OPTIMIZATION_TYPE, createflags: DSR_SUPERRES_CREATE_ENGINE_FLAGS, psourcesettings: *mut DSR_SUPERRES_SOURCE_SETTINGS) -> windows_core::HRESULT>;
+pub type FNDSRExSuperResUpscalerEvict = Option<unsafe extern "system" fn(srupscalerhandle: *mut core::ffi::c_void) -> windows_core::HRESULT>;
+pub type FNDSRExSuperResUpscalerMakeResident = Option<unsafe extern "system" fn(srupscalerhandle: *mut core::ffi::c_void) -> windows_core::HRESULT>;
 windows_core::imp::define_interface!(ID3D12CommandAllocator, ID3D12CommandAllocator_Vtbl, 0x6102dee4_af59_4b09_b999_b44d73f09b24);
 impl core::ops::Deref for ID3D12CommandAllocator {
     type Target = ID3D12Pageable;
@@ -12795,6 +13189,75 @@ impl ID3D12DeviceTools_Vtbl {
     }
 }
 impl windows_core::RuntimeName for ID3D12DeviceTools {}
+windows_core::imp::define_interface!(ID3D12DeviceTools1, ID3D12DeviceTools1_Vtbl, 0xe30e9fc7_e641_4d6e_8a81_9dd9206ec47a);
+impl core::ops::Deref for ID3D12DeviceTools1 {
+    type Target = ID3D12DeviceTools;
+    fn deref(&self) -> &Self::Target {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+windows_core::imp::interface_hierarchy!(ID3D12DeviceTools1, windows_core::IUnknown, ID3D12DeviceTools);
+impl ID3D12DeviceTools1 {
+    #[cfg(feature = "Win32_Graphics_Direct3D")]
+    pub unsafe fn GetApplicationSpecificDriverState(&self) -> windows_core::Result<super::Direct3D::ID3DBlob> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetApplicationSpecificDriverState)(windows_core::Interface::as_raw(self), &mut result__).and_then(|| windows_core::Type::from_abi(result__))
+        }
+    }
+    pub unsafe fn GetApplicationSpecificDriverBlobStatus(&self) -> D3D12_APPLICATION_SPECIFIC_DRIVER_BLOB_STATUS {
+        unsafe { (windows_core::Interface::vtable(self).GetApplicationSpecificDriverBlobStatus)(windows_core::Interface::as_raw(self)) }
+    }
+}
+#[repr(C)]
+pub struct ID3D12DeviceTools1_Vtbl {
+    pub base__: ID3D12DeviceTools_Vtbl,
+    #[cfg(feature = "Win32_Graphics_Direct3D")]
+    pub GetApplicationSpecificDriverState: unsafe extern "system" fn(*mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    #[cfg(not(feature = "Win32_Graphics_Direct3D"))]
+    GetApplicationSpecificDriverState: usize,
+    pub GetApplicationSpecificDriverBlobStatus: unsafe extern "system" fn(*mut core::ffi::c_void) -> D3D12_APPLICATION_SPECIFIC_DRIVER_BLOB_STATUS,
+}
+unsafe impl Send for ID3D12DeviceTools1 {}
+unsafe impl Sync for ID3D12DeviceTools1 {}
+#[cfg(feature = "Win32_Graphics_Direct3D")]
+pub trait ID3D12DeviceTools1_Impl: ID3D12DeviceTools_Impl {
+    fn GetApplicationSpecificDriverState(&self) -> windows_core::Result<super::Direct3D::ID3DBlob>;
+    fn GetApplicationSpecificDriverBlobStatus(&self) -> D3D12_APPLICATION_SPECIFIC_DRIVER_BLOB_STATUS;
+}
+#[cfg(feature = "Win32_Graphics_Direct3D")]
+impl ID3D12DeviceTools1_Vtbl {
+    pub const fn new<Identity: ID3D12DeviceTools1_Impl, const OFFSET: isize>() -> Self {
+        unsafe extern "system" fn GetApplicationSpecificDriverState<Identity: ID3D12DeviceTools1_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, ppblob: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match ID3D12DeviceTools1_Impl::GetApplicationSpecificDriverState(this) {
+                    Ok(ok__) => {
+                        ppblob.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn GetApplicationSpecificDriverBlobStatus<Identity: ID3D12DeviceTools1_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void) -> D3D12_APPLICATION_SPECIFIC_DRIVER_BLOB_STATUS {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                ID3D12DeviceTools1_Impl::GetApplicationSpecificDriverBlobStatus(this)
+            }
+        }
+        Self {
+            base__: ID3D12DeviceTools_Vtbl::new::<Identity, OFFSET>(),
+            GetApplicationSpecificDriverState: GetApplicationSpecificDriverState::<Identity, OFFSET>,
+            GetApplicationSpecificDriverBlobStatus: GetApplicationSpecificDriverBlobStatus::<Identity, OFFSET>,
+        }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<ID3D12DeviceTools1 as windows_core::Interface>::IID || iid == &<ID3D12DeviceTools as windows_core::Interface>::IID
+    }
+}
+#[cfg(feature = "Win32_Graphics_Direct3D")]
+impl windows_core::RuntimeName for ID3D12DeviceTools1 {}
 windows_core::imp::define_interface!(ID3D12Fence, ID3D12Fence_Vtbl, 0x0a753dcf_c4d8_4b91_adf6_be5a60d95a76);
 impl core::ops::Deref for ID3D12Fence {
     type Target = ID3D12Pageable;
@@ -14635,6 +15098,64 @@ impl ID3D12GraphicsCommandList9_Vtbl {
 }
 #[cfg(all(feature = "Win32_Graphics_Direct3D", feature = "Win32_Graphics_Dxgi_Common"))]
 impl windows_core::RuntimeName for ID3D12GraphicsCommandList9 {}
+windows_core::imp::define_interface!(ID3D12GraphicsCommandListExperimental, ID3D12GraphicsCommandListExperimental_Vtbl, 0x669aaf9c_049c_4ca4_ad0d_d9a6f907e618);
+impl core::ops::Deref for ID3D12GraphicsCommandListExperimental {
+    type Target = ID3D12GraphicsCommandList10;
+    fn deref(&self) -> &Self::Target {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+windows_core::imp::interface_hierarchy!(ID3D12GraphicsCommandListExperimental, windows_core::IUnknown, ID3D12Object, ID3D12DeviceChild, ID3D12CommandList, ID3D12GraphicsCommandList, ID3D12GraphicsCommandList1, ID3D12GraphicsCommandList2, ID3D12GraphicsCommandList3, ID3D12GraphicsCommandList4, ID3D12GraphicsCommandList5, ID3D12GraphicsCommandList6, ID3D12GraphicsCommandList7, ID3D12GraphicsCommandList8, ID3D12GraphicsCommandList9, ID3D12GraphicsCommandList10);
+impl ID3D12GraphicsCommandListExperimental {
+    pub unsafe fn SetWorkGraphMaximumGPUInputRecords(&self, maxrecords: u32, maxnodeinputs: u32) {
+        unsafe { (windows_core::Interface::vtable(self).SetWorkGraphMaximumGPUInputRecords)(windows_core::Interface::as_raw(self), maxrecords, maxnodeinputs) }
+    }
+}
+#[repr(C)]
+pub struct ID3D12GraphicsCommandListExperimental_Vtbl {
+    pub base__: ID3D12GraphicsCommandList10_Vtbl,
+    pub SetWorkGraphMaximumGPUInputRecords: unsafe extern "system" fn(*mut core::ffi::c_void, u32, u32),
+}
+unsafe impl Send for ID3D12GraphicsCommandListExperimental {}
+unsafe impl Sync for ID3D12GraphicsCommandListExperimental {}
+#[cfg(all(feature = "Win32_Graphics_Direct3D", feature = "Win32_Graphics_Dxgi_Common"))]
+pub trait ID3D12GraphicsCommandListExperimental_Impl: ID3D12GraphicsCommandList10_Impl {
+    fn SetWorkGraphMaximumGPUInputRecords(&self, maxrecords: u32, maxnodeinputs: u32);
+}
+#[cfg(all(feature = "Win32_Graphics_Direct3D", feature = "Win32_Graphics_Dxgi_Common"))]
+impl ID3D12GraphicsCommandListExperimental_Vtbl {
+    pub const fn new<Identity: ID3D12GraphicsCommandListExperimental_Impl, const OFFSET: isize>() -> Self {
+        unsafe extern "system" fn SetWorkGraphMaximumGPUInputRecords<Identity: ID3D12GraphicsCommandListExperimental_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, maxrecords: u32, maxnodeinputs: u32) {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                ID3D12GraphicsCommandListExperimental_Impl::SetWorkGraphMaximumGPUInputRecords(this, core::mem::transmute_copy(&maxrecords), core::mem::transmute_copy(&maxnodeinputs))
+            }
+        }
+        Self {
+            base__: ID3D12GraphicsCommandList10_Vtbl::new::<Identity, OFFSET>(),
+            SetWorkGraphMaximumGPUInputRecords: SetWorkGraphMaximumGPUInputRecords::<Identity, OFFSET>,
+        }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<ID3D12GraphicsCommandListExperimental as windows_core::Interface>::IID
+            || iid == &<ID3D12Object as windows_core::Interface>::IID
+            || iid == &<ID3D12DeviceChild as windows_core::Interface>::IID
+            || iid == &<ID3D12CommandList as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList1 as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList2 as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList3 as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList4 as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList5 as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList6 as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList7 as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList8 as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList9 as windows_core::Interface>::IID
+            || iid == &<ID3D12GraphicsCommandList10 as windows_core::Interface>::IID
+    }
+}
+#[cfg(all(feature = "Win32_Graphics_Direct3D", feature = "Win32_Graphics_Dxgi_Common"))]
+impl windows_core::RuntimeName for ID3D12GraphicsCommandListExperimental {}
 windows_core::imp::define_interface!(ID3D12Heap, ID3D12Heap_Vtbl, 0x6b3b2502_6e51_45b3_90ee_9884265e8df3);
 impl core::ops::Deref for ID3D12Heap {
     type Target = ID3D12Pageable;
@@ -15523,11 +16044,8 @@ impl windows_core::RuntimeName for ID3D12Pageable {}
 windows_core::imp::define_interface!(ID3D12PageableTools, ID3D12PageableTools_Vtbl, 0x8f1359db_d8d1_42f9_b5cf_79f4cbad0d3d);
 windows_core::imp::interface_hierarchy!(ID3D12PageableTools, windows_core::IUnknown);
 impl ID3D12PageableTools {
-    pub unsafe fn GetAllocation(&self) -> windows_core::Result<D3D12_GPU_VIRTUAL_ADDRESS_RANGE> {
-        unsafe {
-            let mut result__ = core::mem::zeroed();
-            (windows_core::Interface::vtable(self).GetAllocation)(windows_core::Interface::as_raw(self), &mut result__).map(|| result__)
-        }
+    pub unsafe fn GetAllocation(&self, pallocation: *mut D3D12_GPU_VIRTUAL_ADDRESS_RANGE) -> windows_core::Result<()> {
+        unsafe { (windows_core::Interface::vtable(self).GetAllocation)(windows_core::Interface::as_raw(self), pallocation as _).ok() }
     }
 }
 #[repr(C)]
@@ -15538,20 +16056,14 @@ pub struct ID3D12PageableTools_Vtbl {
 unsafe impl Send for ID3D12PageableTools {}
 unsafe impl Sync for ID3D12PageableTools {}
 pub trait ID3D12PageableTools_Impl: windows_core::IUnknownImpl {
-    fn GetAllocation(&self) -> windows_core::Result<D3D12_GPU_VIRTUAL_ADDRESS_RANGE>;
+    fn GetAllocation(&self, pallocation: *mut D3D12_GPU_VIRTUAL_ADDRESS_RANGE) -> windows_core::Result<()>;
 }
 impl ID3D12PageableTools_Vtbl {
     pub const fn new<Identity: ID3D12PageableTools_Impl, const OFFSET: isize>() -> Self {
         unsafe extern "system" fn GetAllocation<Identity: ID3D12PageableTools_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pallocation: *mut D3D12_GPU_VIRTUAL_ADDRESS_RANGE) -> windows_core::HRESULT {
             unsafe {
                 let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
-                match ID3D12PageableTools_Impl::GetAllocation(this) {
-                    Ok(ok__) => {
-                        pallocation.write(core::mem::transmute(ok__));
-                        windows_core::HRESULT(0)
-                    }
-                    Err(err) => err.into(),
-                }
+                ID3D12PageableTools_Impl::GetAllocation(this, core::mem::transmute_copy(&pallocation)).into()
             }
         }
         Self { base__: windows_core::IUnknown_Vtbl::new::<Identity, OFFSET>(), GetAllocation: GetAllocation::<Identity, OFFSET> }
@@ -17431,6 +17943,55 @@ impl ID3D12Tools1_Vtbl {
     }
 }
 impl windows_core::RuntimeName for ID3D12Tools1 {}
+windows_core::imp::define_interface!(ID3D12Tools2, ID3D12Tools2_Vtbl, 0x01d393c5_c9b0_42a1_958c_c26b02d4d097);
+impl core::ops::Deref for ID3D12Tools2 {
+    type Target = ID3D12Tools1;
+    fn deref(&self) -> &Self::Target {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+windows_core::imp::interface_hierarchy!(ID3D12Tools2, windows_core::IUnknown, ID3D12Tools, ID3D12Tools1);
+impl ID3D12Tools2 {
+    #[cfg(feature = "Win32_Graphics_Direct3D")]
+    pub unsafe fn SetApplicationSpecificDriverState<P0, P1>(&self, padapter: P0, pblob: P1) -> windows_core::Result<()>
+    where
+        P0: windows_core::Param<windows_core::IUnknown>,
+        P1: windows_core::Param<super::Direct3D::ID3DBlob>,
+    {
+        unsafe { (windows_core::Interface::vtable(self).SetApplicationSpecificDriverState)(windows_core::Interface::as_raw(self), padapter.param().abi(), pblob.param().abi()).ok() }
+    }
+}
+#[repr(C)]
+pub struct ID3D12Tools2_Vtbl {
+    pub base__: ID3D12Tools1_Vtbl,
+    #[cfg(feature = "Win32_Graphics_Direct3D")]
+    pub SetApplicationSpecificDriverState: unsafe extern "system" fn(*mut core::ffi::c_void, *mut core::ffi::c_void, *mut core::ffi::c_void) -> windows_core::HRESULT,
+    #[cfg(not(feature = "Win32_Graphics_Direct3D"))]
+    SetApplicationSpecificDriverState: usize,
+}
+unsafe impl Send for ID3D12Tools2 {}
+unsafe impl Sync for ID3D12Tools2 {}
+#[cfg(feature = "Win32_Graphics_Direct3D")]
+pub trait ID3D12Tools2_Impl: ID3D12Tools1_Impl {
+    fn SetApplicationSpecificDriverState(&self, padapter: windows_core::Ref<'_, windows_core::IUnknown>, pblob: windows_core::Ref<'_, super::Direct3D::ID3DBlob>) -> windows_core::Result<()>;
+}
+#[cfg(feature = "Win32_Graphics_Direct3D")]
+impl ID3D12Tools2_Vtbl {
+    pub const fn new<Identity: ID3D12Tools2_Impl, const OFFSET: isize>() -> Self {
+        unsafe extern "system" fn SetApplicationSpecificDriverState<Identity: ID3D12Tools2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, padapter: *mut core::ffi::c_void, pblob: *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                ID3D12Tools2_Impl::SetApplicationSpecificDriverState(this, core::mem::transmute_copy(&padapter), core::mem::transmute_copy(&pblob)).into()
+            }
+        }
+        Self { base__: ID3D12Tools1_Vtbl::new::<Identity, OFFSET>(), SetApplicationSpecificDriverState: SetApplicationSpecificDriverState::<Identity, OFFSET> }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<ID3D12Tools2 as windows_core::Interface>::IID || iid == &<ID3D12Tools as windows_core::Interface>::IID || iid == &<ID3D12Tools1 as windows_core::Interface>::IID
+    }
+}
+#[cfg(feature = "Win32_Graphics_Direct3D")]
+impl windows_core::RuntimeName for ID3D12Tools2 {}
 windows_core::imp::define_interface!(ID3D12VersionedRootSignatureDeserializer, ID3D12VersionedRootSignatureDeserializer_Vtbl, 0x7f91ce67_090c_4bb7_b78e_ed8ff2e31da0);
 windows_core::imp::interface_hierarchy!(ID3D12VersionedRootSignatureDeserializer, windows_core::IUnknown);
 impl ID3D12VersionedRootSignatureDeserializer {
@@ -17748,6 +18309,230 @@ impl ID3D12WorkGraphProperties_Vtbl {
     }
 }
 impl windows_core::RuntimeName for ID3D12WorkGraphProperties {}
+windows_core::imp::define_interface!(IDSRDevice, IDSRDevice_Vtbl, 0x994659a7_31ad_4912_9414_159f16630306);
+windows_core::imp::interface_hierarchy!(IDSRDevice, windows_core::IUnknown);
+impl IDSRDevice {
+    pub unsafe fn GetNumSuperResVariants(&self) -> u32 {
+        unsafe { (windows_core::Interface::vtable(self).GetNumSuperResVariants)(windows_core::Interface::as_raw(self)) }
+    }
+    #[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+    pub unsafe fn GetSuperResVariantDesc(&self, variantindex: u32) -> windows_core::Result<DSR_SUPERRES_VARIANT_DESC> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetSuperResVariantDesc)(windows_core::Interface::as_raw(self), variantindex, &mut result__).map(|| result__)
+        }
+    }
+    #[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+    pub unsafe fn QuerySuperResSourceSettings(&self, variantindex: u32, targetsize: DSR_SIZE, targetformat: super::Dxgi::Common::DXGI_FORMAT, optimizationtype: DSR_OPTIMIZATION_TYPE, createflags: DSR_SUPERRES_CREATE_ENGINE_FLAGS) -> windows_core::Result<DSR_SUPERRES_SOURCE_SETTINGS> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).QuerySuperResSourceSettings)(windows_core::Interface::as_raw(self), variantindex, core::mem::transmute(targetsize), targetformat, optimizationtype, createflags, &mut result__).map(|| result__)
+        }
+    }
+    #[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+    pub unsafe fn CreateSuperResEngine<T>(&self, pcreateparams: *const DSR_SUPERRES_CREATE_ENGINE_PARAMETERS, result__: *mut Option<T>) -> windows_core::Result<()>
+    where
+        T: windows_core::Interface,
+    {
+        unsafe { (windows_core::Interface::vtable(self).CreateSuperResEngine)(windows_core::Interface::as_raw(self), pcreateparams, &T::IID, result__ as *mut _ as *mut _).ok() }
+    }
+}
+#[repr(C)]
+pub struct IDSRDevice_Vtbl {
+    pub base__: windows_core::IUnknown_Vtbl,
+    pub GetNumSuperResVariants: unsafe extern "system" fn(*mut core::ffi::c_void) -> u32,
+    #[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+    pub GetSuperResVariantDesc: unsafe extern "system" fn(*mut core::ffi::c_void, u32, *mut DSR_SUPERRES_VARIANT_DESC) -> windows_core::HRESULT,
+    #[cfg(not(feature = "Win32_Graphics_Dxgi_Common"))]
+    GetSuperResVariantDesc: usize,
+    #[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+    pub QuerySuperResSourceSettings: unsafe extern "system" fn(*mut core::ffi::c_void, u32, DSR_SIZE, super::Dxgi::Common::DXGI_FORMAT, DSR_OPTIMIZATION_TYPE, DSR_SUPERRES_CREATE_ENGINE_FLAGS, *mut DSR_SUPERRES_SOURCE_SETTINGS) -> windows_core::HRESULT,
+    #[cfg(not(feature = "Win32_Graphics_Dxgi_Common"))]
+    QuerySuperResSourceSettings: usize,
+    #[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+    pub CreateSuperResEngine: unsafe extern "system" fn(*mut core::ffi::c_void, *const DSR_SUPERRES_CREATE_ENGINE_PARAMETERS, *const windows_core::GUID, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    #[cfg(not(feature = "Win32_Graphics_Dxgi_Common"))]
+    CreateSuperResEngine: usize,
+}
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+pub trait IDSRDevice_Impl: windows_core::IUnknownImpl {
+    fn GetNumSuperResVariants(&self) -> u32;
+    fn GetSuperResVariantDesc(&self, variantindex: u32) -> windows_core::Result<DSR_SUPERRES_VARIANT_DESC>;
+    fn QuerySuperResSourceSettings(&self, variantindex: u32, targetsize: &DSR_SIZE, targetformat: super::Dxgi::Common::DXGI_FORMAT, optimizationtype: DSR_OPTIMIZATION_TYPE, createflags: DSR_SUPERRES_CREATE_ENGINE_FLAGS) -> windows_core::Result<DSR_SUPERRES_SOURCE_SETTINGS>;
+    fn CreateSuperResEngine(&self, pcreateparams: *const DSR_SUPERRES_CREATE_ENGINE_PARAMETERS, iid: *const windows_core::GUID, ppengine: *mut *mut core::ffi::c_void) -> windows_core::Result<()>;
+}
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+impl IDSRDevice_Vtbl {
+    pub const fn new<Identity: IDSRDevice_Impl, const OFFSET: isize>() -> Self {
+        unsafe extern "system" fn GetNumSuperResVariants<Identity: IDSRDevice_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void) -> u32 {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                IDSRDevice_Impl::GetNumSuperResVariants(this)
+            }
+        }
+        unsafe extern "system" fn GetSuperResVariantDesc<Identity: IDSRDevice_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, variantindex: u32, pvariantdesc: *mut DSR_SUPERRES_VARIANT_DESC) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IDSRDevice_Impl::GetSuperResVariantDesc(this, core::mem::transmute_copy(&variantindex)) {
+                    Ok(ok__) => {
+                        pvariantdesc.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn QuerySuperResSourceSettings<Identity: IDSRDevice_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, variantindex: u32, targetsize: DSR_SIZE, targetformat: super::Dxgi::Common::DXGI_FORMAT, optimizationtype: DSR_OPTIMIZATION_TYPE, createflags: DSR_SUPERRES_CREATE_ENGINE_FLAGS, psourcesettings: *mut DSR_SUPERRES_SOURCE_SETTINGS) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IDSRDevice_Impl::QuerySuperResSourceSettings(this, core::mem::transmute_copy(&variantindex), core::mem::transmute(&targetsize), core::mem::transmute_copy(&targetformat), core::mem::transmute_copy(&optimizationtype), core::mem::transmute_copy(&createflags)) {
+                    Ok(ok__) => {
+                        psourcesettings.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn CreateSuperResEngine<Identity: IDSRDevice_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pcreateparams: *const DSR_SUPERRES_CREATE_ENGINE_PARAMETERS, iid: *const windows_core::GUID, ppengine: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                IDSRDevice_Impl::CreateSuperResEngine(this, core::mem::transmute_copy(&pcreateparams), core::mem::transmute_copy(&iid), core::mem::transmute_copy(&ppengine)).into()
+            }
+        }
+        Self {
+            base__: windows_core::IUnknown_Vtbl::new::<Identity, OFFSET>(),
+            GetNumSuperResVariants: GetNumSuperResVariants::<Identity, OFFSET>,
+            GetSuperResVariantDesc: GetSuperResVariantDesc::<Identity, OFFSET>,
+            QuerySuperResSourceSettings: QuerySuperResSourceSettings::<Identity, OFFSET>,
+            CreateSuperResEngine: CreateSuperResEngine::<Identity, OFFSET>,
+        }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<IDSRDevice as windows_core::Interface>::IID
+    }
+}
+#[cfg(feature = "Win32_Graphics_Dxgi_Common")]
+impl windows_core::RuntimeName for IDSRDevice {}
+windows_core::imp::define_interface!(IDSRSuperResEngine, IDSRSuperResEngine_Vtbl, 0x4bfd72e2_2767_4800_bcf4_cedc0d07ea5a);
+windows_core::imp::interface_hierarchy!(IDSRSuperResEngine, windows_core::IUnknown);
+impl IDSRSuperResEngine {
+    pub unsafe fn GetOptimalJitterPattern(&self, sourcesize: DSR_SIZE, targetsize: DSR_SIZE, psize: *mut u32, ppattern: Option<*mut DSR_FLOAT2>) -> windows_core::Result<()> {
+        unsafe { (windows_core::Interface::vtable(self).GetOptimalJitterPattern)(windows_core::Interface::as_raw(self), core::mem::transmute(sourcesize), core::mem::transmute(targetsize), psize as _, ppattern.unwrap_or(core::mem::zeroed()) as _).ok() }
+    }
+    pub unsafe fn CreateUpscaler<P0, T>(&self, pcommandqueue: P0) -> windows_core::Result<T>
+    where
+        P0: windows_core::Param<ID3D12CommandQueue>,
+        T: windows_core::Interface,
+    {
+        let mut result__ = core::ptr::null_mut();
+        unsafe { (windows_core::Interface::vtable(self).CreateUpscaler)(windows_core::Interface::as_raw(self), pcommandqueue.param().abi(), &T::IID, &mut result__).and_then(|| windows_core::Type::from_abi(result__)) }
+    }
+    pub unsafe fn GetDevice(&self) -> Option<IDSRDevice> {
+        unsafe { (windows_core::Interface::vtable(self).GetDevice)(windows_core::Interface::as_raw(self)) }
+    }
+}
+#[repr(C)]
+pub struct IDSRSuperResEngine_Vtbl {
+    pub base__: windows_core::IUnknown_Vtbl,
+    pub GetOptimalJitterPattern: unsafe extern "system" fn(*mut core::ffi::c_void, DSR_SIZE, DSR_SIZE, *mut u32, *mut DSR_FLOAT2) -> windows_core::HRESULT,
+    pub CreateUpscaler: unsafe extern "system" fn(*mut core::ffi::c_void, *mut core::ffi::c_void, *const windows_core::GUID, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub GetDevice: unsafe extern "system" fn(*mut core::ffi::c_void) -> Option<IDSRDevice>,
+}
+pub trait IDSRSuperResEngine_Impl: windows_core::IUnknownImpl {
+    fn GetOptimalJitterPattern(&self, sourcesize: &DSR_SIZE, targetsize: &DSR_SIZE, psize: *mut u32, ppattern: *mut DSR_FLOAT2) -> windows_core::Result<()>;
+    fn CreateUpscaler(&self, pcommandqueue: windows_core::Ref<'_, ID3D12CommandQueue>, __midl__idsrsuperresengine0000: *const windows_core::GUID, ppupscaler: *mut *mut core::ffi::c_void) -> windows_core::Result<()>;
+    fn GetDevice(&self) -> Option<IDSRDevice>;
+}
+impl IDSRSuperResEngine_Vtbl {
+    pub const fn new<Identity: IDSRSuperResEngine_Impl, const OFFSET: isize>() -> Self {
+        unsafe extern "system" fn GetOptimalJitterPattern<Identity: IDSRSuperResEngine_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, sourcesize: DSR_SIZE, targetsize: DSR_SIZE, psize: *mut u32, ppattern: *mut DSR_FLOAT2) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                IDSRSuperResEngine_Impl::GetOptimalJitterPattern(this, core::mem::transmute(&sourcesize), core::mem::transmute(&targetsize), core::mem::transmute_copy(&psize), core::mem::transmute_copy(&ppattern)).into()
+            }
+        }
+        unsafe extern "system" fn CreateUpscaler<Identity: IDSRSuperResEngine_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pcommandqueue: *mut core::ffi::c_void, __midl__idsrsuperresengine0000: *const windows_core::GUID, ppupscaler: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                IDSRSuperResEngine_Impl::CreateUpscaler(this, core::mem::transmute_copy(&pcommandqueue), core::mem::transmute_copy(&__midl__idsrsuperresengine0000), core::mem::transmute_copy(&ppupscaler)).into()
+            }
+        }
+        unsafe extern "system" fn GetDevice<Identity: IDSRSuperResEngine_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void) -> Option<IDSRDevice> {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                IDSRSuperResEngine_Impl::GetDevice(this)
+            }
+        }
+        Self {
+            base__: windows_core::IUnknown_Vtbl::new::<Identity, OFFSET>(),
+            GetOptimalJitterPattern: GetOptimalJitterPattern::<Identity, OFFSET>,
+            CreateUpscaler: CreateUpscaler::<Identity, OFFSET>,
+            GetDevice: GetDevice::<Identity, OFFSET>,
+        }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<IDSRSuperResEngine as windows_core::Interface>::IID
+    }
+}
+impl windows_core::RuntimeName for IDSRSuperResEngine {}
+windows_core::imp::define_interface!(IDSRSuperResUpscaler, IDSRSuperResUpscaler_Vtbl, 0x2adc388c_1b5a_4a87_9377_64822e489c12);
+windows_core::imp::interface_hierarchy!(IDSRSuperResUpscaler, windows_core::IUnknown);
+impl IDSRSuperResUpscaler {
+    pub unsafe fn Execute(&self, pexecuteparams: *const DSR_SUPERRES_UPSCALER_EXECUTE_PARAMETERS, timedeltainseconds: f32, flags: DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS) -> windows_core::Result<()> {
+        unsafe { (windows_core::Interface::vtable(self).Execute)(windows_core::Interface::as_raw(self), core::mem::transmute(pexecuteparams), timedeltainseconds, flags).ok() }
+    }
+    pub unsafe fn Evict(&self) -> windows_core::Result<()> {
+        unsafe { (windows_core::Interface::vtable(self).Evict)(windows_core::Interface::as_raw(self)).ok() }
+    }
+    pub unsafe fn MakeResident(&self) -> windows_core::Result<()> {
+        unsafe { (windows_core::Interface::vtable(self).MakeResident)(windows_core::Interface::as_raw(self)).ok() }
+    }
+}
+#[repr(C)]
+pub struct IDSRSuperResUpscaler_Vtbl {
+    pub base__: windows_core::IUnknown_Vtbl,
+    pub Execute: unsafe extern "system" fn(*mut core::ffi::c_void, *const DSR_SUPERRES_UPSCALER_EXECUTE_PARAMETERS, f32, DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS) -> windows_core::HRESULT,
+    pub Evict: unsafe extern "system" fn(*mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub MakeResident: unsafe extern "system" fn(*mut core::ffi::c_void) -> windows_core::HRESULT,
+}
+pub trait IDSRSuperResUpscaler_Impl: windows_core::IUnknownImpl {
+    fn Execute(&self, pexecuteparams: *const DSR_SUPERRES_UPSCALER_EXECUTE_PARAMETERS, timedeltainseconds: f32, flags: DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS) -> windows_core::Result<()>;
+    fn Evict(&self) -> windows_core::Result<()>;
+    fn MakeResident(&self) -> windows_core::Result<()>;
+}
+impl IDSRSuperResUpscaler_Vtbl {
+    pub const fn new<Identity: IDSRSuperResUpscaler_Impl, const OFFSET: isize>() -> Self {
+        unsafe extern "system" fn Execute<Identity: IDSRSuperResUpscaler_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pexecuteparams: *const DSR_SUPERRES_UPSCALER_EXECUTE_PARAMETERS, timedeltainseconds: f32, flags: DSR_SUPERRES_UPSCALER_EXECUTE_FLAGS) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                IDSRSuperResUpscaler_Impl::Execute(this, core::mem::transmute_copy(&pexecuteparams), core::mem::transmute_copy(&timedeltainseconds), core::mem::transmute_copy(&flags)).into()
+            }
+        }
+        unsafe extern "system" fn Evict<Identity: IDSRSuperResUpscaler_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                IDSRSuperResUpscaler_Impl::Evict(this).into()
+            }
+        }
+        unsafe extern "system" fn MakeResident<Identity: IDSRSuperResUpscaler_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                IDSRSuperResUpscaler_Impl::MakeResident(this).into()
+            }
+        }
+        Self {
+            base__: windows_core::IUnknown_Vtbl::new::<Identity, OFFSET>(),
+            Execute: Execute::<Identity, OFFSET>,
+            Evict: Evict::<Identity, OFFSET>,
+            MakeResident: MakeResident::<Identity, OFFSET>,
+        }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<IDSRSuperResUpscaler as windows_core::Interface>::IID
+    }
+}
+impl windows_core::RuntimeName for IDSRSuperResUpscaler {}
 pub const LUID_DEFINED: u32 = 1u32;
 pub const NUM_D3D12_GPU_BASED_VALIDATION_SHADER_PATCH_MODES: D3D12_GPU_BASED_VALIDATION_SHADER_PATCH_MODE = D3D12_GPU_BASED_VALIDATION_SHADER_PATCH_MODE(4i32);
 #[cfg(feature = "Win32_Graphics_Direct3D")]
