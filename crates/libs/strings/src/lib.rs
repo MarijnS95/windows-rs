@@ -1,5 +1,5 @@
 #![doc = include_str!("../readme.md")]
-#![cfg(windows)]
+// #![cfg(windows)]
 #![allow(non_snake_case)]
 #![cfg_attr(
     windows_debugger_visualizer,

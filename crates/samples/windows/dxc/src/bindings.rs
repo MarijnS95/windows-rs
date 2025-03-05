@@ -111,6 +111,30 @@ pub type DxcCreateInstanceProc = Option<
     ) -> windows_core::HRESULT,
 >;
 #[repr(transparent)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct HANDLE(pub *mut core::ffi::c_void);
+impl HANDLE {
+    pub fn is_invalid(&self) -> bool {
+        self.0 == -1 as _ || self.0 == 0 as _
+    }
+}
+impl windows_core::Free for HANDLE {
+    #[inline]
+    unsafe fn free(&mut self) {
+        if !self.is_invalid() {
+            windows_link::link!("kernel32.dll" "system" fn CloseHandle(hobject : *mut core::ffi::c_void) -> i32);
+            unsafe {
+                CloseHandle(self.0);
+            }
+        }
+    }
+}
+impl Default for HANDLE {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct HEAP_FLAGS(pub u32);
 impl HEAP_FLAGS {
