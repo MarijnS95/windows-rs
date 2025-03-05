@@ -26,6 +26,8 @@ pub mod DirectDraw;
 pub mod DirectManipulation;
 #[cfg(feature = "Win32_Graphics_DirectWrite")]
 pub mod DirectWrite;
+#[cfg(feature = "Win32_Graphics_DirectX")]
+pub mod DirectX;
 #[cfg(feature = "Win32_Graphics_Dwm")]
 pub mod Dwm;
 #[cfg(feature = "Win32_Graphics_Dxgi")]

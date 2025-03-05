@@ -514,6 +514,18 @@ where
     unsafe { MFCreateD3D12SynchronizationObject(pdevice.param().abi(), riid, ppvsyncobject as _).ok() }
 }
 #[inline]
+pub unsafe fn MFCreateDXGICrossAdapterBuffer<P1, P2>(riid: *const windows_core::GUID, punkdevice: P1, pmediatype: P2, usubresource: u32) -> windows_core::Result<IMFMediaBuffer>
+where
+    P1: windows_core::Param<windows_core::IUnknown>,
+    P2: windows_core::Param<IMFMediaType>,
+{
+    windows_link::link!("mfplat.dll" "system" fn MFCreateDXGICrossAdapterBuffer(riid : *const windows_core::GUID, punkdevice : * mut core::ffi::c_void, pmediatype : * mut core::ffi::c_void, usubresource : u32, ppbuffer : *mut * mut core::ffi::c_void) -> windows_core::HRESULT);
+    unsafe {
+        let mut result__ = core::mem::zeroed();
+        MFCreateDXGICrossAdapterBuffer(riid, punkdevice.param().abi(), pmediatype.param().abi(), usubresource, &mut result__).and_then(|| windows_core::Type::from_abi(result__))
+    }
+}
+#[inline]
 pub unsafe fn MFCreateDXGIDeviceManager(resettoken: *mut u32, ppdevicemanager: *mut Option<IMFDXGIDeviceManager>) -> windows_core::Result<()> {
     windows_link::link!("mfplat.dll" "system" fn MFCreateDXGIDeviceManager(resettoken : *mut u32, ppdevicemanager : *mut * mut core::ffi::c_void) -> windows_core::HRESULT);
     unsafe { MFCreateDXGIDeviceManager(resettoken as _, core::mem::transmute(ppdevicemanager)).ok() }
@@ -1498,6 +1510,17 @@ pub unsafe fn MFGetContentProtectionSystemCLSID(guidprotectionsystemid: *const w
     }
 }
 #[inline]
+pub unsafe fn MFGetDXGIDeviceManageMode<P0>(pdevicemanager: P0) -> windows_core::Result<MF_DXGI_DEVICE_MANAGER_MODE>
+where
+    P0: windows_core::Param<windows_core::IUnknown>,
+{
+    windows_link::link!("mfplat.dll" "system" fn MFGetDXGIDeviceManageMode(pdevicemanager : * mut core::ffi::c_void, mode : *mut MF_DXGI_DEVICE_MANAGER_MODE) -> windows_core::HRESULT);
+    unsafe {
+        let mut result__ = core::mem::zeroed();
+        MFGetDXGIDeviceManageMode(pdevicemanager.param().abi(), &mut result__).map(|| result__)
+    }
+}
+#[inline]
 pub unsafe fn MFGetLocalId(verifier: &[u8]) -> windows_core::Result<windows_core::PWSTR> {
     windows_link::link!("mf.dll" "system" fn MFGetLocalId(verifier : *const u8, size : u32, id : *mut windows_core::PWSTR) -> windows_core::HRESULT);
     unsafe {
@@ -2380,6 +2403,7 @@ pub const CLSID_EVRPlaybackPipelineOptimizer: windows_core::GUID = windows_core:
 pub const CLSID_EVRTearlessWindowPresenter9: windows_core::GUID = windows_core::GUID::from_u128(0xa0a7a57b_59b2_4919_a694_add0a526c373);
 pub const CLSID_EnhancedVideoRenderer: windows_core::GUID = windows_core::GUID::from_u128(0xfa10746c_9b63_4b6c_bc49_fc300ea5f256);
 pub const CLSID_FGControl: windows_core::GUID = windows_core::GUID::from_u128(0xe436ebb4_524f_11ce_9f53_0020af0ba770);
+pub const CLSID_FaceDetectionMFT: windows_core::GUID = windows_core::GUID::from_u128(0xc1e565e2_f2de_4537_9612_2f30a160eb5c);
 pub const CLSID_FileSource: windows_core::GUID = windows_core::GUID::from_u128(0x701722e0_8ae3_11ce_a85c_00aa002feab5);
 pub const CLSID_FileWriter: windows_core::GUID = windows_core::GUID::from_u128(0x8596e5f0_0da5_11d0_bd21_00a0c911ce86);
 pub const CLSID_FilterGraph: windows_core::GUID = windows_core::GUID::from_u128(0xe436ebb3_524f_11ce_9f53_0020af0ba770);
@@ -2387,6 +2411,7 @@ pub const CLSID_FilterGraphNoThread: windows_core::GUID = windows_core::GUID::fr
 pub const CLSID_FilterGraphPrivateThread: windows_core::GUID = windows_core::GUID::from_u128(0xa3ecbc41_581a_4476_b693_a63340462d8b);
 pub const CLSID_FilterMapper: windows_core::GUID = windows_core::GUID::from_u128(0xe436ebb2_524f_11ce_9f53_0020af0ba770);
 pub const CLSID_FilterMapper2: windows_core::GUID = windows_core::GUID::from_u128(0xcda42200_bd88_11d0_bd4e_00a0c911ce86);
+pub const CLSID_FrameServerClassFactory: windows_core::GUID = windows_core::GUID::from_u128(0x9a93092c_9cdc_49b8_8349_cbcf3145fe0a);
 pub const CLSID_FrameServerNetworkCameraSource: windows_core::GUID = windows_core::GUID::from_u128(0x7a213aa7_866f_414a_8c1a_275c7283a395);
 pub const CLSID_HttpSchemePlugin: windows_core::GUID = windows_core::GUID::from_u128(0x44cb442b_9da9_49df_b3fd_023777b16e50);
 pub const CLSID_ICodecAPIProxy: windows_core::GUID = windows_core::GUID::from_u128(0x7ff0997a_1999_4286_a73c_622b8814e7eb);
@@ -2805,6 +2830,7 @@ pub const CODECAPI_AVRealtimeControl: windows_core::GUID = windows_core::GUID::f
 pub const CODECAPI_AVScenarioInfo: windows_core::GUID = windows_core::GUID::from_u128(0xb28a6e64_3ff9_446a_8a4b_0d7a53413236);
 pub const CODECAPI_CHANGELISTS: windows_core::GUID = windows_core::GUID::from_u128(0x62b12acf_f6b0_47d9_9456_96f22c4e0b9d);
 pub const CODECAPI_CURRENTCHANGELIST: windows_core::GUID = windows_core::GUID::from_u128(0x1cb14e83_7d72_4657_83fd_47a2c5b9d13d);
+pub const CODECAPI_FeatureMapFlagsUsed: windows_core::GUID = windows_core::GUID::from_u128(0x8bfda3b8_7387_4c07_924f_fe63006cf22b);
 pub const CODECAPI_GUID_AVDecAudioInputAAC: windows_core::GUID = windows_core::GUID::from_u128(0x97df7828_b94a_47e2_a4bc_51194db22a4d);
 pub const CODECAPI_GUID_AVDecAudioInputDTS: windows_core::GUID = windows_core::GUID::from_u128(0x600bc0ca_6a1f_4e91_b241_1bbeb1cb19e0);
 pub const CODECAPI_GUID_AVDecAudioInputDolby: windows_core::GUID = windows_core::GUID::from_u128(0x8e4228a0_f000_4e0b_8f54_ab8d24ad61a2);
@@ -6744,10 +6770,13 @@ impl core::ops::Not for D3D12_VIDEO_ENCODER_VALIDATION_FLAGS {
 }
 pub const D3D12_VIDEO_ENCODER_VALIDATION_FLAG_CODEC_CONFIGURATION_NOT_SUPPORTED: D3D12_VIDEO_ENCODER_VALIDATION_FLAGS = D3D12_VIDEO_ENCODER_VALIDATION_FLAGS(16i32);
 pub const D3D12_VIDEO_ENCODER_VALIDATION_FLAG_CODEC_NOT_SUPPORTED: D3D12_VIDEO_ENCODER_VALIDATION_FLAGS = D3D12_VIDEO_ENCODER_VALIDATION_FLAGS(1i32);
+pub const D3D12_VIDEO_ENCODER_VALIDATION_FLAG_DIRTY_REGIONS_NOT_SUPPORTED: D3D12_VIDEO_ENCODER_VALIDATION_FLAGS = D3D12_VIDEO_ENCODER_VALIDATION_FLAGS(16384i32);
 pub const D3D12_VIDEO_ENCODER_VALIDATION_FLAG_GOP_STRUCTURE_NOT_SUPPORTED: D3D12_VIDEO_ENCODER_VALIDATION_FLAGS = D3D12_VIDEO_ENCODER_VALIDATION_FLAGS(2048i32);
 pub const D3D12_VIDEO_ENCODER_VALIDATION_FLAG_INPUT_FORMAT_NOT_SUPPORTED: D3D12_VIDEO_ENCODER_VALIDATION_FLAGS = D3D12_VIDEO_ENCODER_VALIDATION_FLAGS(8i32);
 pub const D3D12_VIDEO_ENCODER_VALIDATION_FLAG_INTRA_REFRESH_MODE_NOT_SUPPORTED: D3D12_VIDEO_ENCODER_VALIDATION_FLAGS = D3D12_VIDEO_ENCODER_VALIDATION_FLAGS(128i32);
+pub const D3D12_VIDEO_ENCODER_VALIDATION_FLAG_MOTION_SEARCH_NOT_SUPPORTED: D3D12_VIDEO_ENCODER_VALIDATION_FLAGS = D3D12_VIDEO_ENCODER_VALIDATION_FLAGS(32768i32);
 pub const D3D12_VIDEO_ENCODER_VALIDATION_FLAG_NONE: D3D12_VIDEO_ENCODER_VALIDATION_FLAGS = D3D12_VIDEO_ENCODER_VALIDATION_FLAGS(0i32);
+pub const D3D12_VIDEO_ENCODER_VALIDATION_FLAG_QPMAP_NOT_SUPPORTED: D3D12_VIDEO_ENCODER_VALIDATION_FLAGS = D3D12_VIDEO_ENCODER_VALIDATION_FLAGS(8192i32);
 pub const D3D12_VIDEO_ENCODER_VALIDATION_FLAG_RATE_CONTROL_CONFIGURATION_NOT_SUPPORTED: D3D12_VIDEO_ENCODER_VALIDATION_FLAGS = D3D12_VIDEO_ENCODER_VALIDATION_FLAGS(64i32);
 pub const D3D12_VIDEO_ENCODER_VALIDATION_FLAG_RATE_CONTROL_MODE_NOT_SUPPORTED: D3D12_VIDEO_ENCODER_VALIDATION_FLAGS = D3D12_VIDEO_ENCODER_VALIDATION_FLAGS(32i32);
 pub const D3D12_VIDEO_ENCODER_VALIDATION_FLAG_RESOLUTION_NOT_SUPPORTED_IN_LIST: D3D12_VIDEO_ENCODER_VALIDATION_FLAGS = D3D12_VIDEO_ENCODER_VALIDATION_FLAGS(512i32);
@@ -9534,6 +9563,22 @@ pub const DXVAp_DeinterlaceContainerDevice: windows_core::GUID = windows_core::G
 pub const DXVAp_ModeMPEG2_A: windows_core::GUID = windows_core::GUID::from_u128(0x1b81be0a_a0c7_11d3_b984_00c04f2e73c5);
 pub const DXVAp_ModeMPEG2_C: windows_core::GUID = windows_core::GUID::from_u128(0x1b81be0c_a0c7_11d3_b984_00c04f2e73c5);
 pub const DXVAp_NoEncrypt: windows_core::GUID = windows_core::GUID::from_u128(0x1b81bed0_a0c7_11d3_b984_00c04f2e73c5);
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct DetectedFaceBound {
+    pub sizeInBytes: u32,
+    pub normalizedXPosition: f32,
+    pub normalizedYPosition: f32,
+    pub normalizedWidth: f32,
+    pub normalizedHeight: f32,
+    pub confidenceValue: i32,
+    pub flags: u64,
+}
+impl Default for DetectedFaceBound {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct DeviceStreamState(pub i32);
@@ -21145,6 +21190,101 @@ impl IMFDXGIBuffer_Vtbl {
     }
 }
 impl windows_core::RuntimeName for IMFDXGIBuffer {}
+windows_core::imp::define_interface!(IMFDXGICrossAdapterBuffer, IMFDXGICrossAdapterBuffer_Vtbl, 0xb25d03fb_d148_45ef_bfed_f778b7566c07);
+windows_core::imp::interface_hierarchy!(IMFDXGICrossAdapterBuffer, windows_core::IUnknown);
+impl IMFDXGICrossAdapterBuffer {
+    pub unsafe fn GetResourceForDevice<P0, T>(&self, punkdevice: P0) -> windows_core::Result<T>
+    where
+        P0: windows_core::Param<windows_core::IUnknown>,
+        T: windows_core::Interface,
+    {
+        let mut result__ = core::ptr::null_mut();
+        unsafe { (windows_core::Interface::vtable(self).GetResourceForDevice)(windows_core::Interface::as_raw(self), punkdevice.param().abi(), &T::IID, &mut result__).and_then(|| windows_core::Type::from_abi(result__)) }
+    }
+    pub unsafe fn GetSubresourceIndexForDevice<P0>(&self, punkdevice: P0) -> windows_core::Result<u32>
+    where
+        P0: windows_core::Param<windows_core::IUnknown>,
+    {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetSubresourceIndexForDevice)(windows_core::Interface::as_raw(self), punkdevice.param().abi(), &mut result__).map(|| result__)
+        }
+    }
+    pub unsafe fn GetUnknownForDevice<P0, T>(&self, punkdevice: P0, guid: *const windows_core::GUID) -> windows_core::Result<T>
+    where
+        P0: windows_core::Param<windows_core::IUnknown>,
+        T: windows_core::Interface,
+    {
+        let mut result__ = core::ptr::null_mut();
+        unsafe { (windows_core::Interface::vtable(self).GetUnknownForDevice)(windows_core::Interface::as_raw(self), punkdevice.param().abi(), guid, &T::IID, &mut result__).and_then(|| windows_core::Type::from_abi(result__)) }
+    }
+    pub unsafe fn SetUnknownForDevice<P0, P2>(&self, punkdevice: P0, guid: *const windows_core::GUID, punkdata: P2) -> windows_core::Result<()>
+    where
+        P0: windows_core::Param<windows_core::IUnknown>,
+        P2: windows_core::Param<windows_core::IUnknown>,
+    {
+        unsafe { (windows_core::Interface::vtable(self).SetUnknownForDevice)(windows_core::Interface::as_raw(self), punkdevice.param().abi(), guid, punkdata.param().abi()).ok() }
+    }
+}
+#[repr(C)]
+pub struct IMFDXGICrossAdapterBuffer_Vtbl {
+    pub base__: windows_core::IUnknown_Vtbl,
+    pub GetResourceForDevice: unsafe extern "system" fn(*mut core::ffi::c_void, *mut core::ffi::c_void, *const windows_core::GUID, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub GetSubresourceIndexForDevice: unsafe extern "system" fn(*mut core::ffi::c_void, *mut core::ffi::c_void, *mut u32) -> windows_core::HRESULT,
+    pub GetUnknownForDevice: unsafe extern "system" fn(*mut core::ffi::c_void, *mut core::ffi::c_void, *const windows_core::GUID, *const windows_core::GUID, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub SetUnknownForDevice: unsafe extern "system" fn(*mut core::ffi::c_void, *mut core::ffi::c_void, *const windows_core::GUID, *mut core::ffi::c_void) -> windows_core::HRESULT,
+}
+pub trait IMFDXGICrossAdapterBuffer_Impl: windows_core::IUnknownImpl {
+    fn GetResourceForDevice(&self, punkdevice: windows_core::Ref<'_, windows_core::IUnknown>, riid: *const windows_core::GUID, ppvobject: *mut *mut core::ffi::c_void) -> windows_core::Result<()>;
+    fn GetSubresourceIndexForDevice(&self, punkdevice: windows_core::Ref<'_, windows_core::IUnknown>) -> windows_core::Result<u32>;
+    fn GetUnknownForDevice(&self, punkdevice: windows_core::Ref<'_, windows_core::IUnknown>, guid: *const windows_core::GUID, riid: *const windows_core::GUID, ppvobject: *mut *mut core::ffi::c_void) -> windows_core::Result<()>;
+    fn SetUnknownForDevice(&self, punkdevice: windows_core::Ref<'_, windows_core::IUnknown>, guid: *const windows_core::GUID, punkdata: windows_core::Ref<'_, windows_core::IUnknown>) -> windows_core::Result<()>;
+}
+impl IMFDXGICrossAdapterBuffer_Vtbl {
+    pub const fn new<Identity: IMFDXGICrossAdapterBuffer_Impl, const OFFSET: isize>() -> Self {
+        unsafe extern "system" fn GetResourceForDevice<Identity: IMFDXGICrossAdapterBuffer_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, punkdevice: *mut core::ffi::c_void, riid: *const windows_core::GUID, ppvobject: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                IMFDXGICrossAdapterBuffer_Impl::GetResourceForDevice(this, core::mem::transmute_copy(&punkdevice), core::mem::transmute_copy(&riid), core::mem::transmute_copy(&ppvobject)).into()
+            }
+        }
+        unsafe extern "system" fn GetSubresourceIndexForDevice<Identity: IMFDXGICrossAdapterBuffer_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, punkdevice: *mut core::ffi::c_void, pusubresource: *mut u32) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IMFDXGICrossAdapterBuffer_Impl::GetSubresourceIndexForDevice(this, core::mem::transmute_copy(&punkdevice)) {
+                    Ok(ok__) => {
+                        pusubresource.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn GetUnknownForDevice<Identity: IMFDXGICrossAdapterBuffer_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, punkdevice: *mut core::ffi::c_void, guid: *const windows_core::GUID, riid: *const windows_core::GUID, ppvobject: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                IMFDXGICrossAdapterBuffer_Impl::GetUnknownForDevice(this, core::mem::transmute_copy(&punkdevice), core::mem::transmute_copy(&guid), core::mem::transmute_copy(&riid), core::mem::transmute_copy(&ppvobject)).into()
+            }
+        }
+        unsafe extern "system" fn SetUnknownForDevice<Identity: IMFDXGICrossAdapterBuffer_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, punkdevice: *mut core::ffi::c_void, guid: *const windows_core::GUID, punkdata: *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                IMFDXGICrossAdapterBuffer_Impl::SetUnknownForDevice(this, core::mem::transmute_copy(&punkdevice), core::mem::transmute_copy(&guid), core::mem::transmute_copy(&punkdata)).into()
+            }
+        }
+        Self {
+            base__: windows_core::IUnknown_Vtbl::new::<Identity, OFFSET>(),
+            GetResourceForDevice: GetResourceForDevice::<Identity, OFFSET>,
+            GetSubresourceIndexForDevice: GetSubresourceIndexForDevice::<Identity, OFFSET>,
+            GetUnknownForDevice: GetUnknownForDevice::<Identity, OFFSET>,
+            SetUnknownForDevice: SetUnknownForDevice::<Identity, OFFSET>,
+        }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<IMFDXGICrossAdapterBuffer as windows_core::Interface>::IID
+    }
+}
+impl windows_core::RuntimeName for IMFDXGICrossAdapterBuffer {}
 windows_core::imp::define_interface!(IMFDXGIDeviceManager, IMFDXGIDeviceManager_Vtbl, 0xeb533d5d_2db6_40f8_97a9_494692014f07);
 windows_core::imp::interface_hierarchy!(IMFDXGIDeviceManager, windows_core::IUnknown);
 impl IMFDXGIDeviceManager {
@@ -21706,6 +21846,51 @@ impl IMFDeviceTransform_Vtbl {
     }
 }
 impl windows_core::RuntimeName for IMFDeviceTransform {}
+windows_core::imp::define_interface!(IMFDeviceTransform2, IMFDeviceTransform2_Vtbl, 0xf5980fed_b521_488f_909f_1a5fcecedb14);
+impl core::ops::Deref for IMFDeviceTransform2 {
+    type Target = IMFDeviceTransform;
+    fn deref(&self) -> &Self::Target {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+windows_core::imp::interface_hierarchy!(IMFDeviceTransform2, windows_core::IUnknown, IMFDeviceTransform);
+impl IMFDeviceTransform2 {
+    pub unsafe fn GetTransformAttributes(&self) -> windows_core::Result<IMFAttributes> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetTransformAttributes)(windows_core::Interface::as_raw(self), &mut result__).and_then(|| windows_core::Type::from_abi(result__))
+        }
+    }
+}
+#[repr(C)]
+pub struct IMFDeviceTransform2_Vtbl {
+    pub base__: IMFDeviceTransform_Vtbl,
+    pub GetTransformAttributes: unsafe extern "system" fn(*mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+}
+pub trait IMFDeviceTransform2_Impl: IMFDeviceTransform_Impl {
+    fn GetTransformAttributes(&self) -> windows_core::Result<IMFAttributes>;
+}
+impl IMFDeviceTransform2_Vtbl {
+    pub const fn new<Identity: IMFDeviceTransform2_Impl, const OFFSET: isize>() -> Self {
+        unsafe extern "system" fn GetTransformAttributes<Identity: IMFDeviceTransform2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, ppattributes: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IMFDeviceTransform2_Impl::GetTransformAttributes(this) {
+                    Ok(ok__) => {
+                        ppattributes.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        Self { base__: IMFDeviceTransform_Vtbl::new::<Identity, OFFSET>(), GetTransformAttributes: GetTransformAttributes::<Identity, OFFSET> }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<IMFDeviceTransform2 as windows_core::Interface>::IID || iid == &<IMFDeviceTransform as windows_core::Interface>::IID
+    }
+}
+impl windows_core::RuntimeName for IMFDeviceTransform2 {}
 windows_core::imp::define_interface!(IMFDeviceTransformCallback, IMFDeviceTransformCallback_Vtbl, 0x6d5cb646_29ec_41fb_8179_8c4c6d750811);
 windows_core::imp::interface_hierarchy!(IMFDeviceTransformCallback, windows_core::IUnknown);
 impl IMFDeviceTransformCallback {
@@ -22189,6 +22374,84 @@ impl IMFExtendedDRMTypeSupport_Vtbl {
     }
 }
 impl windows_core::RuntimeName for IMFExtendedDRMTypeSupport {}
+windows_core::imp::define_interface!(IMFFaceDetectionTransform, IMFFaceDetectionTransform_Vtbl, 0xddd59578_d0e7_46e2_be8c_1ce76ad147c0);
+windows_core::imp::interface_hierarchy!(IMFFaceDetectionTransform, windows_core::IUnknown);
+impl IMFFaceDetectionTransform {
+    pub unsafe fn SetDetectionCallback<P0>(&self, callback: P0, callbacktoken: *mut *mut core::ffi::c_void) -> windows_core::Result<()>
+    where
+        P0: windows_core::Param<IMFFaceDetectionTransformCallback>,
+    {
+        unsafe { (windows_core::Interface::vtable(self).SetDetectionCallback)(windows_core::Interface::as_raw(self), callback.param().abi(), callbacktoken as _).ok() }
+    }
+    pub unsafe fn ClearDetectionCallback(&self, callbacktoken: *const core::ffi::c_void) -> windows_core::Result<()> {
+        unsafe { (windows_core::Interface::vtable(self).ClearDetectionCallback)(windows_core::Interface::as_raw(self), callbacktoken).ok() }
+    }
+}
+#[repr(C)]
+pub struct IMFFaceDetectionTransform_Vtbl {
+    pub base__: windows_core::IUnknown_Vtbl,
+    pub SetDetectionCallback: unsafe extern "system" fn(*mut core::ffi::c_void, *mut core::ffi::c_void, *mut *mut core::ffi::c_void) -> windows_core::HRESULT,
+    pub ClearDetectionCallback: unsafe extern "system" fn(*mut core::ffi::c_void, *const core::ffi::c_void) -> windows_core::HRESULT,
+}
+pub trait IMFFaceDetectionTransform_Impl: windows_core::IUnknownImpl {
+    fn SetDetectionCallback(&self, callback: windows_core::Ref<'_, IMFFaceDetectionTransformCallback>, callbacktoken: *mut *mut core::ffi::c_void) -> windows_core::Result<()>;
+    fn ClearDetectionCallback(&self, callbacktoken: *const core::ffi::c_void) -> windows_core::Result<()>;
+}
+impl IMFFaceDetectionTransform_Vtbl {
+    pub const fn new<Identity: IMFFaceDetectionTransform_Impl, const OFFSET: isize>() -> Self {
+        unsafe extern "system" fn SetDetectionCallback<Identity: IMFFaceDetectionTransform_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, callback: *mut core::ffi::c_void, callbacktoken: *mut *mut core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                IMFFaceDetectionTransform_Impl::SetDetectionCallback(this, core::mem::transmute_copy(&callback), core::mem::transmute_copy(&callbacktoken)).into()
+            }
+        }
+        unsafe extern "system" fn ClearDetectionCallback<Identity: IMFFaceDetectionTransform_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, callbacktoken: *const core::ffi::c_void) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                IMFFaceDetectionTransform_Impl::ClearDetectionCallback(this, core::mem::transmute_copy(&callbacktoken)).into()
+            }
+        }
+        Self {
+            base__: windows_core::IUnknown_Vtbl::new::<Identity, OFFSET>(),
+            SetDetectionCallback: SetDetectionCallback::<Identity, OFFSET>,
+            ClearDetectionCallback: ClearDetectionCallback::<Identity, OFFSET>,
+        }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<IMFFaceDetectionTransform as windows_core::Interface>::IID
+    }
+}
+impl windows_core::RuntimeName for IMFFaceDetectionTransform {}
+windows_core::imp::define_interface!(IMFFaceDetectionTransformCallback, IMFFaceDetectionTransformCallback_Vtbl, 0x0bfd1ade_0421_4909_acb7_7a7125416881);
+windows_core::imp::interface_hierarchy!(IMFFaceDetectionTransformCallback, windows_core::IUnknown);
+impl IMFFaceDetectionTransformCallback {
+    pub unsafe fn OnFaceDetectionResult(&self, detectedfacebounds: &[DetectedFaceBound]) {
+        unsafe { (windows_core::Interface::vtable(self).OnFaceDetectionResult)(windows_core::Interface::as_raw(self), detectedfacebounds.len().try_into().unwrap(), core::mem::transmute(detectedfacebounds.as_ptr())) }
+    }
+}
+#[repr(C)]
+pub struct IMFFaceDetectionTransformCallback_Vtbl {
+    pub base__: windows_core::IUnknown_Vtbl,
+    pub OnFaceDetectionResult: unsafe extern "system" fn(*mut core::ffi::c_void, u32, *const DetectedFaceBound),
+}
+pub trait IMFFaceDetectionTransformCallback_Impl: windows_core::IUnknownImpl {
+    fn OnFaceDetectionResult(&self, countofbounds: u32, detectedfacebounds: *const DetectedFaceBound);
+}
+impl IMFFaceDetectionTransformCallback_Vtbl {
+    pub const fn new<Identity: IMFFaceDetectionTransformCallback_Impl, const OFFSET: isize>() -> Self {
+        unsafe extern "system" fn OnFaceDetectionResult<Identity: IMFFaceDetectionTransformCallback_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, countofbounds: u32, detectedfacebounds: *const DetectedFaceBound) {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                IMFFaceDetectionTransformCallback_Impl::OnFaceDetectionResult(this, core::mem::transmute_copy(&countofbounds), core::mem::transmute_copy(&detectedfacebounds))
+            }
+        }
+        Self { base__: windows_core::IUnknown_Vtbl::new::<Identity, OFFSET>(), OnFaceDetectionResult: OnFaceDetectionResult::<Identity, OFFSET> }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<IMFFaceDetectionTransformCallback as windows_core::Interface>::IID
+    }
+}
+impl windows_core::RuntimeName for IMFFaceDetectionTransformCallback {}
 windows_core::imp::define_interface!(IMFFieldOfUseMFTUnlock, IMFFieldOfUseMFTUnlock_Vtbl, 0x508e71d3_ec66_4fc3_8775_b4b9ed6ba847);
 windows_core::imp::interface_hierarchy!(IMFFieldOfUseMFTUnlock, windows_core::IUnknown);
 impl IMFFieldOfUseMFTUnlock {
@@ -43637,28 +43900,28 @@ pub const MACROBLOCK_FLAG_MOTION: u32 = 4u32;
 pub const MACROBLOCK_FLAG_SKIP: u32 = 1u32;
 pub const MACROBLOCK_FLAG_VIDEO: u32 = 8u32;
 pub const MAX_SUBSTREAMS: u32 = 15u32;
-pub const MEAudioSessionDeviceRemoved: MF_EVENT_TYPE = MF_EVENT_TYPE(315i32);
-pub const MEAudioSessionDisconnected: MF_EVENT_TYPE = MF_EVENT_TYPE(320i32);
-pub const MEAudioSessionExclusiveModeOverride: MF_EVENT_TYPE = MF_EVENT_TYPE(321i32);
-pub const MEAudioSessionFormatChanged: MF_EVENT_TYPE = MF_EVENT_TYPE(319i32);
-pub const MEAudioSessionGroupingParamChanged: MF_EVENT_TYPE = MF_EVENT_TYPE(317i32);
-pub const MEAudioSessionIconChanged: MF_EVENT_TYPE = MF_EVENT_TYPE(318i32);
-pub const MEAudioSessionNameChanged: MF_EVENT_TYPE = MF_EVENT_TYPE(313i32);
-pub const MEAudioSessionServerShutdown: MF_EVENT_TYPE = MF_EVENT_TYPE(316i32);
-pub const MEAudioSessionVolumeChanged: MF_EVENT_TYPE = MF_EVENT_TYPE(314i32);
-pub const MEBufferingStarted: MF_EVENT_TYPE = MF_EVENT_TYPE(122i32);
-pub const MEBufferingStopped: MF_EVENT_TYPE = MF_EVENT_TYPE(123i32);
-pub const MEByteStreamCharacteristicsChanged: MF_EVENT_TYPE = MF_EVENT_TYPE(700i32);
-pub const MECaptureAudioSessionDeviceRemoved: MF_EVENT_TYPE = MF_EVENT_TYPE(323i32);
-pub const MECaptureAudioSessionDisconnected: MF_EVENT_TYPE = MF_EVENT_TYPE(325i32);
-pub const MECaptureAudioSessionExclusiveModeOverride: MF_EVENT_TYPE = MF_EVENT_TYPE(326i32);
-pub const MECaptureAudioSessionFormatChanged: MF_EVENT_TYPE = MF_EVENT_TYPE(324i32);
-pub const MECaptureAudioSessionServerShutdown: MF_EVENT_TYPE = MF_EVENT_TYPE(327i32);
-pub const MECaptureAudioSessionVolumeChanged: MF_EVENT_TYPE = MF_EVENT_TYPE(322i32);
-pub const MEConnectEnd: MF_EVENT_TYPE = MF_EVENT_TYPE(125i32);
-pub const MEConnectStart: MF_EVENT_TYPE = MF_EVENT_TYPE(124i32);
-pub const MEContentProtectionMessage: MF_EVENT_TYPE = MF_EVENT_TYPE(402i32);
-pub const MEContentProtectionMetadata: MF_EVENT_TYPE = MF_EVENT_TYPE(900i32);
+pub const MEAudioSessionDeviceRemoved: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(315i32);
+pub const MEAudioSessionDisconnected: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(320i32);
+pub const MEAudioSessionExclusiveModeOverride: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(321i32);
+pub const MEAudioSessionFormatChanged: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(319i32);
+pub const MEAudioSessionGroupingParamChanged: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(317i32);
+pub const MEAudioSessionIconChanged: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(318i32);
+pub const MEAudioSessionNameChanged: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(313i32);
+pub const MEAudioSessionServerShutdown: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(316i32);
+pub const MEAudioSessionVolumeChanged: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(314i32);
+pub const MEBufferingStarted: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(122i32);
+pub const MEBufferingStopped: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(123i32);
+pub const MEByteStreamCharacteristicsChanged: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(700i32);
+pub const MECaptureAudioSessionDeviceRemoved: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(323i32);
+pub const MECaptureAudioSessionDisconnected: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(325i32);
+pub const MECaptureAudioSessionExclusiveModeOverride: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(326i32);
+pub const MECaptureAudioSessionFormatChanged: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(324i32);
+pub const MECaptureAudioSessionServerShutdown: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(327i32);
+pub const MECaptureAudioSessionVolumeChanged: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(322i32);
+pub const MEConnectEnd: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(125i32);
+pub const MEConnectStart: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(124i32);
+pub const MEContentProtectionMessage: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(402i32);
+pub const MEContentProtectionMetadata: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(900i32);
 pub const MEDIASINK_CANNOT_MATCH_CLOCK: u32 = 2u32;
 pub const MEDIASINK_CAN_PREROLL: u32 = 16u32;
 pub const MEDIASINK_CLOCK_REQUIRED: u32 = 8u32;
@@ -43866,104 +44129,104 @@ pub const MEDIATYPE_Video: windows_core::GUID = windows_core::GUID::from_u128(0x
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct MEDIA_EVENT_GENERATOR_GET_EVENT_FLAGS(pub u32);
 pub const MEDeviceStreamCreated: windows_core::GUID = windows_core::GUID::from_u128(0x0252a1cf_3540_43b4_9164_d72eb405fa40);
-pub const MEDeviceThermalStateChanged: MF_EVENT_TYPE = MF_EVENT_TYPE(950i32);
-pub const MEEnablerCompleted: MF_EVENT_TYPE = MF_EVENT_TYPE(119i32);
-pub const MEEnablerProgress: MF_EVENT_TYPE = MF_EVENT_TYPE(118i32);
-pub const MEEncodingParameters: MF_EVENT_TYPE = MF_EVENT_TYPE(803i32);
-pub const MEEndOfPresentation: MF_EVENT_TYPE = MF_EVENT_TYPE(211i32);
-pub const MEEndOfPresentationSegment: MF_EVENT_TYPE = MF_EVENT_TYPE(218i32);
-pub const MEEndOfStream: MF_EVENT_TYPE = MF_EVENT_TYPE(212i32);
-pub const MEError: MF_EVENT_TYPE = MF_EVENT_TYPE(1i32);
-pub const MEExtendedType: MF_EVENT_TYPE = MF_EVENT_TYPE(2i32);
-pub const MEGenericV1Anchor: MF_EVENT_TYPE = MF_EVENT_TYPE(3i32);
-pub const MEIndividualizationCompleted: MF_EVENT_TYPE = MF_EVENT_TYPE(117i32);
-pub const MEIndividualizationStart: MF_EVENT_TYPE = MF_EVENT_TYPE(116i32);
-pub const MELicenseAcquisitionCompleted: MF_EVENT_TYPE = MF_EVENT_TYPE(115i32);
-pub const MELicenseAcquisitionStart: MF_EVENT_TYPE = MF_EVENT_TYPE(114i32);
-pub const MEMediaSample: MF_EVENT_TYPE = MF_EVENT_TYPE(213i32);
-pub const MENewPresentation: MF_EVENT_TYPE = MF_EVENT_TYPE(113i32);
-pub const MENewStream: MF_EVENT_TYPE = MF_EVENT_TYPE(205i32);
-pub const MENonFatalError: MF_EVENT_TYPE = MF_EVENT_TYPE(3i32);
-pub const MEPolicyChanged: MF_EVENT_TYPE = MF_EVENT_TYPE(401i32);
-pub const MEPolicyError: MF_EVENT_TYPE = MF_EVENT_TYPE(120i32);
-pub const MEPolicyReport: MF_EVENT_TYPE = MF_EVENT_TYPE(121i32);
-pub const MEPolicySet: MF_EVENT_TYPE = MF_EVENT_TYPE(403i32);
-pub const MEQualityNotify: MF_EVENT_TYPE = MF_EVENT_TYPE(311i32);
-pub const MEReconnectEnd: MF_EVENT_TYPE = MF_EVENT_TYPE(127i32);
-pub const MEReconnectStart: MF_EVENT_TYPE = MF_EVENT_TYPE(126i32);
-pub const MERendererEvent: MF_EVENT_TYPE = MF_EVENT_TYPE(128i32);
-pub const MEReservedMax: MF_EVENT_TYPE = MF_EVENT_TYPE(10000i32);
-pub const MESequencerSourceTopologyUpdated: MF_EVENT_TYPE = MF_EVENT_TYPE(222i32);
-pub const MESessionCapabilitiesChanged: MF_EVENT_TYPE = MF_EVENT_TYPE(110i32);
-pub const MESessionClosed: MF_EVENT_TYPE = MF_EVENT_TYPE(106i32);
-pub const MESessionEnded: MF_EVENT_TYPE = MF_EVENT_TYPE(107i32);
-pub const MESessionNotifyPresentationTime: MF_EVENT_TYPE = MF_EVENT_TYPE(112i32);
-pub const MESessionPaused: MF_EVENT_TYPE = MF_EVENT_TYPE(104i32);
-pub const MESessionRateChanged: MF_EVENT_TYPE = MF_EVENT_TYPE(108i32);
-pub const MESessionScrubSampleComplete: MF_EVENT_TYPE = MF_EVENT_TYPE(109i32);
-pub const MESessionStarted: MF_EVENT_TYPE = MF_EVENT_TYPE(103i32);
-pub const MESessionStopped: MF_EVENT_TYPE = MF_EVENT_TYPE(105i32);
-pub const MESessionStreamSinkFormatChanged: MF_EVENT_TYPE = MF_EVENT_TYPE(129i32);
-pub const MESessionTopologiesCleared: MF_EVENT_TYPE = MF_EVENT_TYPE(102i32);
-pub const MESessionTopologySet: MF_EVENT_TYPE = MF_EVENT_TYPE(101i32);
-pub const MESessionTopologyStatus: MF_EVENT_TYPE = MF_EVENT_TYPE(111i32);
-pub const MESessionUnknown: MF_EVENT_TYPE = MF_EVENT_TYPE(100i32);
-pub const MESessionV1Anchor: MF_EVENT_TYPE = MF_EVENT_TYPE(129i32);
-pub const MESinkInvalidated: MF_EVENT_TYPE = MF_EVENT_TYPE(312i32);
-pub const MESinkUnknown: MF_EVENT_TYPE = MF_EVENT_TYPE(300i32);
-pub const MESinkV1Anchor: MF_EVENT_TYPE = MF_EVENT_TYPE(321i32);
-pub const MESinkV2Anchor: MF_EVENT_TYPE = MF_EVENT_TYPE(327i32);
-pub const MESourceCharacteristicsChanged: MF_EVENT_TYPE = MF_EVENT_TYPE(219i32);
-pub const MESourceMetadataChanged: MF_EVENT_TYPE = MF_EVENT_TYPE(221i32);
-pub const MESourcePaused: MF_EVENT_TYPE = MF_EVENT_TYPE(209i32);
-pub const MESourceRateChangeRequested: MF_EVENT_TYPE = MF_EVENT_TYPE(220i32);
-pub const MESourceRateChanged: MF_EVENT_TYPE = MF_EVENT_TYPE(217i32);
-pub const MESourceSeeked: MF_EVENT_TYPE = MF_EVENT_TYPE(203i32);
-pub const MESourceStarted: MF_EVENT_TYPE = MF_EVENT_TYPE(201i32);
-pub const MESourceStopped: MF_EVENT_TYPE = MF_EVENT_TYPE(207i32);
-pub const MESourceUnknown: MF_EVENT_TYPE = MF_EVENT_TYPE(200i32);
-pub const MESourceV1Anchor: MF_EVENT_TYPE = MF_EVENT_TYPE(222i32);
-pub const MEStreamFormatChanged: MF_EVENT_TYPE = MF_EVENT_TYPE(216i32);
-pub const MEStreamPaused: MF_EVENT_TYPE = MF_EVENT_TYPE(210i32);
-pub const MEStreamSeeked: MF_EVENT_TYPE = MF_EVENT_TYPE(204i32);
-pub const MEStreamSinkDeviceChanged: MF_EVENT_TYPE = MF_EVENT_TYPE(310i32);
-pub const MEStreamSinkFormatChanged: MF_EVENT_TYPE = MF_EVENT_TYPE(309i32);
-pub const MEStreamSinkFormatInvalidated: MF_EVENT_TYPE = MF_EVENT_TYPE(802i32);
-pub const MEStreamSinkMarker: MF_EVENT_TYPE = MF_EVENT_TYPE(306i32);
-pub const MEStreamSinkPaused: MF_EVENT_TYPE = MF_EVENT_TYPE(303i32);
-pub const MEStreamSinkPrerolled: MF_EVENT_TYPE = MF_EVENT_TYPE(307i32);
-pub const MEStreamSinkRateChanged: MF_EVENT_TYPE = MF_EVENT_TYPE(304i32);
-pub const MEStreamSinkRequestSample: MF_EVENT_TYPE = MF_EVENT_TYPE(305i32);
-pub const MEStreamSinkScrubSampleComplete: MF_EVENT_TYPE = MF_EVENT_TYPE(308i32);
-pub const MEStreamSinkStarted: MF_EVENT_TYPE = MF_EVENT_TYPE(301i32);
-pub const MEStreamSinkStopped: MF_EVENT_TYPE = MF_EVENT_TYPE(302i32);
-pub const MEStreamStarted: MF_EVENT_TYPE = MF_EVENT_TYPE(202i32);
-pub const MEStreamStopped: MF_EVENT_TYPE = MF_EVENT_TYPE(208i32);
-pub const MEStreamThinMode: MF_EVENT_TYPE = MF_EVENT_TYPE(215i32);
-pub const MEStreamTick: MF_EVENT_TYPE = MF_EVENT_TYPE(214i32);
-pub const METransformDrainComplete: MF_EVENT_TYPE = MF_EVENT_TYPE(603i32);
-pub const METransformHaveOutput: MF_EVENT_TYPE = MF_EVENT_TYPE(602i32);
-pub const METransformInputStreamStateChanged: MF_EVENT_TYPE = MF_EVENT_TYPE(605i32);
-pub const METransformMarker: MF_EVENT_TYPE = MF_EVENT_TYPE(604i32);
-pub const METransformNeedInput: MF_EVENT_TYPE = MF_EVENT_TYPE(601i32);
-pub const METransformUnknown: MF_EVENT_TYPE = MF_EVENT_TYPE(600i32);
-pub const METrustUnknown: MF_EVENT_TYPE = MF_EVENT_TYPE(400i32);
-pub const METrustV1Anchor: MF_EVENT_TYPE = MF_EVENT_TYPE(403i32);
-pub const MEUnknown: MF_EVENT_TYPE = MF_EVENT_TYPE(0i32);
-pub const MEUpdatedStream: MF_EVENT_TYPE = MF_EVENT_TYPE(206i32);
-pub const MEVideoCaptureDevicePreempted: MF_EVENT_TYPE = MF_EVENT_TYPE(801i32);
-pub const MEVideoCaptureDeviceRemoved: MF_EVENT_TYPE = MF_EVENT_TYPE(800i32);
-pub const MEWMDRMIndividualizationCompleted: MF_EVENT_TYPE = MF_EVENT_TYPE(508i32);
-pub const MEWMDRMIndividualizationProgress: MF_EVENT_TYPE = MF_EVENT_TYPE(513i32);
-pub const MEWMDRMLicenseAcquisitionCompleted: MF_EVENT_TYPE = MF_EVENT_TYPE(506i32);
-pub const MEWMDRMLicenseBackupCompleted: MF_EVENT_TYPE = MF_EVENT_TYPE(500i32);
-pub const MEWMDRMLicenseBackupProgress: MF_EVENT_TYPE = MF_EVENT_TYPE(501i32);
-pub const MEWMDRMLicenseRestoreCompleted: MF_EVENT_TYPE = MF_EVENT_TYPE(502i32);
-pub const MEWMDRMLicenseRestoreProgress: MF_EVENT_TYPE = MF_EVENT_TYPE(503i32);
-pub const MEWMDRMLicenseStoreCleaned: MF_EVENT_TYPE = MF_EVENT_TYPE(515i32);
-pub const MEWMDRMProximityCompleted: MF_EVENT_TYPE = MF_EVENT_TYPE(514i32);
-pub const MEWMDRMRevocationDownloadCompleted: MF_EVENT_TYPE = MF_EVENT_TYPE(516i32);
-pub const MEWMDRMV1Anchor: MF_EVENT_TYPE = MF_EVENT_TYPE(516i32);
+pub const MEDeviceThermalStateChanged: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(950i32);
+pub const MEEnablerCompleted: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(119i32);
+pub const MEEnablerProgress: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(118i32);
+pub const MEEncodingParameters: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(803i32);
+pub const MEEndOfPresentation: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(211i32);
+pub const MEEndOfPresentationSegment: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(218i32);
+pub const MEEndOfStream: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(212i32);
+pub const MEError: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(1i32);
+pub const MEExtendedType: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(2i32);
+pub const MEGenericV1Anchor: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(3i32);
+pub const MEIndividualizationCompleted: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(117i32);
+pub const MEIndividualizationStart: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(116i32);
+pub const MELicenseAcquisitionCompleted: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(115i32);
+pub const MELicenseAcquisitionStart: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(114i32);
+pub const MEMediaSample: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(213i32);
+pub const MENewPresentation: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(113i32);
+pub const MENewStream: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(205i32);
+pub const MENonFatalError: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(3i32);
+pub const MEPolicyChanged: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(401i32);
+pub const MEPolicyError: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(120i32);
+pub const MEPolicyReport: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(121i32);
+pub const MEPolicySet: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(403i32);
+pub const MEQualityNotify: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(311i32);
+pub const MEReconnectEnd: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(127i32);
+pub const MEReconnectStart: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(126i32);
+pub const MERendererEvent: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(128i32);
+pub const MEReservedMax: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(10000i32);
+pub const MESequencerSourceTopologyUpdated: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(222i32);
+pub const MESessionCapabilitiesChanged: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(110i32);
+pub const MESessionClosed: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(106i32);
+pub const MESessionEnded: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(107i32);
+pub const MESessionNotifyPresentationTime: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(112i32);
+pub const MESessionPaused: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(104i32);
+pub const MESessionRateChanged: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(108i32);
+pub const MESessionScrubSampleComplete: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(109i32);
+pub const MESessionStarted: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(103i32);
+pub const MESessionStopped: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(105i32);
+pub const MESessionStreamSinkFormatChanged: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(129i32);
+pub const MESessionTopologiesCleared: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(102i32);
+pub const MESessionTopologySet: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(101i32);
+pub const MESessionTopologyStatus: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(111i32);
+pub const MESessionUnknown: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(100i32);
+pub const MESessionV1Anchor: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(129i32);
+pub const MESinkInvalidated: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(312i32);
+pub const MESinkUnknown: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(300i32);
+pub const MESinkV1Anchor: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(321i32);
+pub const MESinkV2Anchor: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(327i32);
+pub const MESourceCharacteristicsChanged: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(219i32);
+pub const MESourceMetadataChanged: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(221i32);
+pub const MESourcePaused: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(209i32);
+pub const MESourceRateChangeRequested: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(220i32);
+pub const MESourceRateChanged: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(217i32);
+pub const MESourceSeeked: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(203i32);
+pub const MESourceStarted: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(201i32);
+pub const MESourceStopped: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(207i32);
+pub const MESourceUnknown: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(200i32);
+pub const MESourceV1Anchor: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(222i32);
+pub const MEStreamFormatChanged: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(216i32);
+pub const MEStreamPaused: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(210i32);
+pub const MEStreamSeeked: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(204i32);
+pub const MEStreamSinkDeviceChanged: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(310i32);
+pub const MEStreamSinkFormatChanged: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(309i32);
+pub const MEStreamSinkFormatInvalidated: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(802i32);
+pub const MEStreamSinkMarker: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(306i32);
+pub const MEStreamSinkPaused: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(303i32);
+pub const MEStreamSinkPrerolled: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(307i32);
+pub const MEStreamSinkRateChanged: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(304i32);
+pub const MEStreamSinkRequestSample: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(305i32);
+pub const MEStreamSinkScrubSampleComplete: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(308i32);
+pub const MEStreamSinkStarted: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(301i32);
+pub const MEStreamSinkStopped: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(302i32);
+pub const MEStreamStarted: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(202i32);
+pub const MEStreamStopped: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(208i32);
+pub const MEStreamThinMode: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(215i32);
+pub const MEStreamTick: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(214i32);
+pub const METransformDrainComplete: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(603i32);
+pub const METransformHaveOutput: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(602i32);
+pub const METransformInputStreamStateChanged: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(605i32);
+pub const METransformMarker: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(604i32);
+pub const METransformNeedInput: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(601i32);
+pub const METransformUnknown: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(600i32);
+pub const METrustUnknown: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(400i32);
+pub const METrustV1Anchor: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(403i32);
+pub const MEUnknown: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(0i32);
+pub const MEUpdatedStream: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(206i32);
+pub const MEVideoCaptureDevicePreempted: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(801i32);
+pub const MEVideoCaptureDeviceRemoved: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(800i32);
+pub const MEWMDRMIndividualizationCompleted: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(508i32);
+pub const MEWMDRMIndividualizationProgress: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(513i32);
+pub const MEWMDRMLicenseAcquisitionCompleted: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(506i32);
+pub const MEWMDRMLicenseBackupCompleted: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(500i32);
+pub const MEWMDRMLicenseBackupProgress: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(501i32);
+pub const MEWMDRMLicenseRestoreCompleted: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(502i32);
+pub const MEWMDRMLicenseRestoreProgress: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(503i32);
+pub const MEWMDRMLicenseStoreCleaned: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(515i32);
+pub const MEWMDRMProximityCompleted: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(514i32);
+pub const MEWMDRMRevocationDownloadCompleted: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(516i32);
+pub const MEWMDRMV1Anchor: __MIDL___MIDL_itf_mfobjects_0000_0013_0001 = __MIDL___MIDL_itf_mfobjects_0000_0013_0001(516i32);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct MF2DBuffer_LockFlags(pub i32);
@@ -44134,6 +44397,8 @@ pub const MFAudioFormat_Float_SpatialObjects: windows_core::GUID = windows_core:
 pub const MFAudioFormat_LPCM: windows_core::GUID = windows_core::GUID::from_u128(0xe06d8032_db46_11cf_b4d1_00805f6cbbea);
 pub const MFAudioFormat_MP3: windows_core::GUID = windows_core::GUID::from_u128(0x00000055_0000_0010_8000_00aa00389b71);
 pub const MFAudioFormat_MPEG: windows_core::GUID = windows_core::GUID::from_u128(0x00000050_0000_0010_8000_00aa00389b71);
+pub const MFAudioFormat_MPEGH: windows_core::GUID = windows_core::GUID::from_u128(0x7c13c441_ebf8_4931_b678_800b19242236);
+pub const MFAudioFormat_MPEGH_ES: windows_core::GUID = windows_core::GUID::from_u128(0x19ee97fe_1be0_4255_a876_e99f53a42ae3);
 pub const MFAudioFormat_MSP1: windows_core::GUID = windows_core::GUID::from_u128(0x0000000a_0000_0010_8000_00aa00389b71);
 pub const MFAudioFormat_Opus: windows_core::GUID = windows_core::GUID::from_u128(0x0000704f_0000_0010_8000_00aa00389b71);
 pub const MFAudioFormat_PCM: windows_core::GUID = windows_core::GUID::from_u128(0x00000001_0000_0010_8000_00aa00389b71);
@@ -45183,10 +45448,12 @@ pub const MFSampleExtension_RepeatFirstField: windows_core::GUID = windows_core:
 pub const MFSampleExtension_RepeatFrame: windows_core::GUID = windows_core::GUID::from_u128(0x88be738f_0711_4f42_b458_344aed42ec2f);
 pub const MFSampleExtension_SampleKeyID: windows_core::GUID = windows_core::GUID::from_u128(0x9ed713c8_9b87_4b26_8297_a93b0c5a8acc);
 pub const MFSampleExtension_SingleField: windows_core::GUID = windows_core::GUID::from_u128(0x9d85f816_658b_455a_bde0_9fa7e15ab8f9);
+pub const MFSampleExtension_SpatialLayerId: windows_core::GUID = windows_core::GUID::from_u128(0xb7aabc7b_2396_457a_879e_623bfab6e0ac);
 pub const MFSampleExtension_Spatial_CameraCoordinateSystem: windows_core::GUID = windows_core::GUID::from_u128(0x9d13c82f_2199_4e67_91cd_d1a4181f2534);
 pub const MFSampleExtension_Spatial_CameraProjectionTransform: windows_core::GUID = windows_core::GUID::from_u128(0x47f9fcb5_2a02_4f26_a477_792fdf95886a);
 pub const MFSampleExtension_Spatial_CameraViewTransform: windows_core::GUID = windows_core::GUID::from_u128(0x4e251fa4_830f_4770_859a_4b8d99aa809b);
 pub const MFSampleExtension_TargetGlobalLuminance: windows_core::GUID = windows_core::GUID::from_u128(0x3f60ef36_31ef_4daf_8360_940397e41ef3);
+pub const MFSampleExtension_TemporalLayerId: windows_core::GUID = windows_core::GUID::from_u128(0xb3c1fcd2_b331_4376_b974_ad647769b2b0);
 pub const MFSampleExtension_Timestamp: windows_core::GUID = windows_core::GUID::from_u128(0x1e436999_69be_4c7a_9369_70068c0260cb);
 pub const MFSampleExtension_Token: windows_core::GUID = windows_core::GUID::from_u128(0x8294da66_f328_4805_b551_00deb4c57a61);
 pub const MFSampleExtension_VideoDSPMode: windows_core::GUID = windows_core::GUID::from_u128(0xc12d55cb_d7d9_476d_81f3_69117f163ea0);
@@ -45282,7 +45549,9 @@ impl Default for MFTOPONODE_ATTRIBUTE_UPDATE_0 {
         unsafe { core::mem::zeroed() }
     }
 }
+pub const MFT_AUDIO_DECODER_AUDIO_ENDPOINT_FORMFACTOR: windows_core::GUID = windows_core::GUID::from_u128(0x8d574310_909a_433a_ace7_eee74719f901);
 pub const MFT_AUDIO_DECODER_AUDIO_ENDPOINT_ID: windows_core::GUID = windows_core::GUID::from_u128(0xc7ccdd6e_5398_4695_8be7_51b3e95111bd);
+pub const MFT_AUDIO_DECODER_AUDIO_ENDPOINT_IS_DIGITAL_STEREO_ONLY: windows_core::GUID = windows_core::GUID::from_u128(0x26e5a90d_4ad1_4f8c_b8af_adf14d2178f1);
 pub const MFT_AUDIO_DECODER_DEGRADATION_INFO_ATTRIBUTE: windows_core::GUID = windows_core::GUID::from_u128(0x6c3386ad_ec20_430d_b2a5_505c7178d9c4);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
@@ -45312,8 +45581,10 @@ pub const MFT_CATEGORY_VIDEO_RENDERER_EFFECT: windows_core::GUID = windows_core:
 pub const MFT_CODEC_MERIT_Attribute: windows_core::GUID = windows_core::GUID::from_u128(0x88a7cb15_7b07_4a34_9128_e64c6703c4d3);
 pub const MFT_CONNECTED_STREAM_ATTRIBUTE: windows_core::GUID = windows_core::GUID::from_u128(0x71eeb820_a59f_4de2_bcec_38db1dd611a4);
 pub const MFT_CONNECTED_TO_HW_STREAM: windows_core::GUID = windows_core::GUID::from_u128(0x34e6e728_06d6_4491_a553_4795650db912);
+pub const MFT_DECODER_AUTOMATIC_SOFTWARE_FALLBACK: windows_core::GUID = windows_core::GUID::from_u128(0x41f34f53_1bf6_49ed_b95d_02d2a1d7115a);
 pub const MFT_DECODER_EXPOSE_OUTPUT_TYPES_IN_NATIVE_ORDER: windows_core::GUID = windows_core::GUID::from_u128(0xef80833f_f8fa_44d9_80d8_41ed6232670c);
 pub const MFT_DECODER_FINAL_VIDEO_RESOLUTION_HINT: windows_core::GUID = windows_core::GUID::from_u128(0xdc2f8496_15c4_407a_b6f0_1b66ab5fbf53);
+pub const MFT_DECODER_OPERATING_POINT: windows_core::GUID = windows_core::GUID::from_u128(0xa1230334_55d4_4d97_82a7_26d3e6456725);
 pub const MFT_DECODER_QUALITY_MANAGEMENT_CUSTOM_CONTROL: windows_core::GUID = windows_core::GUID::from_u128(0xa24e30d7_de25_4558_bbfb_71070a2d332e);
 pub const MFT_DECODER_QUALITY_MANAGEMENT_RECOVERY_WITHOUT_ARTIFACTS: windows_core::GUID = windows_core::GUID::from_u128(0xd8980deb_0a48_425f_8623_611db41d3810);
 pub const MFT_DRAIN_NO_TAILS: MFT_DRAIN_TYPE = MFT_DRAIN_TYPE(1i32);
@@ -45863,9 +46134,10 @@ pub const MFVideoPrimaries_BT470_2_SysBG: MFVideoPrimaries = MFVideoPrimaries(4i
 pub const MFVideoPrimaries_BT470_2_SysM: MFVideoPrimaries = MFVideoPrimaries(3i32);
 pub const MFVideoPrimaries_BT709: MFVideoPrimaries = MFVideoPrimaries(2i32);
 pub const MFVideoPrimaries_DCI_P3: MFVideoPrimaries = MFVideoPrimaries(11i32);
+pub const MFVideoPrimaries_Display_P3: MFVideoPrimaries = MFVideoPrimaries(13i32);
 pub const MFVideoPrimaries_EBU3213: MFVideoPrimaries = MFVideoPrimaries(7i32);
 pub const MFVideoPrimaries_ForceDWORD: MFVideoPrimaries = MFVideoPrimaries(2147483647i32);
-pub const MFVideoPrimaries_Last: MFVideoPrimaries = MFVideoPrimaries(13i32);
+pub const MFVideoPrimaries_Last: MFVideoPrimaries = MFVideoPrimaries(14i32);
 pub const MFVideoPrimaries_SMPTE170M: MFVideoPrimaries = MFVideoPrimaries(5i32);
 pub const MFVideoPrimaries_SMPTE240M: MFVideoPrimaries = MFVideoPrimaries(6i32);
 pub const MFVideoPrimaries_SMPTE_C: MFVideoPrimaries = MFVideoPrimaries(8i32);
@@ -45935,11 +46207,13 @@ pub const MFVideoTransFunc_26: MFVideoTransferFunction = MFVideoTransferFunction
 pub const MFVideoTransFunc_28: MFVideoTransferFunction = MFVideoTransferFunction(8i32);
 pub const MFVideoTransFunc_709: MFVideoTransferFunction = MFVideoTransferFunction(5i32);
 pub const MFVideoTransFunc_709_sym: MFVideoTransferFunction = MFVideoTransferFunction(11i32);
+pub const MFVideoTransFunc_BT1361_ECG: MFVideoTransferFunction = MFVideoTransferFunction(18i32);
 pub const MFVideoTransFunc_ForceDWORD: MFVideoTransferFunction = MFVideoTransferFunction(2147483647i32);
 pub const MFVideoTransFunc_HLG: MFVideoTransferFunction = MFVideoTransferFunction(16i32);
-pub const MFVideoTransFunc_Last: MFVideoTransferFunction = MFVideoTransferFunction(18i32);
+pub const MFVideoTransFunc_Last: MFVideoTransferFunction = MFVideoTransferFunction(20i32);
 pub const MFVideoTransFunc_Log_100: MFVideoTransferFunction = MFVideoTransferFunction(9i32);
 pub const MFVideoTransFunc_Log_316: MFVideoTransferFunction = MFVideoTransferFunction(10i32);
+pub const MFVideoTransFunc_SMPTE428: MFVideoTransferFunction = MFVideoTransferFunction(19i32);
 pub const MFVideoTransFunc_Unknown: MFVideoTransferFunction = MFVideoTransferFunction(0i32);
 pub const MFVideoTransFunc_sRGB: MFVideoTransferFunction = MFVideoTransferFunction(7i32);
 #[repr(transparent)]
@@ -45952,10 +46226,17 @@ pub const MFVideoTransferMatrix_BT2020_10: MFVideoTransferMatrix = MFVideoTransf
 pub const MFVideoTransferMatrix_BT2020_12: MFVideoTransferMatrix = MFVideoTransferMatrix(5i32);
 pub const MFVideoTransferMatrix_BT601: MFVideoTransferMatrix = MFVideoTransferMatrix(2i32);
 pub const MFVideoTransferMatrix_BT709: MFVideoTransferMatrix = MFVideoTransferMatrix(1i32);
+pub const MFVideoTransferMatrix_Chroma: MFVideoTransferMatrix = MFVideoTransferMatrix(10i32);
+pub const MFVideoTransferMatrix_Chroma_const: MFVideoTransferMatrix = MFVideoTransferMatrix(11i32);
+pub const MFVideoTransferMatrix_FCC47: MFVideoTransferMatrix = MFVideoTransferMatrix(7i32);
 pub const MFVideoTransferMatrix_ForceDWORD: MFVideoTransferMatrix = MFVideoTransferMatrix(2147483647i32);
-pub const MFVideoTransferMatrix_Last: MFVideoTransferMatrix = MFVideoTransferMatrix(6i32);
+pub const MFVideoTransferMatrix_ICtCp: MFVideoTransferMatrix = MFVideoTransferMatrix(12i32);
+pub const MFVideoTransferMatrix_Identity: MFVideoTransferMatrix = MFVideoTransferMatrix(6i32);
+pub const MFVideoTransferMatrix_Last: MFVideoTransferMatrix = MFVideoTransferMatrix(13i32);
+pub const MFVideoTransferMatrix_SMPTE2085: MFVideoTransferMatrix = MFVideoTransferMatrix(9i32);
 pub const MFVideoTransferMatrix_SMPTE240M: MFVideoTransferMatrix = MFVideoTransferMatrix(3i32);
 pub const MFVideoTransferMatrix_Unknown: MFVideoTransferMatrix = MFVideoTransferMatrix(0i32);
+pub const MFVideoTransferMatrix_YCgCo: MFVideoTransferMatrix = MFVideoTransferMatrix(8i32);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct MFVirtualCameraAccess(pub i32);
@@ -45993,6 +46274,7 @@ pub const MF_ACCESSMODE_READ: MF_FILE_ACCESSMODE = MF_FILE_ACCESSMODE(1i32);
 pub const MF_ACCESSMODE_READWRITE: MF_FILE_ACCESSMODE = MF_FILE_ACCESSMODE(3i32);
 pub const MF_ACCESSMODE_WRITE: MF_FILE_ACCESSMODE = MF_FILE_ACCESSMODE(2i32);
 pub const MF_ACCESS_CONTROLLED_MEDIASOURCE_SERVICE: windows_core::GUID = windows_core::GUID::from_u128(0x014a5031_2f05_4c6a_9f9c_7d0dc4eda5f4);
+pub const MF_ACOUSTIC_ECHO_CANCELLATION_CONTROL_SERVICE: windows_core::GUID = windows_core::GUID::from_u128(0x7f6c3b29_2d12_4f6f_ac05_c1a89b8d5288);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct MF_ACTIVATE_CUSTOM_MIXER(pub i32);
@@ -46036,6 +46318,7 @@ pub const MF_ATTRIBUTE_STRING: MF_ATTRIBUTE_TYPE = MF_ATTRIBUTE_TYPE(31i32);
 pub struct MF_ATTRIBUTE_TYPE(pub i32);
 pub const MF_ATTRIBUTE_UINT32: MF_ATTRIBUTE_TYPE = MF_ATTRIBUTE_TYPE(19i32);
 pub const MF_ATTRIBUTE_UINT64: MF_ATTRIBUTE_TYPE = MF_ATTRIBUTE_TYPE(21i32);
+pub const MF_AUDIO_EFFECTS_MANAGER_SERVICE: windows_core::GUID = windows_core::GUID::from_u128(0x1f541943_d5df_455e_a2e5_7d64d3bbbdb5);
 pub const MF_AUDIO_RENDERER_ATTRIBUTE_ENDPOINT_ID: windows_core::GUID = windows_core::GUID::from_u128(0xb10aaec3_ef71_4cc3_b873_05a9a08b9f8e);
 pub const MF_AUDIO_RENDERER_ATTRIBUTE_ENDPOINT_ROLE: windows_core::GUID = windows_core::GUID::from_u128(0x6ba644ff_27c5_4d02_9887_c28619fdb91b);
 pub const MF_AUDIO_RENDERER_ATTRIBUTE_FLAGS: windows_core::GUID = windows_core::GUID::from_u128(0xede4b5e0_f805_4d6c_99b3_db01bf95dfab);
@@ -46070,6 +46353,7 @@ impl Default for MF_BYTE_STREAM_CACHE_RANGE {
         unsafe { core::mem::zeroed() }
     }
 }
+pub const MF_CAMERASOURCE_PROVIDE_SELECTED_PROFILE_ON_START: windows_core::GUID = windows_core::GUID::from_u128(0xa9b46058_82f2_4e5c_bf6e_25b4b09f22ed);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct MF_CAMERA_CONTROL_CONFIGURATION_TYPE(pub i32);
@@ -46257,6 +46541,7 @@ pub const MF_DEVICESTREAM_TAKEPHOTO_TRIGGER: windows_core::GUID = windows_core::
 pub const MF_DEVICESTREAM_TRANSFORM_STREAM_ID: windows_core::GUID = windows_core::GUID::from_u128(0xe63937b7_daaf_4d49_815f_d826f8ad31e7);
 pub const MF_DEVICE_THERMAL_STATE_CHANGED: windows_core::GUID = windows_core::GUID::from_u128(0x70ccd0af_fc9f_4deb_a875_9fecd16c5bd4);
 pub const MF_DEVSOURCE_ATTRIBUTE_ENABLE_MS_CAMERA_EFFECTS: windows_core::GUID = windows_core::GUID::from_u128(0x28a5531a_57dd_4fd5_aaa7_385abf57d785);
+pub const MF_DEVSOURCE_ATTRIBUTE_FRAMESERVER_SHARE_MODE: windows_core::GUID = windows_core::GUID::from_u128(0x44d1a9bc_2999_4238_ae43_0730ceb2ab1b);
 pub const MF_DEVSOURCE_ATTRIBUTE_FRIENDLY_NAME: windows_core::GUID = windows_core::GUID::from_u128(0x60d0e559_52f8_4fa2_bbce_acdb34a8ec01);
 pub const MF_DEVSOURCE_ATTRIBUTE_MEDIA_TYPE: windows_core::GUID = windows_core::GUID::from_u128(0x56a819ca_0c78_4de4_a0a7_3ddaba0f24d4);
 pub const MF_DEVSOURCE_ATTRIBUTE_SOURCE_PASSWORD: windows_core::GUID = windows_core::GUID::from_u128(0xa0fd7e16_42d9_49df_84c0_e82c5eab8874);
@@ -46283,6 +46568,12 @@ pub const MF_DROP_MODE_3: MF_QUALITY_DROP_MODE = MF_QUALITY_DROP_MODE(3i32);
 pub const MF_DROP_MODE_4: MF_QUALITY_DROP_MODE = MF_QUALITY_DROP_MODE(4i32);
 pub const MF_DROP_MODE_5: MF_QUALITY_DROP_MODE = MF_QUALITY_DROP_MODE(5i32);
 pub const MF_DROP_MODE_NONE: MF_QUALITY_DROP_MODE = MF_QUALITY_DROP_MODE(0i32);
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct MF_DXGI_DEVICE_MANAGER_MODE(pub i32);
+pub const MF_DXGI_DEVICE_MANAGER_MODE_D3D11: MF_DXGI_DEVICE_MANAGER_MODE = MF_DXGI_DEVICE_MANAGER_MODE(1i32);
+pub const MF_DXGI_DEVICE_MANAGER_MODE_D3D12: MF_DXGI_DEVICE_MANAGER_MODE = MF_DXGI_DEVICE_MANAGER_MODE(2i32);
+pub const MF_DXGI_DEVICE_MANAGER_MODE_INVALID: MF_DXGI_DEVICE_MANAGER_MODE = MF_DXGI_DEVICE_MANAGER_MODE(0i32);
 pub const MF_ENABLE_3DVIDEO_OUTPUT: windows_core::GUID = windows_core::GUID::from_u128(0xbdad7bca_0e5f_4b10_ab16_26de381b6293);
 pub const MF_EVENT_DO_THINNING: windows_core::GUID = windows_core::GUID::from_u128(0x321ea6fb_dad9_46e4_b31d_d2eae7090e30);
 pub const MF_EVENT_FLAG_NONE: MEDIA_EVENT_GENERATOR_GET_EVENT_FLAGS = MEDIA_EVENT_GENERATOR_GET_EVENT_FLAGS(0u32);
@@ -46306,9 +46597,6 @@ pub const MF_EVENT_STREAM_METADATA_CONTENT_KEYIDS: windows_core::GUID = windows_
 pub const MF_EVENT_STREAM_METADATA_KEYDATA: windows_core::GUID = windows_core::GUID::from_u128(0xcd59a4a1_4a3b_4bbd_8665_72a40fbea776);
 pub const MF_EVENT_STREAM_METADATA_SYSTEMID: windows_core::GUID = windows_core::GUID::from_u128(0x1ea2ef64_ba16_4a36_8719_fe7560ba32ad);
 pub const MF_EVENT_TOPOLOGY_STATUS: windows_core::GUID = windows_core::GUID::from_u128(0x30c5018d_9a53_454b_ad9e_6d5f8fa7c43b);
-#[repr(transparent)]
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
-pub struct MF_EVENT_TYPE(pub i32);
 pub const MF_E_ALLOCATOR_ALREADY_COMMITED: windows_core::HRESULT = windows_core::HRESULT(0xC00DA7FA_u32 as _);
 pub const MF_E_ALLOCATOR_NOT_COMMITED: windows_core::HRESULT = windows_core::HRESULT(0xC00DA7F9_u32 as _);
 pub const MF_E_ALLOCATOR_NOT_INITIALIZED: windows_core::HRESULT = windows_core::HRESULT(0xC00DA7F8_u32 as _);
@@ -46340,6 +46628,7 @@ pub const MF_E_BANDWIDTH_OVERRUN: windows_core::HRESULT = windows_core::HRESULT(
 pub const MF_E_BUFFERTOOSMALL: windows_core::HRESULT = windows_core::HRESULT(0xC00D36B1_u32 as _);
 pub const MF_E_BYTESTREAM_NOT_SEEKABLE: windows_core::HRESULT = windows_core::HRESULT(0xC00D36EE_u32 as _);
 pub const MF_E_BYTESTREAM_UNKNOWN_LENGTH: windows_core::HRESULT = windows_core::HRESULT(0xC00D36FB_u32 as _);
+pub const MF_E_CAMERA_PRIVACY_NOT_ALLOWED: windows_core::HRESULT = windows_core::HRESULT(0xC00DB798_u32 as _);
 pub const MF_E_CANNOT_CREATE_SINK: windows_core::HRESULT = windows_core::HRESULT(0xC00D36FA_u32 as _);
 pub const MF_E_CANNOT_FIND_KEYFRAME_SAMPLE: windows_core::HRESULT = windows_core::HRESULT(0xC00D3E9D_u32 as _);
 pub const MF_E_CANNOT_INDEX_IN_PLACE: windows_core::HRESULT = windows_core::HRESULT(0xC00D4657_u32 as _);
@@ -46429,6 +46718,7 @@ pub const MF_E_LICENSE_RESTORE_NO_RIGHTS: windows_core::HRESULT = windows_core::
 pub const MF_E_MEDIAPROC_WRONGSTATE: windows_core::HRESULT = windows_core::HRESULT(0xC00D36F2_u32 as _);
 pub const MF_E_MEDIA_EXTENSION_APPSERVICE_CONNECTION_FAILED: windows_core::HRESULT = windows_core::HRESULT(0xC00DB3B0_u32 as _);
 pub const MF_E_MEDIA_EXTENSION_APPSERVICE_REQUEST_FAILED: windows_core::HRESULT = windows_core::HRESULT(0xC00DB3B1_u32 as _);
+pub const MF_E_MEDIA_EXTENSION_PACKAGE_BAD_STATUS: windows_core::HRESULT = windows_core::HRESULT(0xC00DB3B4_u32 as _);
 pub const MF_E_MEDIA_EXTENSION_PACKAGE_INTEGRITY_CHECK_FAILED: windows_core::HRESULT = windows_core::HRESULT(0xC00DB3B2_u32 as _);
 pub const MF_E_MEDIA_EXTENSION_PACKAGE_LICENSE_INVALID: windows_core::HRESULT = windows_core::HRESULT(0xC00DB3B3_u32 as _);
 pub const MF_E_MEDIA_SOURCE_NOT_STARTED: windows_core::HRESULT = windows_core::HRESULT(0xC00D3E91_u32 as _);
@@ -47038,6 +47328,7 @@ pub const MF_MT_COMPRESSED: windows_core::GUID = windows_core::GUID::from_u128(0
 pub const MF_MT_CONTAINER_RATE_SCALING: windows_core::GUID = windows_core::GUID::from_u128(0x83877f5e_0444_4e28_8479_6db0989b8c09);
 pub const MF_MT_CUSTOM_VIDEO_PRIMARIES: windows_core::GUID = windows_core::GUID::from_u128(0x47537213_8cfb_4722_aa34_fbc9e24d77b8);
 pub const MF_MT_D3D12_CPU_READBACK: windows_core::GUID = windows_core::GUID::from_u128(0x28ee9fe3_d481_46a6_b98a_7f69d5280e82);
+pub const MF_MT_D3D12_RESOURCE_DIMENSION: windows_core::GUID = windows_core::GUID::from_u128(0x5f772624_16ca_4b89_9651_5ddf769f8ab8);
 pub const MF_MT_D3D12_RESOURCE_FLAG_ALLOW_CROSS_ADAPTER: windows_core::GUID = windows_core::GUID::from_u128(0xa6a1e439_2f96_4ab5_98dc_adf74973505d);
 pub const MF_MT_D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL: windows_core::GUID = windows_core::GUID::from_u128(0xb1138dc3_01d5_4c14_9bdc_cdc9336f55b9);
 pub const MF_MT_D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET: windows_core::GUID = windows_core::GUID::from_u128(0xeeac2585_3430_498c_84a2_77b1bba570f6);
@@ -47103,6 +47394,7 @@ pub const MF_MT_MPEG2_TIMECODE: windows_core::GUID = windows_core::GUID::from_u1
 pub const MF_MT_MPEG4_CURRENT_SAMPLE_ENTRY: windows_core::GUID = windows_core::GUID::from_u128(0x9aa7e155_b64a_4c1d_a500_455d600b6560);
 pub const MF_MT_MPEG4_SAMPLE_DESCRIPTION: windows_core::GUID = windows_core::GUID::from_u128(0x261e9d83_9529_4b8f_a111_8b9c950a81a9);
 pub const MF_MT_MPEG4_TRACK_TYPE: windows_core::GUID = windows_core::GUID::from_u128(0x54f486dd_9327_4f6d_80ab_6f709ebb4cce);
+pub const MF_MT_MPEGH_AUDIO_PROFILE_LEVEL_INDICATION: windows_core::GUID = windows_core::GUID::from_u128(0x51267a39_dd0c_4bb9_a7bd_9173ad4b131c);
 pub const MF_MT_MPEG_SEQUENCE_HEADER: windows_core::GUID = windows_core::GUID::from_u128(0x3c036de7_3ad0_4c9e_9216_ee6d6ac21cb3);
 pub const MF_MT_MPEG_START_TIME_CODE: windows_core::GUID = windows_core::GUID::from_u128(0x91f67885_4333_4280_97cd_bd5a6c03a06e);
 pub const MF_MT_ORIGINAL_4CC: windows_core::GUID = windows_core::GUID::from_u128(0xd7be3fe0_2bc7_492d_b843_61a1919b70c3);
@@ -47118,6 +47410,7 @@ pub const MF_MT_SAMPLE_SIZE: windows_core::GUID = windows_core::GUID::from_u128(
 pub const MF_MT_SECURE: windows_core::GUID = windows_core::GUID::from_u128(0xc5acc4fd_0304_4ecf_809f_47bc97ff63bd);
 pub const MF_MT_SOURCE_CONTENT_HINT: windows_core::GUID = windows_core::GUID::from_u128(0x68aca3cc_22d0_44e6_85f8_28167197fa38);
 pub const MF_MT_SPATIAL_AUDIO_DATA_PRESENT: windows_core::GUID = windows_core::GUID::from_u128(0x6842f6e7_d43e_4ebb_9c9c_c96f41784863);
+pub const MF_MT_SPATIAL_AUDIO_IS_PREVIRTUALIZED: windows_core::GUID = windows_core::GUID::from_u128(0x4eacab51_ffe5_421a_a2a7_8b7409a1cac4);
 pub const MF_MT_SPATIAL_AUDIO_MAX_DYNAMIC_OBJECTS: windows_core::GUID = windows_core::GUID::from_u128(0xdcfba24a_2609_4240_a721_3faea76a4df9);
 pub const MF_MT_SPATIAL_AUDIO_MAX_METADATA_ITEMS: windows_core::GUID = windows_core::GUID::from_u128(0x11aa80b4_e0da_47c6_8060_96c1259ae50d);
 pub const MF_MT_SPATIAL_AUDIO_MIN_METADATA_ITEM_OFFSET_SPACING: windows_core::GUID = windows_core::GUID::from_u128(0x83e96ec9_1184_417e_8254_9f269158fc06);
@@ -47349,6 +47642,7 @@ pub const MF_SA_D3D11_HW_PROTECTED: windows_core::GUID = windows_core::GUID::fro
 pub const MF_SA_D3D11_SHARED: windows_core::GUID = windows_core::GUID::from_u128(0x7b8f32c3_6d96_4b89_9203_dd38b61414f3);
 pub const MF_SA_D3D11_SHARED_WITHOUT_MUTEX: windows_core::GUID = windows_core::GUID::from_u128(0x39dbd44d_2e44_4931_a4c8_352d3dc42115);
 pub const MF_SA_D3D11_USAGE: windows_core::GUID = windows_core::GUID::from_u128(0xe85fe442_2ca3_486e_a9c7_109dda609880);
+pub const MF_SA_D3D12_AWARE: windows_core::GUID = windows_core::GUID::from_u128(0x77f0bacb_17a8_4a50_9a7d_a5cc09d39d44);
 pub const MF_SA_D3D12_CLEAR_VALUE: windows_core::GUID = windows_core::GUID::from_u128(0x86ba9a39_0526_495d_9ab5_54ec9fad6fc3);
 pub const MF_SA_D3D12_HEAP_FLAGS: windows_core::GUID = windows_core::GUID::from_u128(0x496b3266_d28f_4f8c_93a7_4a596b1a31a1);
 pub const MF_SA_D3D12_HEAP_TYPE: windows_core::GUID = windows_core::GUID::from_u128(0x56f26a76_bbc1_4ce0_bb11_e22368d874ed);
@@ -47374,6 +47668,7 @@ pub const MF_SD_MUTUALLY_EXCLUSIVE: windows_core::GUID = windows_core::GUID::fro
 pub const MF_SD_PROTECTED: windows_core::GUID = windows_core::GUID::from_u128(0x00af2181_bdc2_423c_abca_f503593bc121);
 pub const MF_SD_SAMI_LANGUAGE: windows_core::GUID = windows_core::GUID::from_u128(0x36fcb98a_6cd0_44cb_acb9_a8f5600dd0bb);
 pub const MF_SD_STREAM_NAME: windows_core::GUID = windows_core::GUID::from_u128(0x4f1b099d_d314_41e5_a781_7fefaa4c501f);
+pub const MF_SD_SUPPORTS_PROTECTED_CODEC_SWITCH: windows_core::GUID = windows_core::GUID::from_u128(0x8fb6b117_862e_4b31_8dab_5e0a434caef0);
 pub const MF_SD_VIDEO_SPHERICAL: windows_core::GUID = windows_core::GUID::from_u128(0xa51da449_3fdc_478c_bcb5_30be76595f55);
 pub const MF_SD_VIDEO_SPHERICAL_FORMAT: windows_core::GUID = windows_core::GUID::from_u128(0x4a8fc407_6ea1_46c8_b567_6971d4a139c3);
 pub const MF_SD_VIDEO_SPHERICAL_INITIAL_VIEWDIRECTION: windows_core::GUID = windows_core::GUID::from_u128(0x11d25a49_bb62_467f_9db1_c17165716c49);
@@ -47549,6 +47844,7 @@ pub const MF_SOURCE_READER_INVALID_STREAM_INDEX: MF_SOURCE_READER_CONSTANTS = MF
 pub const MF_SOURCE_READER_MEDIASOURCE: MF_SOURCE_READER_CONSTANTS = MF_SOURCE_READER_CONSTANTS(-1i32);
 pub const MF_SOURCE_READER_MEDIASOURCE_CHARACTERISTICS: windows_core::GUID = windows_core::GUID::from_u128(0x6d23f5c8_c5d7_4a9b_9971_5d11f8bca880);
 pub const MF_SOURCE_READER_MEDIASOURCE_CONFIG: windows_core::GUID = windows_core::GUID::from_u128(0x9085abeb_0354_48f9_abb5_200df838c68e);
+pub const MF_SOURCE_READER_PASSTHROUGH_MODE: windows_core::GUID = windows_core::GUID::from_u128(0x043ff126_fe2c_4708_a09b_da2ab435ced9);
 pub const MF_SOURCE_STREAM_SUPPORTS_HW_CONNECTION: windows_core::GUID = windows_core::GUID::from_u128(0xa38253aa_6314_42fd_a3ce_bb27b6859946);
 pub const MF_STANDARD_WORKQUEUE: MFASYNC_WORKQUEUE_TYPE = MFASYNC_WORKQUEUE_TYPE(0i32);
 pub const MF_STF_VERSION_DATE: windows_core::GUID = windows_core::GUID::from_u128(0x31a165d5_df67_4095_8e44_8868fc20dbfd);
@@ -48772,6 +49068,9 @@ pub struct _MFT_PROCESS_OUTPUT_STATUS(pub i32);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct _MFT_SET_TYPE_FLAGS(pub i32);
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct __MIDL___MIDL_itf_mfobjects_0000_0013_0001(pub i32);
 pub const _msoBegin: SEEK_ORIGIN = SEEK_ORIGIN(0i32);
 pub const _msoCurrent: SEEK_ORIGIN = SEEK_ORIGIN(1i32);
 #[repr(transparent)]
@@ -49084,6 +49383,9 @@ pub const eAVEncH264VLevel4_2: eAVEncH264VLevel = eAVEncH264VLevel(42i32);
 pub const eAVEncH264VLevel5: eAVEncH264VLevel = eAVEncH264VLevel(50i32);
 pub const eAVEncH264VLevel5_1: eAVEncH264VLevel = eAVEncH264VLevel(51i32);
 pub const eAVEncH264VLevel5_2: eAVEncH264VLevel = eAVEncH264VLevel(52i32);
+pub const eAVEncH264VLevel6: eAVEncH264VLevel = eAVEncH264VLevel(60i32);
+pub const eAVEncH264VLevel6_1: eAVEncH264VLevel = eAVEncH264VLevel(61i32);
+pub const eAVEncH264VLevel6_2: eAVEncH264VLevel = eAVEncH264VLevel(62i32);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct eAVEncH264VProfile(pub i32);

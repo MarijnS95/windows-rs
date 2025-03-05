@@ -1,3 +1,5 @@
+#[cfg(feature = "Win32_Graphics_DirectX")]
+pub mod DirectX;
 #[cfg(feature = "Win32_Graphics_Dwm")]
 pub mod Dwm;
 #[cfg(feature = "Win32_Graphics_Gdi")]

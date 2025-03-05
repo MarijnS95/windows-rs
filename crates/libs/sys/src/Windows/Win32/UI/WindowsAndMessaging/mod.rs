@@ -142,6 +142,7 @@ windows_targets::link!("user32.dll" "system" fn GetClassNameW(hwnd : super::supe
 windows_targets::link!("user32.dll" "system" fn GetClassWord(hwnd : super::super::Foundation:: HWND, nindex : i32) -> u16);
 windows_targets::link!("user32.dll" "system" fn GetClientRect(hwnd : super::super::Foundation:: HWND, lprect : *mut super::super::Foundation:: RECT) -> windows_sys::core::BOOL);
 windows_targets::link!("user32.dll" "system" fn GetClipCursor(lprect : *mut super::super::Foundation:: RECT) -> windows_sys::core::BOOL);
+windows_targets::link!("user32.dll" "system" fn GetCurrentMonitorTopologyId() -> u32);
 windows_targets::link!("user32.dll" "system" fn GetCursor() -> HCURSOR);
 windows_targets::link!("user32.dll" "system" fn GetCursorInfo(pci : *mut CURSORINFO) -> windows_sys::core::BOOL);
 windows_targets::link!("user32.dll" "system" fn GetCursorPos(lppoint : *mut super::super::Foundation:: POINT) -> windows_sys::core::BOOL);
@@ -243,6 +244,7 @@ windows_targets::link!("user32.dll" "system" fn IsCharAlphaNumericA(ch : i8) -> 
 windows_targets::link!("user32.dll" "system" fn IsCharAlphaNumericW(ch : u16) -> windows_sys::core::BOOL);
 windows_targets::link!("user32.dll" "system" fn IsCharAlphaW(ch : u16) -> windows_sys::core::BOOL);
 windows_targets::link!("user32.dll" "system" fn IsCharLowerA(ch : i8) -> windows_sys::core::BOOL);
+windows_targets::link!("user32.dll" "system" fn IsCharLowerW(ch : u16) -> windows_sys::core::BOOL);
 windows_targets::link!("user32.dll" "system" fn IsCharUpperA(ch : i8) -> windows_sys::core::BOOL);
 windows_targets::link!("user32.dll" "system" fn IsCharUpperW(ch : u16) -> windows_sys::core::BOOL);
 windows_targets::link!("user32.dll" "system" fn IsChild(hwndparent : super::super::Foundation:: HWND, hwnd : super::super::Foundation:: HWND) -> windows_sys::core::BOOL);
@@ -1333,6 +1335,7 @@ pub const GUID_IO_VOLUME_MOUNT: windows_sys::core::GUID = windows_sys::core::GUI
 pub const GUID_IO_VOLUME_NAME_CHANGE: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0x2de97f83_4c06_11d2_a532_00609713055a);
 pub const GUID_IO_VOLUME_NEED_CHKDSK: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0x799a0960_0a0b_4e03_ad88_2fa7c6ce748a);
 pub const GUID_IO_VOLUME_PHYSICAL_CONFIGURATION_CHANGE: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0x2de97f84_4c06_11d2_a532_00609713055a);
+pub const GUID_IO_VOLUME_PREPARE_DELETE: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0xac0707fb_4a9a_4c81_9e2e_385b79a8fd28);
 pub const GUID_IO_VOLUME_PREPARING_EJECT: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0xc79eb16e_0dac_4e7a_a86c_b25ceeaa88f6);
 pub const GUID_IO_VOLUME_UNIQUE_ID_CHANGE: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0xaf39da42_6622_41f5_970b_139d092fa3d9);
 pub const GUID_IO_VOLUME_UNLOCK: windows_sys::core::GUID = windows_sys::core::GUID::from_u128(0x9a8c3d68_d0cb_11d1_8fef_00a0c9a06d32);
@@ -1638,6 +1641,7 @@ pub const INDEXID_OBJECT: u32 = 0u32;
 pub const INPUTLANGCHANGE_BACKWARD: u32 = 4u32;
 pub const INPUTLANGCHANGE_FORWARD: u32 = 2u32;
 pub const INPUTLANGCHANGE_SYSCHARSET: u32 = 1u32;
+pub const INVALID_MONITOR_TOPOLOGY_ID: u32 = 0u32;
 pub const ISMEX_CALLBACK: u32 = 4u32;
 pub const ISMEX_NOSEND: u32 = 0u32;
 pub const ISMEX_NOTIFY: u32 = 2u32;
@@ -1741,6 +1745,10 @@ pub const LB_SETLOCALE: u32 = 421u32;
 pub const LB_SETSEL: u32 = 389u32;
 pub const LB_SETTABSTOPS: u32 = 402u32;
 pub const LB_SETTOPINDEX: u32 = 407u32;
+pub type LEGACY_TOUCHPAD_FEATURES = i32;
+pub const LEGACY_TOUCHPAD_FEATURE_ENABLE_DISABLE: LEGACY_TOUCHPAD_FEATURES = 1i32;
+pub const LEGACY_TOUCHPAD_FEATURE_NONE: LEGACY_TOUCHPAD_FEATURES = 0i32;
+pub const LEGACY_TOUCHPAD_FEATURE_REVERSE_SCROLL_DIRECTION: LEGACY_TOUCHPAD_FEATURES = 4i32;
 pub const LLKHF_ALTDOWN: KBDLLHOOKSTRUCT_FLAGS = 32u32;
 pub const LLKHF_EXTENDED: KBDLLHOOKSTRUCT_FLAGS = 1u32;
 pub const LLKHF_INJECTED: KBDLLHOOKSTRUCT_FLAGS = 16u32;
@@ -1976,10 +1984,22 @@ pub struct MENUTEMPLATEEX_0_0 {
     pub mitHeader: MENUITEMTEMPLATEHEADER,
     pub miTemplate: [MENUITEMTEMPLATE; 1],
 }
+pub const MENU_CHECK_ITEM: u32 = 256u32;
+pub const MENU_DELETE_MENU: u32 = 32u32;
+pub const MENU_ENABLE_ITEM: u32 = 128u32;
+pub const MENU_GET_ITEM_DATA: u32 = 2u32;
+pub const MENU_GET_ITEM_INFO: u32 = 1u32;
+pub const MENU_GET_SUBMENU: u32 = 4u32;
+pub const MENU_INSERT_ITEM: u32 = 16u32;
+pub const MENU_INSERT_MENU: u32 = 8u32;
 pub type MENU_ITEM_FLAGS = u32;
 pub type MENU_ITEM_MASK = u32;
 pub type MENU_ITEM_STATE = u32;
 pub type MENU_ITEM_TYPE = u32;
+pub const MENU_SET_DEFAULT_ITEM: u32 = 512u32;
+pub const MENU_SET_ITEM_DATA: u32 = 1024u32;
+pub const MENU_SET_ITEM_INFO: u32 = 64u32;
+pub const MENU_SET_SUBMENU: u32 = 2048u32;
 pub type MESSAGEBOX_RESULT = i32;
 pub type MESSAGEBOX_STYLE = u32;
 #[repr(C)]
@@ -2569,6 +2589,7 @@ pub const SB_LINEDOWN: SCROLLBAR_COMMAND = 1i32;
 pub const SB_LINELEFT: SCROLLBAR_COMMAND = 0i32;
 pub const SB_LINERIGHT: SCROLLBAR_COMMAND = 1i32;
 pub const SB_LINEUP: SCROLLBAR_COMMAND = 0i32;
+pub const SB_MIN: u32 = 0u32;
 pub const SB_PAGEDOWN: SCROLLBAR_COMMAND = 3i32;
 pub const SB_PAGELEFT: SCROLLBAR_COMMAND = 2i32;
 pub const SB_PAGERIGHT: SCROLLBAR_COMMAND = 3i32;
@@ -2886,6 +2907,7 @@ pub const SPI_GETTHREADLOCALINPUTSETTINGS: SYSTEM_PARAMETERS_INFO_ACTION = 4174u
 pub const SPI_GETTOGGLEKEYS: SYSTEM_PARAMETERS_INFO_ACTION = 52u32;
 pub const SPI_GETTOOLTIPANIMATION: SYSTEM_PARAMETERS_INFO_ACTION = 4118u32;
 pub const SPI_GETTOOLTIPFADE: SYSTEM_PARAMETERS_INFO_ACTION = 4120u32;
+pub const SPI_GETTOUCHPADPARAMETERS: SYSTEM_PARAMETERS_INFO_ACTION = 174u32;
 pub const SPI_GETTOUCHPREDICTIONPARAMETERS: SYSTEM_PARAMETERS_INFO_ACTION = 156u32;
 pub const SPI_GETUIEFFECTS: SYSTEM_PARAMETERS_INFO_ACTION = 4158u32;
 pub const SPI_GETWAITTOKILLSERVICETIMEOUT: SYSTEM_PARAMETERS_INFO_ACTION = 124u32;
@@ -3015,6 +3037,7 @@ pub const SPI_SETTHREADLOCALINPUTSETTINGS: SYSTEM_PARAMETERS_INFO_ACTION = 4175u
 pub const SPI_SETTOGGLEKEYS: SYSTEM_PARAMETERS_INFO_ACTION = 53u32;
 pub const SPI_SETTOOLTIPANIMATION: SYSTEM_PARAMETERS_INFO_ACTION = 4119u32;
 pub const SPI_SETTOOLTIPFADE: SYSTEM_PARAMETERS_INFO_ACTION = 4121u32;
+pub const SPI_SETTOUCHPADPARAMETERS: SYSTEM_PARAMETERS_INFO_ACTION = 175u32;
 pub const SPI_SETTOUCHPREDICTIONPARAMETERS: SYSTEM_PARAMETERS_INFO_ACTION = 157u32;
 pub const SPI_SETUIEFFECTS: SYSTEM_PARAMETERS_INFO_ACTION = 4159u32;
 pub const SPI_SETWAITTOKILLSERVICETIMEOUT: SYSTEM_PARAMETERS_INFO_ACTION = 125u32;
@@ -3084,6 +3107,7 @@ pub const SWP_HIDEWINDOW: SET_WINDOW_POS_FLAGS = 128u32;
 pub const SWP_NOACTIVATE: SET_WINDOW_POS_FLAGS = 16u32;
 pub const SWP_NOCOPYBITS: SET_WINDOW_POS_FLAGS = 256u32;
 pub const SWP_NOMOVE: SET_WINDOW_POS_FLAGS = 2u32;
+pub const SWP_NONE: u32 = 0u32;
 pub const SWP_NOOWNERZORDER: SET_WINDOW_POS_FLAGS = 512u32;
 pub const SWP_NOREDRAW: SET_WINDOW_POS_FLAGS = 8u32;
 pub const SWP_NOREPOSITION: SET_WINDOW_POS_FLAGS = 512u32;
@@ -3148,6 +3172,29 @@ pub const TKF_HOTKEYSOUND: u32 = 16u32;
 pub const TKF_INDICATOR: u32 = 32u32;
 pub const TKF_TOGGLEKEYSON: u32 = 1u32;
 pub type TOOLTIP_DISMISS_FLAGS = i32;
+pub const TOUCHPAD_PARAMETERS_LATEST_VERSION: u32 = 1u32;
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct TOUCHPAD_PARAMETERS_V1 {
+    pub versionNumber: u32,
+    pub maxSupportedContacts: u32,
+    pub legacyTouchpadFeatures: LEGACY_TOUCHPAD_FEATURES,
+    pub _bitfield1: i32,
+    pub _bitfield2: i32,
+    pub sensitivityLevel: TOUCHPAD_SENSITIVITY_LEVEL,
+    pub cursorSpeed: u32,
+    pub feedbackIntensity: u32,
+    pub clickForceSensitivity: u32,
+    pub rightClickZoneWidth: u32,
+    pub rightClickZoneHeight: u32,
+}
+pub const TOUCHPAD_PARAMETERS_VERSION_1: u32 = 1u32;
+pub type TOUCHPAD_SENSITIVITY_LEVEL = i32;
+pub const TOUCHPAD_SENSITIVITY_LEVEL_HIGH_SENSITIVITY: TOUCHPAD_SENSITIVITY_LEVEL = 1i32;
+pub const TOUCHPAD_SENSITIVITY_LEVEL_LEAST_SENSITIVE: TOUCHPAD_SENSITIVITY_LEVEL = 4i32;
+pub const TOUCHPAD_SENSITIVITY_LEVEL_LOW_SENSITIVITY: TOUCHPAD_SENSITIVITY_LEVEL = 3i32;
+pub const TOUCHPAD_SENSITIVITY_LEVEL_MEDIUM_SENSITIVITY: TOUCHPAD_SENSITIVITY_LEVEL = 2i32;
+pub const TOUCHPAD_SENSITIVITY_LEVEL_MOST_SENSITIVE: TOUCHPAD_SENSITIVITY_LEVEL = 0i32;
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct TOUCHPREDICTIONPARAMETERS {
@@ -3764,4 +3811,5 @@ pub const __WARNING_PRECONDITION_NULLTERMINATION_VIOLATION: u32 = 26035u32;
 pub const __WARNING_RANGE_POSTCONDITION_VIOLATION: u32 = 26061u32;
 pub const __WARNING_RETURNING_BAD_RESULT: u32 = 28196u32;
 pub const __WARNING_RETURN_UNINIT_VAR: u32 = 6101u32;
+pub const __WARNING_UNSAFE_STRING_FUNCTION: u32 = 25025u32;
 pub const __WARNING_USING_UNINIT_VAR: u32 = 6001u32;

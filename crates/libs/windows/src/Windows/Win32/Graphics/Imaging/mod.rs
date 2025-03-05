@@ -128,6 +128,7 @@ pub const CLSID_WICGpsMetadataWriter: windows_core::GUID = windows_core::GUID::f
 pub const CLSID_WICHeifDecoder: windows_core::GUID = windows_core::GUID::from_u128(0xe9a4a80a_44fe_4de4_8971_7150b10a5199);
 pub const CLSID_WICHeifEncoder: windows_core::GUID = windows_core::GUID::from_u128(0x0dbecec1_9eb3_4860_9c6f_ddbe86634575);
 pub const CLSID_WICHeifHDRMetadataReader: windows_core::GUID = windows_core::GUID::from_u128(0x2438de3d_94d9_4be8_84a8_4de95a575e75);
+pub const CLSID_WICHeifHDRMetadataWriter: windows_core::GUID = windows_core::GUID::from_u128(0xb83135a2_8e7e_485e_a533_f93621dd93c8);
 pub const CLSID_WICHeifMetadataReader: windows_core::GUID = windows_core::GUID::from_u128(0xacddfc3f_85ec_41bc_bdef_1bc262e4db05);
 pub const CLSID_WICHeifMetadataWriter: windows_core::GUID = windows_core::GUID::from_u128(0x3ae45e79_40bc_4401_ace5_dd3cb16e6afe);
 pub const CLSID_WICIMDMetadataReader: windows_core::GUID = windows_core::GUID::from_u128(0x7447a267_0015_42c8_a8f1_fb3b94c68361);
@@ -154,6 +155,12 @@ pub const CLSID_WICJpegEncoder: windows_core::GUID = windows_core::GUID::from_u1
 pub const CLSID_WICJpegLuminanceMetadataReader: windows_core::GUID = windows_core::GUID::from_u128(0x356f2f88_05a6_4728_b9a4_1bfbce04d838);
 pub const CLSID_WICJpegLuminanceMetadataWriter: windows_core::GUID = windows_core::GUID::from_u128(0x1d583abc_8a0e_4657_9982_a380ca58fb4b);
 pub const CLSID_WICJpegQualcommPhoneEncoder: windows_core::GUID = windows_core::GUID::from_u128(0x68ed5c62_f534_4979_b2b3_686a12b2b34c);
+pub const CLSID_WICJpegXLAnimFrameMetadataReader: windows_core::GUID = windows_core::GUID::from_u128(0x9cdf50a8_8770_4fe6_aef2_d06e2c01744f);
+pub const CLSID_WICJpegXLAnimFrameMetadataWriter: windows_core::GUID = windows_core::GUID::from_u128(0xd1ce58a8_06e0_4b6f_8fc1_577560bd5ad9);
+pub const CLSID_WICJpegXLAnimMetadataReader: windows_core::GUID = windows_core::GUID::from_u128(0xbf8b6eb0_37e2_4ed8_8289_be9ae31d9f03);
+pub const CLSID_WICJpegXLAnimMetadataWriter: windows_core::GUID = windows_core::GUID::from_u128(0x39d01345_432b_44e6_afd6_f606d20a5571);
+pub const CLSID_WICJpegXLDecoder: windows_core::GUID = windows_core::GUID::from_u128(0xfc6ceece_aef5_4a23_96ec_5984ffb486d9);
+pub const CLSID_WICJpegXLEncoder: windows_core::GUID = windows_core::GUID::from_u128(0x0e4ecd3b_1ba6_4636_8198_56c73040964a);
 pub const CLSID_WICLSDMetadataReader: windows_core::GUID = windows_core::GUID::from_u128(0x41070793_59e4_479a_a1f7_954adc2ef5fc);
 pub const CLSID_WICLSDMetadataWriter: windows_core::GUID = windows_core::GUID::from_u128(0x73c037e7_e5d9_4954_876a_6da81d6e5768);
 pub const CLSID_WICPlanarFormatConverter: windows_core::GUID = windows_core::GUID::from_u128(0x184132b8_32f8_4784_9131_dd7224b23438);
@@ -211,6 +218,7 @@ pub const GUID_ContainerFormatGif: windows_core::GUID = windows_core::GUID::from
 pub const GUID_ContainerFormatHeif: windows_core::GUID = windows_core::GUID::from_u128(0xe1e62521_6787_405b_a339_500715b5763f);
 pub const GUID_ContainerFormatIco: windows_core::GUID = windows_core::GUID::from_u128(0xa3a860c4_338f_4c17_919a_fba4b5628f21);
 pub const GUID_ContainerFormatJpeg: windows_core::GUID = windows_core::GUID::from_u128(0x19e4a5aa_5662_4fc5_a0c0_1758028e1057);
+pub const GUID_ContainerFormatJpegXL: windows_core::GUID = windows_core::GUID::from_u128(0xfec14e3f_427a_4736_aae6_27ed84f69322);
 pub const GUID_ContainerFormatPng: windows_core::GUID = windows_core::GUID::from_u128(0x1b7cfaf4_713f_473c_bbcd_6137425faeaf);
 pub const GUID_ContainerFormatRaw: windows_core::GUID = windows_core::GUID::from_u128(0xfe99ce60_f19c_433c_a3ae_00acefa9ca21);
 pub const GUID_ContainerFormatTiff: windows_core::GUID = windows_core::GUID::from_u128(0x163bcc30_e2e9_4f0b_961d_a3e9fdb788a3);
@@ -247,6 +255,8 @@ pub const GUID_MetadataFormatInterop: windows_core::GUID = windows_core::GUID::f
 pub const GUID_MetadataFormatJpegChrominance: windows_core::GUID = windows_core::GUID::from_u128(0xf73d0dcf_cec6_4f85_9b0e_1c3956b1bef7);
 pub const GUID_MetadataFormatJpegComment: windows_core::GUID = windows_core::GUID::from_u128(0x220e5f33_afd3_474e_9d31_7d4fe730f557);
 pub const GUID_MetadataFormatJpegLuminance: windows_core::GUID = windows_core::GUID::from_u128(0x86908007_edfc_4860_8d4b_4ee6e83e6058);
+pub const GUID_MetadataFormatJpegXLAnim: windows_core::GUID = windows_core::GUID::from_u128(0x501c2e24_7a7d_42b2_93c7_b4f45bcc92f7);
+pub const GUID_MetadataFormatJpegXLAnimFrame: windows_core::GUID = windows_core::GUID::from_u128(0x958ecc2c_36cb_4af9_9ea8_0b74baccfd3e);
 pub const GUID_MetadataFormatLSD: windows_core::GUID = windows_core::GUID::from_u128(0xe256031e_6299_4929_b98d_5ac884afba92);
 pub const GUID_MetadataFormatSubIfd: windows_core::GUID = windows_core::GUID::from_u128(0x58a2e128_2db9_4e57_bb14_5177891ed331);
 pub const GUID_MetadataFormatThumbnail: windows_core::GUID = windows_core::GUID::from_u128(0x243dcee9_8703_40ee_8ef0_22a600b8058c);
@@ -341,6 +351,8 @@ pub const GUID_WICPixelFormat80bppCMYKAlpha: windows_core::GUID = windows_core::
 pub const GUID_WICPixelFormat8bppAlpha: windows_core::GUID = windows_core::GUID::from_u128(0xe6cd0116_eeba_4161_aa85_27dd9fb3a895);
 pub const GUID_WICPixelFormat8bppCb: windows_core::GUID = windows_core::GUID::from_u128(0x1339f224_6bfe_4c3e_9302_e4f3a6d0ca2a);
 pub const GUID_WICPixelFormat8bppCr: windows_core::GUID = windows_core::GUID::from_u128(0xb8145053_2116_49f0_8835_ed844b205c51);
+pub const GUID_WICPixelFormat8bppDepth: windows_core::GUID = windows_core::GUID::from_u128(0x4c9c9f45_1d89_4e31_9bc7_69343a0dca69);
+pub const GUID_WICPixelFormat8bppGain: windows_core::GUID = windows_core::GUID::from_u128(0xa884022a_af13_4c16_b746_619bf618b878);
 pub const GUID_WICPixelFormat8bppGray: windows_core::GUID = windows_core::GUID::from_u128(0x6fddc324_4e03_4bfe_b185_3d77768dc908);
 pub const GUID_WICPixelFormat8bppIndexed: windows_core::GUID = windows_core::GUID::from_u128(0x6fddc324_4e03_4bfe_b185_3d77768dc904);
 pub const GUID_WICPixelFormat8bppY: windows_core::GUID = windows_core::GUID::from_u128(0x91b4db54_2df9_42f0_b449_2909bb3df88e);
@@ -1892,6 +1904,54 @@ impl IWICBitmapSourceTransform_Vtbl {
     }
 }
 impl windows_core::RuntimeName for IWICBitmapSourceTransform {}
+windows_core::imp::define_interface!(IWICBitmapSourceTransform2, IWICBitmapSourceTransform2_Vtbl, 0xc3373fdf_6d39_4e5f_8e79_bf40c0b7ed77);
+impl core::ops::Deref for IWICBitmapSourceTransform2 {
+    type Target = IWICBitmapSourceTransform;
+    fn deref(&self) -> &Self::Target {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+windows_core::imp::interface_hierarchy!(IWICBitmapSourceTransform2, windows_core::IUnknown, IWICBitmapSourceTransform);
+impl IWICBitmapSourceTransform2 {
+    pub unsafe fn GetColorContextsForPixelFormat(&self, ppixelformat: *const windows_core::GUID, ppicolorcontexts: &[Option<IWICColorContext>]) -> windows_core::Result<u32> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetColorContextsForPixelFormat)(windows_core::Interface::as_raw(self), ppixelformat, ppicolorcontexts.len().try_into().unwrap(), core::mem::transmute(ppicolorcontexts.as_ptr()), &mut result__).map(|| result__)
+        }
+    }
+}
+#[repr(C)]
+pub struct IWICBitmapSourceTransform2_Vtbl {
+    pub base__: IWICBitmapSourceTransform_Vtbl,
+    pub GetColorContextsForPixelFormat: unsafe extern "system" fn(*mut core::ffi::c_void, *const windows_core::GUID, u32, *const *mut core::ffi::c_void, *mut u32) -> windows_core::HRESULT,
+}
+pub trait IWICBitmapSourceTransform2_Impl: IWICBitmapSourceTransform_Impl {
+    fn GetColorContextsForPixelFormat(&self, ppixelformat: *const windows_core::GUID, ccount: u32, ppicolorcontexts: *const Option<IWICColorContext>) -> windows_core::Result<u32>;
+}
+impl IWICBitmapSourceTransform2_Vtbl {
+    pub const fn new<Identity: IWICBitmapSourceTransform2_Impl, const OFFSET: isize>() -> Self {
+        unsafe extern "system" fn GetColorContextsForPixelFormat<Identity: IWICBitmapSourceTransform2_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, ppixelformat: *const windows_core::GUID, ccount: u32, ppicolorcontexts: *const *mut core::ffi::c_void, pcactualcount: *mut u32) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IWICBitmapSourceTransform2_Impl::GetColorContextsForPixelFormat(this, core::mem::transmute_copy(&ppixelformat), core::mem::transmute_copy(&ccount), core::mem::transmute_copy(&ppicolorcontexts)) {
+                    Ok(ok__) => {
+                        pcactualcount.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        Self {
+            base__: IWICBitmapSourceTransform_Vtbl::new::<Identity, OFFSET>(),
+            GetColorContextsForPixelFormat: GetColorContextsForPixelFormat::<Identity, OFFSET>,
+        }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<IWICBitmapSourceTransform2 as windows_core::Interface>::IID || iid == &<IWICBitmapSourceTransform as windows_core::Interface>::IID
+    }
+}
+impl windows_core::RuntimeName for IWICBitmapSourceTransform2 {}
 windows_core::imp::define_interface!(IWICColorContext, IWICColorContext_Vtbl, 0x3c613a02_34b2_44ea_9a7c_45aea9c6fd6d);
 windows_core::imp::interface_hierarchy!(IWICColorContext, windows_core::IUnknown);
 impl IWICColorContext {
@@ -3168,6 +3228,81 @@ impl IWICDevelopRawNotificationCallback_Vtbl {
     }
 }
 impl windows_core::RuntimeName for IWICDevelopRawNotificationCallback {}
+windows_core::imp::define_interface!(IWICDisplayAdaptationControl, IWICDisplayAdaptationControl_Vtbl, 0xde9d91d2_70b4_4f41_836c_25fcd39626d3);
+windows_core::imp::interface_hierarchy!(IWICDisplayAdaptationControl, windows_core::IUnknown);
+impl IWICDisplayAdaptationControl {
+    pub unsafe fn DoesSupportChangingMaxLuminance(&self, pguiddstformat: *const windows_core::GUID) -> windows_core::Result<windows_core::BOOL> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).DoesSupportChangingMaxLuminance)(windows_core::Interface::as_raw(self), pguiddstformat, &mut result__).map(|| result__)
+        }
+    }
+    pub unsafe fn SetDisplayMaxLuminance(&self, fluminanceinnits: f32) -> windows_core::Result<()> {
+        unsafe { (windows_core::Interface::vtable(self).SetDisplayMaxLuminance)(windows_core::Interface::as_raw(self), fluminanceinnits).ok() }
+    }
+    pub unsafe fn GetDisplayMaxLuminance(&self) -> windows_core::Result<f32> {
+        unsafe {
+            let mut result__ = core::mem::zeroed();
+            (windows_core::Interface::vtable(self).GetDisplayMaxLuminance)(windows_core::Interface::as_raw(self), &mut result__).map(|| result__)
+        }
+    }
+}
+#[repr(C)]
+pub struct IWICDisplayAdaptationControl_Vtbl {
+    pub base__: windows_core::IUnknown_Vtbl,
+    pub DoesSupportChangingMaxLuminance: unsafe extern "system" fn(*mut core::ffi::c_void, *const windows_core::GUID, *mut windows_core::BOOL) -> windows_core::HRESULT,
+    pub SetDisplayMaxLuminance: unsafe extern "system" fn(*mut core::ffi::c_void, f32) -> windows_core::HRESULT,
+    pub GetDisplayMaxLuminance: unsafe extern "system" fn(*mut core::ffi::c_void, *mut f32) -> windows_core::HRESULT,
+}
+pub trait IWICDisplayAdaptationControl_Impl: windows_core::IUnknownImpl {
+    fn DoesSupportChangingMaxLuminance(&self, pguiddstformat: *const windows_core::GUID) -> windows_core::Result<windows_core::BOOL>;
+    fn SetDisplayMaxLuminance(&self, fluminanceinnits: f32) -> windows_core::Result<()>;
+    fn GetDisplayMaxLuminance(&self) -> windows_core::Result<f32>;
+}
+impl IWICDisplayAdaptationControl_Vtbl {
+    pub const fn new<Identity: IWICDisplayAdaptationControl_Impl, const OFFSET: isize>() -> Self {
+        unsafe extern "system" fn DoesSupportChangingMaxLuminance<Identity: IWICDisplayAdaptationControl_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pguiddstformat: *const windows_core::GUID, pfissupported: *mut windows_core::BOOL) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IWICDisplayAdaptationControl_Impl::DoesSupportChangingMaxLuminance(this, core::mem::transmute_copy(&pguiddstformat)) {
+                    Ok(ok__) => {
+                        pfissupported.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        unsafe extern "system" fn SetDisplayMaxLuminance<Identity: IWICDisplayAdaptationControl_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, fluminanceinnits: f32) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                IWICDisplayAdaptationControl_Impl::SetDisplayMaxLuminance(this, core::mem::transmute_copy(&fluminanceinnits)).into()
+            }
+        }
+        unsafe extern "system" fn GetDisplayMaxLuminance<Identity: IWICDisplayAdaptationControl_Impl, const OFFSET: isize>(this: *mut core::ffi::c_void, pfluminanceinnits: *mut f32) -> windows_core::HRESULT {
+            unsafe {
+                let this: &Identity = &*((this as *const *const ()).offset(OFFSET) as *const Identity);
+                match IWICDisplayAdaptationControl_Impl::GetDisplayMaxLuminance(this) {
+                    Ok(ok__) => {
+                        pfluminanceinnits.write(core::mem::transmute(ok__));
+                        windows_core::HRESULT(0)
+                    }
+                    Err(err) => err.into(),
+                }
+            }
+        }
+        Self {
+            base__: windows_core::IUnknown_Vtbl::new::<Identity, OFFSET>(),
+            DoesSupportChangingMaxLuminance: DoesSupportChangingMaxLuminance::<Identity, OFFSET>,
+            SetDisplayMaxLuminance: SetDisplayMaxLuminance::<Identity, OFFSET>,
+            GetDisplayMaxLuminance: GetDisplayMaxLuminance::<Identity, OFFSET>,
+        }
+    }
+    pub fn matches(iid: &windows_core::GUID) -> bool {
+        iid == &<IWICDisplayAdaptationControl as windows_core::Interface>::IID
+    }
+}
+impl windows_core::RuntimeName for IWICDisplayAdaptationControl {}
 windows_core::imp::define_interface!(IWICEnumMetadataItem, IWICEnumMetadataItem_Vtbl, 0xdc2bb46d_3f07_481e_8625_220c4aedbb33);
 windows_core::imp::interface_hierarchy!(IWICEnumMetadataItem, windows_core::IUnknown);
 impl IWICEnumMetadataItem {
@@ -6338,6 +6473,13 @@ pub struct WICGifLogicalScreenDescriptorProperties(pub i32);
 pub const WICGifLogicalScreenDescriptorSortFlag: WICGifLogicalScreenDescriptorProperties = WICGifLogicalScreenDescriptorProperties(6i32);
 pub const WICGifLogicalScreenDescriptorWidth: WICGifLogicalScreenDescriptorProperties = WICGifLogicalScreenDescriptorProperties(2i32);
 pub const WICGifLogicalScreenSignature: WICGifLogicalScreenDescriptorProperties = WICGifLogicalScreenDescriptorProperties(1i32);
+pub const WICHeifCompressionAV1: WICHeifCompressionOption = WICHeifCompressionOption(3i32);
+pub const WICHeifCompressionDontCare: WICHeifCompressionOption = WICHeifCompressionOption(0i32);
+pub const WICHeifCompressionHEVC: WICHeifCompressionOption = WICHeifCompressionOption(2i32);
+pub const WICHeifCompressionNone: WICHeifCompressionOption = WICHeifCompressionOption(1i32);
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct WICHeifCompressionOption(pub i32);
 pub const WICHeifHdrCustomVideoPrimaries: WICHeifHdrProperties = WICHeifHdrProperties(5i32);
 pub const WICHeifHdrMaximumFrameAverageLuminanceLevel: WICHeifHdrProperties = WICHeifHdrProperties(2i32);
 pub const WICHeifHdrMaximumLuminanceLevel: WICHeifHdrProperties = WICHeifHdrProperties(1i32);
@@ -6430,6 +6572,17 @@ pub const WICJpegScanTypeProgressive: WICJpegScanType = WICJpegScanType(2i32);
 pub struct WICJpegTransferMatrix(pub i32);
 pub const WICJpegTransferMatrixBT601: WICJpegTransferMatrix = WICJpegTransferMatrix(1i32);
 pub const WICJpegTransferMatrixIdentity: WICJpegTransferMatrix = WICJpegTransferMatrix(0i32);
+pub const WICJpegXLAnimFrameDurationInTicks: WICJpegXLAnimFrameProperties = WICJpegXLAnimFrameProperties(1i32);
+pub const WICJpegXLAnimFrameName: WICJpegXLAnimFrameProperties = WICJpegXLAnimFrameProperties(2i32);
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct WICJpegXLAnimFrameProperties(pub i32);
+pub const WICJpegXLAnimFrameTicksPerSecondDenominator: WICJpegXLAnimProperties = WICJpegXLAnimProperties(3i32);
+pub const WICJpegXLAnimFrameTicksPerSecondNumerator: WICJpegXLAnimProperties = WICJpegXLAnimProperties(2i32);
+pub const WICJpegXLAnimLoopCount: WICJpegXLAnimProperties = WICJpegXLAnimProperties(1i32);
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct WICJpegXLAnimProperties(pub i32);
 pub const WICJpegYCrCbSubsampling420: WICJpegYCrCbSubsamplingOption = WICJpegYCrCbSubsamplingOption(1i32);
 pub const WICJpegYCrCbSubsampling422: WICJpegYCrCbSubsamplingOption = WICJpegYCrCbSubsamplingOption(2i32);
 pub const WICJpegYCrCbSubsampling440: WICJpegYCrCbSubsamplingOption = WICJpegYCrCbSubsamplingOption(4i32);

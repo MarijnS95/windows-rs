@@ -1798,6 +1798,11 @@ pub unsafe fn RemoveResourceFromClusterSharedVolumes(hresource: HRESOURCE) -> u3
     windows_link::link!("clusapi.dll" "system" fn RemoveResourceFromClusterSharedVolumes(hresource : HRESOURCE) -> u32);
     unsafe { RemoveResourceFromClusterSharedVolumes(hresource) }
 }
+#[inline]
+pub unsafe fn RepairClusterNameAccount(hcluster: HCLUSTER, pconfig: *const REPAIR_CLUSTER_NAME_ACCOUNT_CONFIG, pfnprogresscallback: PCLUSTER_SETUP_PROGRESS_CALLBACK, pvcallbackarg: Option<*const core::ffi::c_void>) -> u32 {
+    windows_link::link!("clusapi.dll" "system" fn RepairClusterNameAccount(hcluster : HCLUSTER, pconfig : *const REPAIR_CLUSTER_NAME_ACCOUNT_CONFIG, pfnprogresscallback : PCLUSTER_SETUP_PROGRESS_CALLBACK, pvcallbackarg : *const core::ffi::c_void) -> u32);
+    unsafe { RepairClusterNameAccount(hcluster, pconfig, pfnprogresscallback, pvcallbackarg.unwrap_or(core::mem::zeroed()) as _) }
+}
 #[cfg(feature = "Win32_System_Registry")]
 #[inline]
 pub unsafe fn ResUtilAddUnknownProperties(hkeyclusterkey: super::super::System::Registry::HKEY, ppropertytable: *const RESUTIL_PROPERTY_ITEM, poutpropertylist: *mut core::ffi::c_void, pcboutpropertylistsize: u32, pcbbytesreturned: *mut u32, pcbrequired: *mut u32) -> u32 {
@@ -2731,6 +2736,7 @@ pub const CLCTL_GET_NETWORK: CLCTL_CODES = CLCTL_CODES(53i32);
 pub const CLCTL_GET_NETWORK_NAME: CLCTL_CODES = CLCTL_CODES(361i32);
 pub const CLCTL_GET_NODE: CLCTL_CODES = CLCTL_CODES(49i32);
 pub const CLCTL_GET_NODES_IN_FD: CLCTL_CODES = CLCTL_CODES(11745i32);
+pub const CLCTL_GET_NODE_NETWORK_CONNECTIVITY: CLCTL_CODES = CLCTL_CODES(797i32);
 pub const CLCTL_GET_OPERATION_CONTEXT: CLCTL_CODES = CLCTL_CODES(1057001i32);
 pub const CLCTL_GET_PRIVATE_PROPERTIES: CLCTL_CODES = CLCTL_CODES(129i32);
 pub const CLCTL_GET_PRIVATE_PROPERTY_FMTS: CLCTL_CODES = CLCTL_CODES(141i32);
@@ -3076,7 +3082,9 @@ pub const CLUSAPI_RESOURCE_ONLINE_IGNORE_AFFINITY_RULE: u32 = 32u32;
 pub const CLUSAPI_RESOURCE_ONLINE_IGNORE_RESOURCE_STATUS: u32 = 1u32;
 pub const CLUSAPI_RESOURCE_ONLINE_NECESSARY_FOR_QUORUM: u32 = 4u32;
 pub const CLUSAPI_VALID_CHANGE_RESOURCE_GROUP_FLAGS: u64 = 1u64;
-pub const CLUSAPI_VERSION: u32 = 2572u32;
+pub const CLUSAPI_VERSION: u32 = 3077u32;
+pub const CLUSAPI_VERSION_CU: u32 = 3075u32;
+pub const CLUSAPI_VERSION_GA: u32 = 3077u32;
 pub const CLUSAPI_VERSION_NI: u32 = 2572u32;
 pub const CLUSAPI_VERSION_RS3: u32 = 2560u32;
 pub const CLUSAPI_VERSION_SERVER2008: u32 = 1536u32;
@@ -3084,6 +3092,7 @@ pub const CLUSAPI_VERSION_SERVER2008R2: u32 = 1792u32;
 pub const CLUSAPI_VERSION_WINDOWS8: u32 = 1793u32;
 pub const CLUSAPI_VERSION_WINDOWSBLUE: u32 = 1794u32;
 pub const CLUSAPI_VERSION_WINTHRESHOLD: u32 = 1795u32;
+pub const CLUSAPI_VERSION_ZN: u32 = 3076u32;
 pub const CLUSCTL_ACCESS_MODE_MASK: u32 = 3u32;
 pub const CLUSCTL_ACCESS_SHIFT: u32 = 0u32;
 #[repr(transparent)]
@@ -3868,9 +3877,12 @@ pub const CLUSREG_DELETE_KEY: CLUSTER_REG_COMMAND = CLUSTER_REG_COMMAND(3i32);
 pub const CLUSREG_DELETE_VALUE: CLUSTER_REG_COMMAND = CLUSTER_REG_COMMAND(4i32);
 pub const CLUSREG_KEYNAME_OBJECTGUIDS: windows_core::PCWSTR = windows_core::w!("ObjectGUIDs");
 pub const CLUSREG_LAST_COMMAND: CLUSTER_REG_COMMAND = CLUSTER_REG_COMMAND(19i32);
+pub const CLUSREG_NAME_ACCELERATED_NETWORKING_ENABLED: windows_core::PCWSTR = windows_core::w!("AcceleratedNetworkingEnabled");
+pub const CLUSREG_NAME_ACCELERATED_NETWORKING_NODE_RESERVE: windows_core::PCWSTR = windows_core::w!("AcceleratedNetworkingNodeReserve");
 pub const CLUSREG_NAME_AFFINITYRULE_ENABLED: windows_core::PCWSTR = windows_core::w!("Enabled");
 pub const CLUSREG_NAME_AFFINITYRULE_GROUPS: windows_core::PCWSTR = windows_core::w!("Groups");
 pub const CLUSREG_NAME_AFFINITYRULE_NAME: windows_core::PCWSTR = windows_core::w!("Name");
+pub const CLUSREG_NAME_AFFINITYRULE_SOFTANTIAFFINITY: windows_core::PCWSTR = windows_core::w!("SoftAntiAffinity");
 pub const CLUSREG_NAME_AFFINITYRULE_TYPE: windows_core::PCWSTR = windows_core::w!("RuleType");
 pub const CLUSREG_NAME_CLOUDWITNESS_ACCOUNT_NAME: windows_core::PCWSTR = windows_core::w!("AccountName");
 pub const CLUSREG_NAME_CLOUDWITNESS_CONTAINER_NAME: windows_core::PCWSTR = windows_core::w!("ContainerName");
@@ -3976,8 +3988,12 @@ pub const CLUSREG_NAME_IPV6_NATIVE_NETWORK: windows_core::PCWSTR = windows_core:
 pub const CLUSREG_NAME_IPV6_NATIVE_PREFIX_LENGTH: windows_core::PCWSTR = windows_core::w!("PrefixLength");
 pub const CLUSREG_NAME_IPV6_TUNNEL_ADDRESS: windows_core::PCWSTR = windows_core::w!("Address");
 pub const CLUSREG_NAME_IPV6_TUNNEL_TUNNELTYPE: windows_core::PCWSTR = windows_core::w!("TunnelType");
+pub const CLUSREG_NAME_KEYVALUESTORE_MANAGERNAME: windows_core::PCWSTR = windows_core::w!("ManagerName");
+pub const CLUSREG_NAME_KEYVALUESTORE_MANAGERPATH: windows_core::PCWSTR = windows_core::w!("ManagerPath");
+pub const CLUSREG_NAME_KEYVALUESTORE_NAME: windows_core::PCWSTR = windows_core::w!("KeyValueStores");
 pub const CLUSREG_NAME_LAST_RECENT_EVENTS_RESET_TIME: windows_core::PCWSTR = windows_core::w!("RecentEventsResetTime");
 pub const CLUSREG_NAME_LOG_FILE_PATH: windows_core::PCWSTR = windows_core::w!("LogFilePath");
+pub const CLUSREG_NAME_MAX_PARALLEL_MIGRATIONS: windows_core::PCWSTR = windows_core::w!("MaximumParallelMigrations");
 pub const CLUSREG_NAME_MESSAGE_BUFFER_LENGTH: windows_core::PCWSTR = windows_core::w!("MessageBufferLength");
 pub const CLUSREG_NAME_MIXED_MODE: windows_core::PCWSTR = windows_core::w!("MixedMode");
 pub const CLUSREG_NAME_NETFT_IPSEC_ENABLED: windows_core::PCWSTR = windows_core::w!("NetftIPSecEnabled");
@@ -4030,12 +4046,15 @@ pub const CLUSREG_NAME_NET_SPEED: windows_core::PCWSTR = windows_core::w!("LinkS
 pub const CLUSREG_NAME_NODE_BUILD_NUMBER: windows_core::PCWSTR = windows_core::w!("BuildNumber");
 pub const CLUSREG_NAME_NODE_CSDVERSION: windows_core::PCWSTR = windows_core::w!("CSDVersion");
 pub const CLUSREG_NAME_NODE_DESC: windows_core::PCWSTR = windows_core::w!("Description");
+pub const CLUSREG_NAME_NODE_DRAIN_ERROR_CODE: windows_core::PCWSTR = windows_core::w!("DrainErrorCode");
 pub const CLUSREG_NAME_NODE_DRAIN_STATUS: windows_core::PCWSTR = windows_core::w!("NodeDrainStatus");
 pub const CLUSREG_NAME_NODE_DRAIN_TARGET: windows_core::PCWSTR = windows_core::w!("NodeDrainTarget");
 pub const CLUSREG_NAME_NODE_DYNAMIC_WEIGHT: windows_core::PCWSTR = windows_core::w!("DynamicWeight");
+pub const CLUSREG_NAME_NODE_FAILBACK_STATUS: windows_core::PCWSTR = windows_core::w!("NodeFailbackStatus");
 pub const CLUSREG_NAME_NODE_FAULT_DOMAIN: windows_core::PCWSTR = windows_core::w!("FaultDomain");
 pub const CLUSREG_NAME_NODE_FDID: windows_core::PCWSTR = windows_core::w!("FaultDomainId");
 pub const CLUSREG_NAME_NODE_HIGHEST_VERSION: windows_core::PCWSTR = windows_core::w!("NodeHighestVersion");
+pub const CLUSREG_NAME_NODE_HYPERTHREADING_ENABLED: windows_core::PCWSTR = windows_core::w!("HyperthreadingEnabled");
 pub const CLUSREG_NAME_NODE_IS_PRIMARY: windows_core::PCWSTR = windows_core::w!("IsPrimary");
 pub const CLUSREG_NAME_NODE_LOWEST_VERSION: windows_core::PCWSTR = windows_core::w!("NodeLowestVersion");
 pub const CLUSREG_NAME_NODE_MAJOR_VERSION: windows_core::PCWSTR = windows_core::w!("MajorVersion");
@@ -4458,6 +4477,7 @@ pub const CLUSTER_ENFORCED_ANTIAFFINITY: windows_core::PCWSTR = windows_core::w!
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct CLUSTER_ENUM(pub i32);
 pub const CLUSTER_ENUM_ALL: CLUSTER_ENUM = CLUSTER_ENUM(63i32);
+pub const CLUSTER_ENUM_CAPACITY_NODE: CLUSTER_ENUM = CLUSTER_ENUM(268435456i32);
 pub const CLUSTER_ENUM_GROUP: CLUSTER_ENUM = CLUSTER_ENUM(8i32);
 pub const CLUSTER_ENUM_INTERNAL_NETWORK: CLUSTER_ENUM = CLUSTER_ENUM(-2147483648i32);
 #[repr(C)]
@@ -4633,6 +4653,9 @@ pub const CLUSTER_NODE_ENUM_ALL: CLUSTER_NODE_ENUM = CLUSTER_NODE_ENUM(3i32);
 pub const CLUSTER_NODE_ENUM_GROUPS: CLUSTER_NODE_ENUM = CLUSTER_NODE_ENUM(2i32);
 pub const CLUSTER_NODE_ENUM_NETINTERFACES: CLUSTER_NODE_ENUM = CLUSTER_NODE_ENUM(1i32);
 pub const CLUSTER_NODE_ENUM_PREFERRED_GROUPS: CLUSTER_NODE_ENUM = CLUSTER_NODE_ENUM(4i32);
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct CLUSTER_NODE_FAILBACK_STATUS(pub i32);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct CLUSTER_NODE_RESUME_FAILBACK_TYPE(pub i32);
@@ -4962,6 +4985,12 @@ pub const CLUSTER_WITNESS_FAILED_RESTART_INTERVAL: windows_core::PCWSTR = window
 pub const CLUS_ACCESS_ANY: u32 = 0u32;
 pub const CLUS_ACCESS_READ: u32 = 1u32;
 pub const CLUS_ACCESS_WRITE: u32 = 2u32;
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct CLUS_ADAPTER_EXCLUSION_TYPE(pub i32);
+pub const CLUS_ADAPTER_EXCLUSION_TYPE_DESCRIPTION: CLUS_ADAPTER_EXCLUSION_TYPE = CLUS_ADAPTER_EXCLUSION_TYPE(1i32);
+pub const CLUS_ADAPTER_EXCLUSION_TYPE_FRIENDLYNAME: CLUS_ADAPTER_EXCLUSION_TYPE = CLUS_ADAPTER_EXCLUSION_TYPE(2i32);
+pub const CLUS_ADAPTER_EXCLUSION_TYPE_IPPREFIX: CLUS_ADAPTER_EXCLUSION_TYPE = CLUS_ADAPTER_EXCLUSION_TYPE(0i32);
 pub const CLUS_AFFINITY_RULE_DIFFERENT_FAULT_DOMAIN: CLUS_AFFINITY_RULE_TYPE = CLUS_AFFINITY_RULE_TYPE(3i32);
 pub const CLUS_AFFINITY_RULE_DIFFERENT_NODE: CLUS_AFFINITY_RULE_TYPE = CLUS_AFFINITY_RULE_TYPE(4i32);
 pub const CLUS_AFFINITY_RULE_MAX: CLUS_AFFINITY_RULE_TYPE = CLUS_AFFINITY_RULE_TYPE(4i32);
@@ -5410,6 +5439,7 @@ pub const CLUS_RESTYPE_NAME_IPV6_NATIVE: windows_core::PCWSTR = windows_core::w!
 pub const CLUS_RESTYPE_NAME_IPV6_TUNNEL: windows_core::PCWSTR = windows_core::w!("IPv6 Tunnel Address");
 pub const CLUS_RESTYPE_NAME_ISCSITARGET: windows_core::PCWSTR = windows_core::w!("iSCSI Target Server");
 pub const CLUS_RESTYPE_NAME_ISNS: windows_core::PCWSTR = windows_core::w!("Microsoft iSNS");
+pub const CLUS_RESTYPE_NAME_KEY_VALUE_STORE: windows_core::PCWSTR = windows_core::w!("Key Value Store");
 pub const CLUS_RESTYPE_NAME_MSDTC: windows_core::PCWSTR = windows_core::w!("Distributed Transaction Coordinator");
 pub const CLUS_RESTYPE_NAME_MSMQ: windows_core::PCWSTR = windows_core::w!("Microsoft Message Queue Server");
 pub const CLUS_RESTYPE_NAME_MSMQ_TRIGGER: windows_core::PCWSTR = windows_core::w!("MSMQTriggers");
@@ -5569,6 +5599,9 @@ pub struct CREATE_CLUSTER_CONFIG {
     pub fEmptyCluster: bool,
     pub managementPointType: CLUSTER_MGMT_POINT_TYPE,
     pub managementPointResType: CLUSTER_MGMT_POINT_RESTYPE,
+    pub pszUserName: windows_core::PCWSTR,
+    pub pszPassword: windows_core::PCWSTR,
+    pub pszDomain: windows_core::PCWSTR,
 }
 impl Default for CREATE_CLUSTER_CONFIG {
     fn default() -> Self {
@@ -5598,6 +5631,7 @@ pub const CREATE_CLUSTER_VERSION: u32 = 1536u32;
 pub const CTCTL_GET_FAULT_DOMAIN_STATE: CLCTL_CODES = CLCTL_CODES(789i32);
 pub const CTCTL_GET_ROUTESTATUS_BASIC: CLCTL_CODES = CLCTL_CODES(781i32);
 pub const CTCTL_GET_ROUTESTATUS_EXTENDED: CLCTL_CODES = CLCTL_CODES(785i32);
+pub const CU_UPGRADE_VERSION: u32 = 3u32;
 pub const ClusApplication: windows_core::GUID = windows_core::GUID::from_u128(0xf2e606e5_2631_11d1_89f1_00a0c90d061e);
 pub const ClusCryptoKeys: windows_core::GUID = windows_core::GUID::from_u128(0xf2e6072b_2631_11d1_89f1_00a0c90d061e);
 pub const ClusDisk: windows_core::GUID = windows_core::GUID::from_u128(0xf2e60723_2631_11d1_89f1_00a0c90d061e);
@@ -5613,9 +5647,12 @@ pub const ClusGroupTypeFileServer: CLUSGROUP_TYPE = CLUSGROUP_TYPE(100i32);
 pub const ClusGroupTypeGenericApplication: CLUSGROUP_TYPE = CLUSGROUP_TYPE(107i32);
 pub const ClusGroupTypeGenericScript: CLUSGROUP_TYPE = CLUSGROUP_TYPE(109i32);
 pub const ClusGroupTypeGenericService: CLUSGROUP_TYPE = CLUSGROUP_TYPE(108i32);
+pub const ClusGroupTypeHcsVirtualMachine: CLUSGROUP_TYPE = CLUSGROUP_TYPE(126i32);
 pub const ClusGroupTypeIScsiNameService: CLUSGROUP_TYPE = CLUSGROUP_TYPE(110i32);
 pub const ClusGroupTypeIScsiTarget: CLUSGROUP_TYPE = CLUSGROUP_TYPE(113i32);
 pub const ClusGroupTypeInfrastructureFileServer: CLUSGROUP_TYPE = CLUSGROUP_TYPE(122i32);
+pub const ClusGroupTypeKeyValueStoreManager: CLUSGROUP_TYPE = CLUSGROUP_TYPE(125i32);
+pub const ClusGroupTypeMetaVirtualMachine: CLUSGROUP_TYPE = CLUSGROUP_TYPE(127i32);
 pub const ClusGroupTypeMsmq: CLUSGROUP_TYPE = CLUSGROUP_TYPE(104i32);
 pub const ClusGroupTypePrintServer: CLUSGROUP_TYPE = CLUSGROUP_TYPE(101i32);
 pub const ClusGroupTypeScaleoutCluster: CLUSGROUP_TYPE = CLUSGROUP_TYPE(118i32);
@@ -5628,6 +5665,7 @@ pub const ClusGroupTypeTaskScheduler: CLUSGROUP_TYPE = CLUSGROUP_TYPE(116i32);
 pub const ClusGroupTypeTemporary: CLUSGROUP_TYPE = CLUSGROUP_TYPE(3i32);
 pub const ClusGroupTypeTsSessionBroker: CLUSGROUP_TYPE = CLUSGROUP_TYPE(112i32);
 pub const ClusGroupTypeUnknown: CLUSGROUP_TYPE = CLUSGROUP_TYPE(9999i32);
+pub const ClusGroupTypeUserManager: CLUSGROUP_TYPE = CLUSGROUP_TYPE(124i32);
 pub const ClusGroupTypeVMReplicaBroker: CLUSGROUP_TYPE = CLUSGROUP_TYPE(115i32);
 pub const ClusGroupTypeVMReplicaCoordinator: CLUSGROUP_TYPE = CLUSGROUP_TYPE(120i32);
 pub const ClusGroupTypeVirtualMachine: CLUSGROUP_TYPE = CLUSGROUP_TYPE(111i32);
@@ -5692,6 +5730,7 @@ pub const ClusterNetworkUnavailable: CLUSTER_NETWORK_STATE = CLUSTER_NETWORK_STA
 pub const ClusterNetworkUp: CLUSTER_NETWORK_STATE = CLUSTER_NETWORK_STATE(3i32);
 pub const ClusterNodeDown: CLUSTER_NODE_STATE = CLUSTER_NODE_STATE(1i32);
 pub const ClusterNodeDrainStatusCount: CLUSTER_NODE_DRAIN_STATUS = CLUSTER_NODE_DRAIN_STATUS(4i32);
+pub const ClusterNodeFailbackStatusCount: CLUSTER_NODE_FAILBACK_STATUS = CLUSTER_NODE_FAILBACK_STATUS(4i32);
 pub const ClusterNodeJoining: CLUSTER_NODE_STATE = CLUSTER_NODE_STATE(3i32);
 pub const ClusterNodePaused: CLUSTER_NODE_STATE = CLUSTER_NODE_STATE(2i32);
 pub const ClusterNodeResumeFailbackTypeCount: CLUSTER_NODE_RESUME_FAILBACK_TYPE = CLUSTER_NODE_RESUME_FAILBACK_TYPE(3i32);
@@ -5734,6 +5773,7 @@ pub const ClusterRoleIPV6Address: CLUSTER_ROLE = CLUSTER_ROLE(22i32);
 pub const ClusterRoleIPV6TunnelAddress: CLUSTER_ROLE = CLUSTER_ROLE(23i32);
 pub const ClusterRoleISCSINameServer: CLUSTER_ROLE = CLUSTER_ROLE(6i32);
 pub const ClusterRoleISCSITargetServer: CLUSTER_ROLE = CLUSTER_ROLE(24i32);
+pub const ClusterRoleKeyValueStore: CLUSTER_ROLE = CLUSTER_ROLE(32i32);
 pub const ClusterRoleMSMQ: CLUSTER_ROLE = CLUSTER_ROLE(7i32);
 pub const ClusterRoleNFS: CLUSTER_ROLE = CLUSTER_ROLE(8i32);
 pub const ClusterRoleNetworkFileSystem: CLUSTER_ROLE = CLUSTER_ROLE(14i32);
@@ -5753,6 +5793,7 @@ pub const ClusterRoleVolumeShadowCopyServiceTask: CLUSTER_ROLE = CLUSTER_ROLE(11
 pub const ClusterRoleWINS: CLUSTER_ROLE = CLUSTER_ROLE(12i32);
 pub const ClusterSetupPhaseAddClusterProperties: CLUSTER_SETUP_PHASE = CLUSTER_SETUP_PHASE(201i32);
 pub const ClusterSetupPhaseAddNodeToCluster: CLUSTER_SETUP_PHASE = CLUSTER_SETUP_PHASE(301i32);
+pub const ClusterSetupPhaseApplyNetworkATCIntents: CLUSTER_SETUP_PHASE = CLUSTER_SETUP_PHASE(303i32);
 pub const ClusterSetupPhaseCleanupCOs: CLUSTER_SETUP_PHASE = CLUSTER_SETUP_PHASE(402i32);
 pub const ClusterSetupPhaseCleanupNode: CLUSTER_SETUP_PHASE = CLUSTER_SETUP_PHASE(405i32);
 pub const ClusterSetupPhaseClusterGroupOnline: CLUSTER_SETUP_PHASE = CLUSTER_SETUP_PHASE(206i32);
@@ -5778,6 +5819,8 @@ pub const ClusterSetupPhaseMoveGroup: CLUSTER_SETUP_PHASE = CLUSTER_SETUP_PHASE(
 pub const ClusterSetupPhaseNodeUp: CLUSTER_SETUP_PHASE = CLUSTER_SETUP_PHASE(302i32);
 pub const ClusterSetupPhaseOfflineGroup: CLUSTER_SETUP_PHASE = CLUSTER_SETUP_PHASE(403i32);
 pub const ClusterSetupPhaseQueryClusterNameAccount: CLUSTER_SETUP_PHASE = CLUSTER_SETUP_PHASE(106i32);
+pub const ClusterSetupPhaseRepairCNOAccount: CLUSTER_SETUP_PHASE = CLUSTER_SETUP_PHASE(500i32);
+pub const ClusterSetupPhaseRepairDNSPermissions: CLUSTER_SETUP_PHASE = CLUSTER_SETUP_PHASE(501i32);
 pub const ClusterSetupPhaseReport: CLUSTER_SETUP_PHASE_TYPE = CLUSTER_SETUP_PHASE_TYPE(4i32);
 pub const ClusterSetupPhaseStart: CLUSTER_SETUP_PHASE_TYPE = CLUSTER_SETUP_PHASE_TYPE(1i32);
 pub const ClusterSetupPhaseStartingClusSvc: CLUSTER_SETUP_PHASE = CLUSTER_SETUP_PHASE(105i32);
@@ -5820,6 +5863,7 @@ pub struct FAILURE_TYPE(pub i32);
 pub const FAILURE_TYPE_EMBEDDED: FAILURE_TYPE = FAILURE_TYPE(1i32);
 pub const FAILURE_TYPE_GENERAL: FAILURE_TYPE = FAILURE_TYPE(0i32);
 pub const FAILURE_TYPE_NETWORK_LOSS: FAILURE_TYPE = FAILURE_TYPE(2i32);
+pub const FE_22H2_UPGRADE_VERSION: u32 = 5u32;
 pub const FE_UPGRADE_VERSION: u32 = 4u32;
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -5852,6 +5896,7 @@ pub const FILESHARE_CHANGE_MODIFY: FILESHARE_CHANGE_ENUM = FILESHARE_CHANGE_ENUM
 pub const FILESHARE_CHANGE_NONE: FILESHARE_CHANGE_ENUM = FILESHARE_CHANGE_ENUM(0i32);
 pub const FailbackGroupsImmediately: CLUSTER_NODE_RESUME_FAILBACK_TYPE = CLUSTER_NODE_RESUME_FAILBACK_TYPE(1i32);
 pub const FailbackGroupsPerPolicy: CLUSTER_NODE_RESUME_FAILBACK_TYPE = CLUSTER_NODE_RESUME_FAILBACK_TYPE(2i32);
+pub const GA_UPGRADE_VERSION: u32 = 5u32;
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct GET_OPERATION_CONTEXT_PARAMS {
@@ -5865,6 +5910,7 @@ impl Default for GET_OPERATION_CONTEXT_PARAMS {
         unsafe { core::mem::zeroed() }
     }
 }
+pub const GE_UPGRADE_VERSION: u32 = 6u32;
 pub const GROUPSET_READY_SETTING_APPLICATION_READY: u32 = 4u32;
 pub const GROUPSET_READY_SETTING_DELAY: u32 = 1u32;
 pub const GROUPSET_READY_SETTING_ONLINE: u32 = 2u32;
@@ -14181,6 +14227,10 @@ pub const NodeDrainStatusCompleted: CLUSTER_NODE_DRAIN_STATUS = CLUSTER_NODE_DRA
 pub const NodeDrainStatusFailed: CLUSTER_NODE_DRAIN_STATUS = CLUSTER_NODE_DRAIN_STATUS(3i32);
 pub const NodeDrainStatusInProgress: CLUSTER_NODE_DRAIN_STATUS = CLUSTER_NODE_DRAIN_STATUS(1i32);
 pub const NodeDrainStatusNotInitiated: CLUSTER_NODE_DRAIN_STATUS = CLUSTER_NODE_DRAIN_STATUS(0i32);
+pub const NodeFailbackStatusCompleted: CLUSTER_NODE_FAILBACK_STATUS = CLUSTER_NODE_FAILBACK_STATUS(2i32);
+pub const NodeFailbackStatusFailed: CLUSTER_NODE_FAILBACK_STATUS = CLUSTER_NODE_FAILBACK_STATUS(3i32);
+pub const NodeFailbackStatusInProgress: CLUSTER_NODE_FAILBACK_STATUS = CLUSTER_NODE_FAILBACK_STATUS(1i32);
+pub const NodeFailbackStatusNotInitiated: CLUSTER_NODE_FAILBACK_STATUS = CLUSTER_NODE_FAILBACK_STATUS(0i32);
 pub const NodeStatusAvoidPlacement: CLUSTER_NODE_STATUS = CLUSTER_NODE_STATUS(32i32);
 pub const NodeStatusDrainCompleted: CLUSTER_NODE_STATUS = CLUSTER_NODE_STATUS(8i32);
 pub const NodeStatusDrainFailed: CLUSTER_NODE_STATUS = CLUSTER_NODE_STATUS(16i32);
@@ -14197,6 +14247,17 @@ pub struct NodeUtilizationInfoElement {
     pub AvailableMemoryAfterReclamation: u64,
 }
 impl Default for NodeUtilizationInfoElement {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct NodeVFInfo {
+    pub VFTotal: u32,
+    pub VFUsed: u32,
+}
+impl Default for NodeVFInfo {
     fn default() -> Self {
         unsafe { core::mem::zeroed() }
     }
@@ -14452,6 +14513,7 @@ pub type PCLUSAPI_REMOVE_CLUSTER_RESOURCE_NODE = Option<unsafe extern "system" f
 pub type PCLUSAPI_REMOVE_CLUSTER_RESOURCE_NODE_EX = Option<unsafe extern "system" fn(hresource: HRESOURCE, hnode: HNODE, lpszreason: windows_core::PCWSTR) -> u32>;
 pub type PCLUSAPI_REMOVE_CROSS_CLUSTER_GROUPSET_DEPENDENCY = Option<unsafe extern "system" fn(hdependentgroupset: HGROUPSET, lpremoteclustername: windows_core::PCWSTR, lpremotegroupsetname: windows_core::PCWSTR) -> u32>;
 pub type PCLUSAPI_REMOVE_RESOURCE_FROM_CLUSTER_SHARED_VOLUMES = Option<unsafe extern "system" fn(hresource: HRESOURCE) -> u32>;
+pub type PCLUSAPI_REPAIR_CLUSTER_NAME_ACCOUNT = Option<unsafe extern "system" fn(hcluster: HCLUSTER) -> u32>;
 pub type PCLUSAPI_RESTART_CLUSTER_RESOURCE = Option<unsafe extern "system" fn(hresource: HRESOURCE, dwflags: u32) -> u32>;
 pub type PCLUSAPI_RESTART_CLUSTER_RESOURCE_EX = Option<unsafe extern "system" fn(hresource: HRESOURCE, dwflags: u32) -> u32>;
 pub type PCLUSAPI_RESTORE_CLUSTER_DATABASE = Option<unsafe extern "system" fn(lpszpathname: windows_core::PCWSTR, bforce: windows_core::BOOL, lpszquorumdriveletter: windows_core::PCWSTR) -> u32>;
@@ -14715,6 +14777,20 @@ pub const PriorityDisabled: CLUSTER_GROUP_PRIORITY = CLUSTER_GROUP_PRIORITY(0i32
 pub const PriorityHigh: CLUSTER_GROUP_PRIORITY = CLUSTER_GROUP_PRIORITY(3000i32);
 pub const PriorityLow: CLUSTER_GROUP_PRIORITY = CLUSTER_GROUP_PRIORITY(1000i32);
 pub const PriorityMedium: CLUSTER_GROUP_PRIORITY = CLUSTER_GROUP_PRIORITY(2000i32);
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct REPAIR_CLUSTER_NAME_ACCOUNT_CONFIG {
+    pub dwVersion: u32,
+    pub dwFlags: u32,
+    pub pszUserName: windows_core::PCWSTR,
+    pub pszPassword: windows_core::PCWSTR,
+    pub pszDomain: windows_core::PCWSTR,
+}
+impl Default for REPAIR_CLUSTER_NAME_ACCOUNT_CONFIG {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct RESDLL_CONTEXT_OPERATION_TYPE(pub i32);
@@ -15125,6 +15201,7 @@ impl Default for WitnessTagUpdateHelper {
         unsafe { core::mem::zeroed() }
     }
 }
+pub const ZN_UPGRADE_VERSION: u32 = 4u32;
 pub const eResourceStateChangeReasonFailedMove: CLUSTER_RESOURCE_STATE_CHANGE_REASON = CLUSTER_RESOURCE_STATE_CHANGE_REASON(3i32);
 pub const eResourceStateChangeReasonFailover: CLUSTER_RESOURCE_STATE_CHANGE_REASON = CLUSTER_RESOURCE_STATE_CHANGE_REASON(2i32);
 pub const eResourceStateChangeReasonMove: CLUSTER_RESOURCE_STATE_CHANGE_REASON = CLUSTER_RESOURCE_STATE_CHANGE_REASON(1i32);

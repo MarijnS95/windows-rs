@@ -916,24 +916,24 @@ where
     unsafe { UnloadPerfCounterTextStringsW(lpcommandline.param().abi(), bquietmodearg.into()) }
 }
 #[inline]
-pub unsafe fn UpdatePerfNameFilesA<P0, P1, P2>(sznewctrfilepath: P0, sznewhlpfilepath: P1, szlanguageid: P2, dwflags: usize) -> u32
+pub unsafe fn UpdatePerfNameFilesA<P0, P1, P2>(sznewctrfilepath: P0, sznewhlpfilepath: P1, szlanguageid: P2, dwmodes: usize) -> u32
 where
     P0: windows_core::Param<windows_core::PCSTR>,
     P1: windows_core::Param<windows_core::PCSTR>,
     P2: windows_core::Param<windows_core::PCSTR>,
 {
-    windows_link::link!("loadperf.dll" "system" fn UpdatePerfNameFilesA(sznewctrfilepath : windows_core::PCSTR, sznewhlpfilepath : windows_core::PCSTR, szlanguageid : windows_core::PCSTR, dwflags : usize) -> u32);
-    unsafe { UpdatePerfNameFilesA(sznewctrfilepath.param().abi(), sznewhlpfilepath.param().abi(), szlanguageid.param().abi(), dwflags) }
+    windows_link::link!("loadperf.dll" "system" fn UpdatePerfNameFilesA(sznewctrfilepath : windows_core::PCSTR, sznewhlpfilepath : windows_core::PCSTR, szlanguageid : windows_core::PCSTR, dwmodes : usize) -> u32);
+    unsafe { UpdatePerfNameFilesA(sznewctrfilepath.param().abi(), sznewhlpfilepath.param().abi(), szlanguageid.param().abi(), dwmodes) }
 }
 #[inline]
-pub unsafe fn UpdatePerfNameFilesW<P0, P1, P2>(sznewctrfilepath: P0, sznewhlpfilepath: P1, szlanguageid: P2, dwflags: usize) -> u32
+pub unsafe fn UpdatePerfNameFilesW<P0, P1, P2>(sznewctrfilepath: P0, sznewhlpfilepath: P1, szlanguageid: P2, dwmodes: usize) -> u32
 where
     P0: windows_core::Param<windows_core::PCWSTR>,
     P1: windows_core::Param<windows_core::PCWSTR>,
     P2: windows_core::Param<windows_core::PCWSTR>,
 {
-    windows_link::link!("loadperf.dll" "system" fn UpdatePerfNameFilesW(sznewctrfilepath : windows_core::PCWSTR, sznewhlpfilepath : windows_core::PCWSTR, szlanguageid : windows_core::PCWSTR, dwflags : usize) -> u32);
-    unsafe { UpdatePerfNameFilesW(sznewctrfilepath.param().abi(), sznewhlpfilepath.param().abi(), szlanguageid.param().abi(), dwflags) }
+    windows_link::link!("loadperf.dll" "system" fn UpdatePerfNameFilesW(sznewctrfilepath : windows_core::PCWSTR, sznewhlpfilepath : windows_core::PCWSTR, szlanguageid : windows_core::PCWSTR, dwmodes : usize) -> u32);
+    unsafe { UpdatePerfNameFilesW(sznewctrfilepath.param().abi(), sznewhlpfilepath.param().abi(), szlanguageid.param().abi(), dwmodes) }
 }
 pub const AppearPropPage: windows_core::GUID = windows_core::GUID::from_u128(0xe49741e9_93a8_4ab1_8e96_bf4482282e9c);
 #[repr(transparent)]

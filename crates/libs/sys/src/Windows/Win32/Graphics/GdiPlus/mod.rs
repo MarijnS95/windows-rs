@@ -1381,6 +1381,7 @@ pub struct GdiplusStartupOutput {
     pub NotificationUnhook: isize,
 }
 pub type GdiplusStartupParams = i32;
+pub const GdiplusStartupReserved0: GdiplusStartupParams = 4i32;
 pub const GdiplusStartupSetPSValue: GdiplusStartupParams = 2i32;
 pub const GdiplusStartupTransparencyMask: GdiplusStartupParams = -16777216i32;
 pub const GenericError: Status = 1i32;

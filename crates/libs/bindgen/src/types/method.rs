@@ -309,6 +309,16 @@ impl Method {
             let args = params.iter().map(|param|{
                 let name = param.write_ident();
 
+                for attr in param.def.attributes() {
+                    match attr.name() {
+                        "NativeArrayInfoAttribute" =>  {
+                            dbg!(attr.args());
+                            panic!();
+                        }
+                        _ => {}
+                    }
+                }
+
                 if param.is_input() {
                     if param.is_winrt_array() {
                         if param.is_copyable() {

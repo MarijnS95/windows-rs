@@ -1069,6 +1069,30 @@ pub unsafe fn SaslSetContextOption(contexthandle: *const super::super::Credentia
     unsafe { SaslSetContextOption(contexthandle, option, value, size).ok() }
 }
 #[inline]
+pub unsafe fn SecAllocateAndSetCallTarget<P2>(lpipaddress: Option<&[u8]>, targetname: P2) -> windows_core::Result<i32>
+where
+    P2: windows_core::Param<windows_core::PCWSTR>,
+{
+    windows_link::link!("sspicli.dll" "system" fn SecAllocateAndSetCallTarget(lpipaddress : *const u8, cchipaddress : u32, targetname : windows_core::PCWSTR, freecallcontext : *mut i32) -> windows_core::HRESULT);
+    unsafe {
+        let mut result__ = core::mem::zeroed();
+        SecAllocateAndSetCallTarget(core::mem::transmute(lpipaddress.as_deref().map_or(core::ptr::null(), |slice| slice.as_ptr())), lpipaddress.as_deref().map_or(0, |slice| slice.len().try_into().unwrap()), targetname.param().abi(), &mut result__).map(|| result__)
+    }
+}
+#[inline]
+pub unsafe fn SecAllocateAndSetIPAddress(lpipaddress: &[u8]) -> windows_core::Result<i32> {
+    windows_link::link!("sspicli.dll" "system" fn SecAllocateAndSetIPAddress(lpipaddress : *const u8, cchipaddress : u32, freecallcontext : *mut i32) -> windows_core::HRESULT);
+    unsafe {
+        let mut result__ = core::mem::zeroed();
+        SecAllocateAndSetIPAddress(core::mem::transmute(lpipaddress.as_ptr()), lpipaddress.len().try_into().unwrap(), &mut result__).map(|| result__)
+    }
+}
+#[inline]
+pub unsafe fn SecFreeCallContext() {
+    windows_link::link!("sspicli.dll" "system" fn SecFreeCallContext());
+    unsafe { SecFreeCallContext() }
+}
+#[inline]
 pub unsafe fn SendSAS(asuser: bool) {
     windows_link::link!("sas.dll" "system" fn SendSAS(asuser : windows_core::BOOL));
     unsafe { SendSAS(asuser.into()) }
@@ -1422,6 +1446,7 @@ pub const ASC_REQ_CONFIDENTIALITY: ASC_REQ_FLAGS = ASC_REQ_FLAGS(16u32);
 pub const ASC_REQ_CONNECTION: ASC_REQ_FLAGS = ASC_REQ_FLAGS(2048u32);
 pub const ASC_REQ_DATAGRAM: ASC_REQ_FLAGS = ASC_REQ_FLAGS(1024u32);
 pub const ASC_REQ_DELEGATE: ASC_REQ_FLAGS = ASC_REQ_FLAGS(1u32);
+pub const ASC_REQ_EXPLICIT_SESSION: ASC_REQ_HIGH_FLAGS = ASC_REQ_HIGH_FLAGS(68719476736u64);
 pub const ASC_REQ_EXTENDED_ERROR: ASC_REQ_FLAGS = ASC_REQ_FLAGS(32768u32);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
@@ -1518,6 +1543,7 @@ pub const ASC_RET_CONFIDENTIALITY: u32 = 16u32;
 pub const ASC_RET_CONNECTION: u32 = 2048u32;
 pub const ASC_RET_DATAGRAM: u32 = 1024u32;
 pub const ASC_RET_DELEGATE: u32 = 1u32;
+pub const ASC_RET_EXPLICIT_SESSION: u64 = 68719476736u64;
 pub const ASC_RET_EXTENDED_ERROR: u32 = 32768u32;
 pub const ASC_RET_FRAGMENT_ONLY: u32 = 8388608u32;
 pub const ASC_RET_IDENTIFY: u32 = 524288u32;
@@ -1529,6 +1555,7 @@ pub const ASC_RET_NO_ADDITIONAL_TOKEN: u32 = 33554432u32;
 pub const ASC_RET_NO_TOKEN: u32 = 16777216u32;
 pub const ASC_RET_NULL_SESSION: u32 = 1048576u32;
 pub const ASC_RET_REPLAY_DETECT: u32 = 4u32;
+pub const ASC_RET_REUSE_SESSION_TICKETS: u64 = 34359738368u64;
 pub const ASC_RET_SEQUENCE_DETECT: u32 = 8u32;
 pub const ASC_RET_SESSION_TICKET: u32 = 64u32;
 pub const ASC_RET_STREAM: u32 = 65536u32;
@@ -1940,6 +1967,7 @@ pub const ISC_REQ_CONNECTION: ISC_REQ_FLAGS = ISC_REQ_FLAGS(2048u32);
 pub const ISC_REQ_DATAGRAM: ISC_REQ_FLAGS = ISC_REQ_FLAGS(1024u32);
 pub const ISC_REQ_DEFERRED_CRED_VALIDATION: ISC_REQ_HIGH_FLAGS = ISC_REQ_HIGH_FLAGS(8589934592u64);
 pub const ISC_REQ_DELEGATE: ISC_REQ_FLAGS = ISC_REQ_FLAGS(1u32);
+pub const ISC_REQ_EXPLICIT_SESSION: ISC_REQ_HIGH_FLAGS = ISC_REQ_HIGH_FLAGS(68719476736u64);
 pub const ISC_REQ_EXTENDED_ERROR: ISC_REQ_FLAGS = ISC_REQ_FLAGS(16384u32);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
@@ -2027,6 +2055,7 @@ pub const ISC_REQ_NULL_SESSION: ISC_REQ_FLAGS = ISC_REQ_FLAGS(262144u32);
 pub const ISC_REQ_PROMPT_FOR_CREDS: ISC_REQ_FLAGS = ISC_REQ_FLAGS(64u32);
 pub const ISC_REQ_REPLAY_DETECT: ISC_REQ_FLAGS = ISC_REQ_FLAGS(4u32);
 pub const ISC_REQ_RESERVED1: ISC_REQ_FLAGS = ISC_REQ_FLAGS(1048576u32);
+pub const ISC_REQ_REUSE_SESSION_TICKETS: ISC_REQ_HIGH_FLAGS = ISC_REQ_HIGH_FLAGS(34359738368u64);
 pub const ISC_REQ_SEQUENCE_DETECT: ISC_REQ_FLAGS = ISC_REQ_FLAGS(8u32);
 pub const ISC_REQ_STREAM: ISC_REQ_FLAGS = ISC_REQ_FLAGS(32768u32);
 pub const ISC_REQ_UNVERIFIED_TARGET_NAME: ISC_REQ_FLAGS = ISC_REQ_FLAGS(536870912u32);
@@ -2042,6 +2071,7 @@ pub const ISC_RET_CONNECTION: u32 = 2048u32;
 pub const ISC_RET_DATAGRAM: u32 = 1024u32;
 pub const ISC_RET_DEFERRED_CRED_VALIDATION: u64 = 8589934592u64;
 pub const ISC_RET_DELEGATE: u32 = 1u32;
+pub const ISC_RET_EXPLICIT_SESSION: u64 = 68719476736u64;
 pub const ISC_RET_EXTENDED_ERROR: u32 = 16384u32;
 pub const ISC_RET_FORWARD_CREDENTIALS: u32 = 4194304u32;
 pub const ISC_RET_FRAGMENT_ONLY: u32 = 2097152u32;
@@ -2057,6 +2087,7 @@ pub const ISC_RET_NULL_SESSION: u32 = 262144u32;
 pub const ISC_RET_REAUTHENTICATION: u32 = 134217728u32;
 pub const ISC_RET_REPLAY_DETECT: u32 = 4u32;
 pub const ISC_RET_RESERVED1: u32 = 1048576u32;
+pub const ISC_RET_REUSE_SESSION_TICKETS: u64 = 34359738368u64;
 pub const ISC_RET_SEQUENCE_DETECT: u32 = 8u32;
 pub const ISC_RET_STREAM: u32 = 32768u32;
 pub const ISC_RET_USED_COLLECTED_CREDS: u32 = 64u32;
@@ -2067,6 +2098,11 @@ pub const ISC_RET_USE_SESSION_KEY: u32 = 32u32;
 pub const ISSP_LEVEL: u32 = 32u32;
 pub const ISSP_MODE: u32 = 1u32;
 pub const InvalidCredKey: MSV1_0_CREDENTIAL_KEY_TYPE = MSV1_0_CREDENTIAL_KEY_TYPE(0i32);
+pub const KDC_NETWORK_DISCOVERY_FLAGS_DS13_REQUIRED: u32 = 2147483648u32;
+pub const KDC_NETWORK_SETTINGS_FLAGS_CONFIGURE_DISCOVERY: u32 = 1073741824u32;
+pub const KDC_NETWORK_SETTINGS_FLAGS_CONFIGURE_PROXY: u32 = 2147483648u32;
+pub const KDC_NETWORK_SETTINGS_FLAGS_FORCEPROXY: u32 = 1u32;
+pub const KDC_NETWORK_SETTINGS_V2: u32 = 2u32;
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct KDC_PROXY_CACHE_ENTRY_DATA {
@@ -2250,6 +2286,17 @@ impl Default for KERB_CERTIFICATE_UNLOCK_LOGON {
 }
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
+pub struct KERB_CHANGEMACHINEPASSWORD_REQUEST {
+    pub MessageType: KERB_PROTOCOL_MESSAGE_TYPE,
+    pub ForcePasswordChange: bool,
+}
+impl Default for KERB_CHANGEMACHINEPASSWORD_REQUEST {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct KERB_CHANGEPASSWORD_REQUEST {
     pub MessageType: KERB_PROTOCOL_MESSAGE_TYPE,
     pub DomainName: LSA_UNICODE_STRING,
@@ -2402,8 +2449,10 @@ impl Default for KERB_DECRYPT_RESPONSE {
 }
 pub const KERB_ETYPE_AES128_CTS_HMAC_SHA1_96: u32 = 17u32;
 pub const KERB_ETYPE_AES128_CTS_HMAC_SHA1_96_PLAIN: i32 = -148i32;
+pub const KERB_ETYPE_AES128_CTS_HMAC_SHA256: u32 = 19u32;
 pub const KERB_ETYPE_AES256_CTS_HMAC_SHA1_96: u32 = 18u32;
 pub const KERB_ETYPE_AES256_CTS_HMAC_SHA1_96_PLAIN: i32 = -149i32;
+pub const KERB_ETYPE_AES256_CTS_HMAC_SHA384: u32 = 20u32;
 pub const KERB_ETYPE_DEFAULT: u32 = 0u32;
 pub const KERB_ETYPE_DES3_CBC_MD5: u32 = 5u32;
 pub const KERB_ETYPE_DES3_CBC_SHA1: u32 = 7u32;
@@ -2814,6 +2863,7 @@ impl Default for KERB_REFRESH_SCCRED_REQUEST {
     }
 }
 pub const KERB_REQUEST_ADD_CREDENTIAL: KERB_REQUEST_FLAGS = KERB_REQUEST_FLAGS(1u32);
+pub const KERB_REQUEST_CRED_LOCAL_ACCOUNT: u32 = 8u32;
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct KERB_REQUEST_FLAGS(pub u32);
@@ -3258,6 +3308,8 @@ pub const KerbDecryptDataMessage: KERB_PROTOCOL_MESSAGE_TYPE = KERB_PROTOCOL_MES
 pub const KerbInteractiveLogon: KERB_LOGON_SUBMIT_TYPE = KERB_LOGON_SUBMIT_TYPE(2i32);
 pub const KerbInteractiveProfile: KERB_PROFILE_BUFFER_TYPE = KERB_PROFILE_BUFFER_TYPE(2i32);
 pub const KerbLuidLogon: KERB_LOGON_SUBMIT_TYPE = KERB_LOGON_SUBMIT_TYPE(84i32);
+pub const KerbNetworkTicketLogonMessage: KERB_PROTOCOL_MESSAGE_TYPE = KERB_PROTOCOL_MESSAGE_TYPE(37i32);
+pub const KerbNlChangeMachinePasswordMessage: KERB_PROTOCOL_MESSAGE_TYPE = KERB_PROTOCOL_MESSAGE_TYPE(38i32);
 pub const KerbNoElevationLogon: KERB_LOGON_SUBMIT_TYPE = KERB_LOGON_SUBMIT_TYPE(83i32);
 pub const KerbPinKdcMessage: KERB_PROTOCOL_MESSAGE_TYPE = KERB_PROTOCOL_MESSAGE_TYPE(30i32);
 pub const KerbPrintCloudKerberosDebugMessage: KERB_PROTOCOL_MESSAGE_TYPE = KERB_PROTOCOL_MESSAGE_TYPE(36i32);
@@ -3346,6 +3398,9 @@ pub const LOGON_USED_LM_PASSWORD: MSV_SUB_AUTHENTICATION_FILTER = MSV_SUB_AUTHEN
 pub const LOGON_WINLOGON: u32 = 32768u32;
 pub const LOOKUP_TRANSLATE_NAMES: u32 = 2048u32;
 pub const LOOKUP_VIEW_LOCAL_INFORMATION: u32 = 1u32;
+pub const LSAD_AES256_ENC_KEY_STRING: windows_core::PCSTR = windows_core::s!("Microsoft LSAD encryption key AEAD-AES-256-CBC-HMAC-SHA512 16");
+pub const LSAD_AES256_MAC_KEY_STRING: windows_core::PCSTR = windows_core::s!("Microsoft LSAD MAC key AEAD-AES-256-CBC-HMAC-SHA512 16");
+pub const LSAD_AES_256_ALG: windows_core::PCSTR = windows_core::s!("AEAD-AES-256-CBC-HMAC-SHA512");
 pub const LSAD_AES_BLOCK_SIZE: u32 = 16u32;
 pub const LSAD_AES_CRYPT_SHA512_HASH_SIZE: u32 = 64u32;
 pub const LSAD_AES_KEY_SIZE: u32 = 16u32;
@@ -3983,6 +4038,7 @@ impl Default for MSV1_0_IUM_SUPPLEMENTAL_CREDENTIAL {
         unsafe { core::mem::zeroed() }
     }
 }
+pub const MSV1_0_KERBEROS_LOGON: u32 = 4u32;
 pub const MSV1_0_LANMAN_SESSION_KEY_LENGTH: u32 = 8u32;
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -4502,6 +4558,24 @@ impl Default for NETLOGON_SERVICE_INFO {
         unsafe { core::mem::zeroed() }
     }
 }
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct NETLOGON_TARGET_INFO {
+    pub Type: u32,
+    pub NbComputerName: LSA_UNICODE_STRING,
+    pub NbDomainName: LSA_UNICODE_STRING,
+    pub DnsComputerName: LSA_UNICODE_STRING,
+    pub DnsDomainName: LSA_UNICODE_STRING,
+    pub DnsTreeName: LSA_UNICODE_STRING,
+    pub TargetName: LSA_UNICODE_STRING,
+}
+impl Default for NETLOGON_TARGET_INFO {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+pub const NETLOGON_TARGET_INFO_TYPE_KERBEROS: u32 = 2u32;
+pub const NETLOGON_TARGET_INFO_TYPE_NTLM: u32 = 1u32;
 pub const NGC_DATA_FLAG_IS_CLOUD_TRUST_CRED: u32 = 8u32;
 pub const NGC_DATA_FLAG_IS_SMARTCARD_DATA: u32 = 4u32;
 pub const NGC_DATA_FLAG_KERB_CERTIFICATE_LOGON_FLAG_CHECK_DUPLICATES: u32 = 1u32;
@@ -4545,6 +4619,7 @@ pub const NetlogonNetworkInformation: NETLOGON_LOGON_INFO_CLASS = NETLOGON_LOGON
 pub const NetlogonNetworkTransitiveInformation: NETLOGON_LOGON_INFO_CLASS = NETLOGON_LOGON_INFO_CLASS(6i32);
 pub const NetlogonServiceInformation: NETLOGON_LOGON_INFO_CLASS = NETLOGON_LOGON_INFO_CLASS(3i32);
 pub const NetlogonServiceTransitiveInformation: NETLOGON_LOGON_INFO_CLASS = NETLOGON_LOGON_INFO_CLASS(7i32);
+pub const NetlogonTicketLogonInformation: NETLOGON_LOGON_INFO_CLASS = NETLOGON_LOGON_INFO_CLASS(8i32);
 pub const PCT1SP_NAME: windows_core::PCWSTR = windows_core::w!("Microsoft PCT 1.0");
 pub const PCT1SP_NAME_A: windows_core::PCSTR = windows_core::s!("Microsoft PCT 1.0");
 pub const PCT1SP_NAME_W: windows_core::PCWSTR = windows_core::w!("Microsoft PCT 1.0");
@@ -5265,6 +5340,8 @@ pub const SCHANNEL_NAME: windows_core::PCWSTR = windows_core::w!("Schannel");
 pub const SCHANNEL_NAME_A: windows_core::PCSTR = windows_core::s!("Schannel");
 pub const SCHANNEL_NAME_W: windows_core::PCWSTR = windows_core::w!("Schannel");
 pub const SCHANNEL_RENEGOTIATE: u32 = 0u32;
+pub const SCHANNEL_RSA_PKCS_PADDING_ALGORITHM: windows_core::PCWSTR = windows_core::w!("SCH_RSA_PKCS_PAD");
+pub const SCHANNEL_RSA_PSS_PADDING_ALGORITHM: windows_core::PCWSTR = windows_core::w!("SCH_RSA_PSS_PAD");
 pub const SCHANNEL_SECRET_PRIVKEY: u32 = 2u32;
 pub const SCHANNEL_SECRET_TYPE_CAPI: u32 = 1u32;
 pub const SCHANNEL_SESSION: u32 = 3u32;
@@ -5419,6 +5496,7 @@ pub const SCH_USE_PRESHAREDKEY_ONLY: SCHANNEL_CRED_FLAGS = SCHANNEL_CRED_FLAGS(8
 pub const SCH_USE_STRONG_CRYPTO: SCHANNEL_CRED_FLAGS = SCHANNEL_CRED_FLAGS(4194304u32);
 pub const SECBUFFER_ALERT: u32 = 17u32;
 pub const SECBUFFER_APPLICATION_PROTOCOLS: u32 = 18u32;
+pub const SECBUFFER_APP_SESSION_STATE: u32 = 31u32;
 pub const SECBUFFER_ATTRMASK: u32 = 4026531840u32;
 pub const SECBUFFER_CERTIFICATE_REQUEST_CONTEXT: u32 = 29u32;
 pub const SECBUFFER_CHANGE_PASS_RESPONSE: u32 = 15u32;
@@ -5442,6 +5520,7 @@ pub const SECBUFFER_READONLY: u32 = 2147483648u32;
 pub const SECBUFFER_READONLY_WITH_CHECKSUM: u32 = 268435456u32;
 pub const SECBUFFER_RESERVED: u32 = 1610612736u32;
 pub const SECBUFFER_SEND_GENERIC_TLS_EXTENSION: u32 = 25u32;
+pub const SECBUFFER_SESSION_TICKET: u32 = 32u32;
 pub const SECBUFFER_SRTP_MASTER_KEY_IDENTIFIER: u32 = 20u32;
 pub const SECBUFFER_SRTP_PROTECTION_PROFILES: u32 = 19u32;
 pub const SECBUFFER_STREAM: u32 = 10u32;
@@ -5742,6 +5821,7 @@ pub const SECPKG_CREDENTIAL_FLAGS_CALLER_HAS_TCB: u32 = 1u32;
 pub const SECPKG_CREDENTIAL_FLAGS_CREDMAN_CRED: u32 = 2u32;
 pub const SECPKG_CREDENTIAL_VERSION: u32 = 201u32;
 pub const SECPKG_CRED_ATTR_CERT: u32 = 4u32;
+pub const SECPKG_CRED_ATTR_KDC_NETWORK_SETTINGS: u32 = 3u32;
 pub const SECPKG_CRED_ATTR_KDC_PROXY_SETTINGS: u32 = 3u32;
 pub const SECPKG_CRED_ATTR_NAMES: u32 = 1u32;
 pub const SECPKG_CRED_ATTR_PAC_BYPASS: u32 = 5u32;
@@ -5753,6 +5833,7 @@ pub const SECPKG_CRED_BOTH: u32 = 3u32;
 pub struct SECPKG_CRED_CLASS(pub i32);
 pub const SECPKG_CRED_DEFAULT: u32 = 4u32;
 pub const SECPKG_CRED_INBOUND: SECPKG_CRED = SECPKG_CRED(1u32);
+pub const SECPKG_CRED_KERB_ANCHOR_DS_VERSION: u32 = 64u32;
 pub const SECPKG_CRED_OUTBOUND: SECPKG_CRED = SECPKG_CRED(2u32);
 pub const SECPKG_CRED_PROCESS_POLICY_ONLY: u32 = 32u32;
 pub const SECPKG_CRED_RESERVED: u32 = 4026531840u32;
@@ -6434,6 +6515,17 @@ pub struct SEC_APPLICATION_PROTOCOL_NEGOTIATION_EXT(pub i32);
 pub struct SEC_APPLICATION_PROTOCOL_NEGOTIATION_STATUS(pub i32);
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
+pub struct SEC_APP_SESSION_STATE {
+    pub AppSessionStateSize: u16,
+    pub AppSessionState: [u8; 1],
+}
+impl Default for SEC_APP_SESSION_STATE {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct SEC_CERTIFICATE_REQUEST_CONTEXT {
     pub cbCertificateRequestContext: u8,
     pub rgCertificateRequestContext: [u8; 1],
@@ -6552,6 +6644,17 @@ pub struct SEC_PRESHAREDKEY_IDENTITY {
     pub KeyIdentity: [u8; 1],
 }
 impl Default for SEC_PRESHAREDKEY_IDENTITY {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct SEC_SESSION_TICKET {
+    pub SessionTicketSize: u16,
+    pub SessionTicket: [u8; 1],
+}
+impl Default for SEC_SESSION_TICKET {
     fn default() -> Self {
         unsafe { core::mem::zeroed() }
     }
@@ -7024,6 +7127,7 @@ pub const SL_E_IA_INVALID_VIRTUALIZATION_PLATFORM: windows_core::HRESULT = windo
 pub const SL_E_IA_MACHINE_NOT_BOUND: windows_core::HRESULT = windows_core::HRESULT(0xC004FD04_u32 as _);
 pub const SL_E_IA_PARENT_PARTITION_NOT_ACTIVATED: windows_core::HRESULT = windows_core::HRESULT(0xC004FD02_u32 as _);
 pub const SL_E_IA_THROTTLE_LIMIT_EXCEEDED: windows_core::HRESULT = windows_core::HRESULT(0xC004FD00_u32 as _);
+pub const SL_E_INCOMPLETE_OR_OLD_DISM_BINARIES: windows_core::HRESULT = windows_core::HRESULT(0xC004F094_u32 as _);
 pub const SL_E_INTERNAL_ERROR: windows_core::HRESULT = windows_core::HRESULT(0xC004F001_u32 as _);
 pub const SL_E_INVALID_AD_DATA: windows_core::HRESULT = windows_core::HRESULT(0xC004C4AF_u32 as _);
 pub const SL_E_INVALID_BINDING_BLOB: windows_core::HRESULT = windows_core::HRESULT(0xC004F032_u32 as _);
@@ -7134,6 +7238,11 @@ pub const SL_E_SLP_BAD_FORMAT: windows_core::HRESULT = windows_core::HRESULT(0xC
 pub const SL_E_SLP_INVALID_MARKER_VERSION: windows_core::HRESULT = windows_core::HRESULT(0xC004F07C_u32 as _);
 pub const SL_E_SLP_MISSING_ACPI_SLIC: windows_core::HRESULT = windows_core::HRESULT(0xC004F057_u32 as _);
 pub const SL_E_SLP_MISSING_SLP_MARKER: windows_core::HRESULT = windows_core::HRESULT(0xC004F058_u32 as _);
+pub const SL_E_SLP_MSOA_BAD_DATA_HEADER: windows_core::HRESULT = windows_core::HRESULT(0xC004F091_u32 as _);
+pub const SL_E_SLP_MSOA_BAD_FORMAT: windows_core::HRESULT = windows_core::HRESULT(0xC004F090_u32 as _);
+pub const SL_E_SLP_MSOA_INVALID_DATA_LENGTH: windows_core::HRESULT = windows_core::HRESULT(0xC004F092_u32 as _);
+pub const SL_E_SLP_MSOA_INVALID_PRODUCT_KEY: windows_core::HRESULT = windows_core::HRESULT(0xC004F093_u32 as _);
+pub const SL_E_SLP_MSOA_PRODUCT_KEY_MISMATCH: windows_core::HRESULT = windows_core::HRESULT(0xC004F095_u32 as _);
 pub const SL_E_SLP_NOT_SIGNED: windows_core::HRESULT = windows_core::HRESULT(0xC004F02A_u32 as _);
 pub const SL_E_SLP_OEM_CERT_MISSING: windows_core::HRESULT = windows_core::HRESULT(0xC004F063_u32 as _);
 pub const SL_E_SOFTMOD_EXPLOIT_DETECTED: windows_core::HRESULT = windows_core::HRESULT(0xC004C4AB_u32 as _);
@@ -8512,6 +8621,22 @@ impl Default for SecPkgCredentials_Cert {
 }
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
+pub struct SecPkgCredentials_KdcNetworkSettingsW {
+    pub Version: u32,
+    pub Flags: u32,
+    pub ProxyServerOffset: u16,
+    pub ProxyServerLength: u16,
+    pub ClientTlsCredOffset: u16,
+    pub ClientTlsCredLength: u16,
+    pub DcDiscoveryFlags: u32,
+}
+impl Default for SecPkgCredentials_KdcNetworkSettingsW {
+    fn default() -> Self {
+        unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct SecPkgCredentials_KdcProxySettingsW {
     pub Version: u32,
     pub Flags: u32,
@@ -9150,6 +9275,7 @@ impl Default for USER_SESSION_KEY {
         unsafe { core::mem::zeroed() }
     }
 }
+pub const USER_SHADOW_ACCOUNT: u32 = 4194304u32;
 pub const USER_SMARTCARD_REQUIRED: u32 = 4096u32;
 pub const USER_TEMP_DUPLICATE_ACCOUNT: u32 = 8u32;
 pub const USER_TRUSTED_FOR_DELEGATION: u32 = 8192u32;
@@ -9195,3 +9321,5 @@ pub struct eTlsHashAlgorithm(pub i32);
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct eTlsSignatureAlgorithm(pub i32);
+pub const versionbyte: u32 = 1u32;
+pub const versionbyte_length: u32 = 1u32;
