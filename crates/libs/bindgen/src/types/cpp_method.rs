@@ -677,6 +677,17 @@ impl CppMethod {
         }
     }
 
+    pub fn handle_last_error_dword(&self) -> bool {
+        if let Some(map) = self.def.impl_map() {
+            if map.flags().contains(PInvokeAttributes::SupportsLastError) {
+                if let Type::CppStruct(ty) = &self.signature.return_type {
+                    return ty.def.underlying_type().is_unsigned();
+                }
+            }
+        }
+        false
+    }
+
     pub fn handle_last_error(&self) -> bool {
         if let Some(map) = self.def.impl_map() {
             if map.flags().contains(PInvokeAttributes::SupportsLastError) {

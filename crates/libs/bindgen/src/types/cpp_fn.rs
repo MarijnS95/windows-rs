@@ -208,6 +208,22 @@ impl CppFn {
                             (!result__.is_invalid()).then_some(result__).ok_or_else(windows_core::Error::from_win32)
                         }
                     }
+                } else if method.handle_last_error_dword() {
+                    quote! {
+                        #cfg
+                        #[inline]
+                        pub unsafe fn #name<#generics>(#params) windows_core::Result<::std::num::NonZero<#abi_return_type>> #where_clause {
+                            #link
+                            // let result__ = unsafe { #name(#args) };
+                            // // TODO
+                            // if result__ == 0 {
+                            //     Err(Error::from_win32())
+                            // } else {
+                            //     Ok(result__)
+                            // }
+                            ::std::num::NonZero::new(unsafe { #name(#args) }).unwrap_or_else(windows_core::Error::from_win32)
+                        }
+                    }
                 } else {
                     quote! {
                         #cfg
