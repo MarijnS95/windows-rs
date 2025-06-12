@@ -1,3 +1,4 @@
+#![cfg(windows)]
 windows_core::imp::define_interface!(
     AsyncActionCompletedHandler,
     AsyncActionCompletedHandler_Vtbl,

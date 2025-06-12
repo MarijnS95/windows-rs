@@ -4,7 +4,7 @@
 #![debugger_visualizer(natvis_file = "../windows-core.natvis")]
 #![cfg_attr(all(not(feature = "std")), no_std)]
 
-#[cfg(windows)]
+// #[cfg(windows)]
 include!("windows.rs");
 
 extern crate self as windows_core;
